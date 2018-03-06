@@ -726,7 +726,7 @@ def update_ref(id):
             conn.commit()
 
             # Открывается сохраненный файл
-            rb = xlrd.open_workbook(UPLOAD_FOLDER + filename)
+            rb = xlrd.open_workbook(constants.UPLOAD_FOLDER + filename)
             sheet = rb.sheet_by_index(0)
 
             # Запсиь строчек справочника в базу данных
@@ -756,6 +756,25 @@ def update_ref(id):
 
 
 
+# Меры
+@app.route("/measures")
+@is_logged_in
+def measures():
+    # Список справочников
+    cursor.execute(
+        '''SELECT * FROM area_description WHERE user_id=%s AND type=%s ORDER BY id DESC''',
+        [str(session['user_id']), constants.AREA_DESCRIPTION_TYPE['Мера']])
+    measures_list = cursor.fetchall()
+    return render_template('measures.html', list = measures_list)
+
+# Мера
+@app.route("/measure/<string:id>/")
+def measure(id):
+    # Подключение к базе данных
+    cursor.execute("SELECT * FROM area_description WHERE id = %s", [id])
+    the_measure = cursor.fetchall()
+
+    return render_template('measure.html', id = id, the_measure = the_measure)
 
 
 # Запуск сервера
