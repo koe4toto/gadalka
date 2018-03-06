@@ -1,0 +1,18 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <h1>Новое измерение времени</h1>
+    {% from "includes/_formtamplate.html" import form_render %}
+    <div class="row">
+        <div class="col-6">
+            <form method="POST" action="">
+                {{ form_render(form) }}
+                <p>
+                    <input type="submit" class="btn btn-primary" value="Сохранить">
+                    <a class="btn btn-link" onclick="javascript:history.back(-2); return false;">Отменить</a>
+                </p>
+
+            </form>
+        </div>
+    </div>
+{% endblock %}

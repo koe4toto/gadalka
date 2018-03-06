@@ -1,0 +1,59 @@
+{# A macro that display the fields of a form.
+   Require a form object.
+   Return html markup. Tags and classes for Bootstrap 3 css.
+   Usage example:
+    {% import "bs_form.html" as bs %}
+    <form action="" method="post">
+      {{ bs.form_render(form) }}
+      <button type="submit">Submit</button>
+    </form>
+#}
+
+{% macro form_render(form) -%}
+  {% for field in form if field.widget.input_type != 'hidden' %}
+    <div class="form-group {% if field.errors %}has-error{% endif %}">
+
+      {% if field.type == 'BooleanField' %}
+        <div class="checkbox">
+          <label>
+            {{ field }}
+            {{ field.label.text }}
+            {% if field.flags.required %}*{% endif %}
+          </label>
+        </div>
+
+      {% elif field.type == 'RadioField' %}
+        {{ field.label(class='control-label') }}
+        {% if field.flags.required %}*{% endif %}
+        {% for subfield in field %}
+          <div class="radio">
+            <label>
+              {{ subfield }}
+              {{ subfield.label.text }}
+            </label>
+          </div>
+        {% endfor %}
+
+      {% elif field.type == 'FileField' %}
+        {{ field.label }}
+        {{ field }}
+
+      {% elif field.type == 'SubmitField' %}
+        {{ field(class='btn btn-primary') }}
+
+      {% else %}
+        {{ field.label(class='control-label') }}
+        {% if field.flags.required %}*{% endif %}
+
+        {{ field(class='form-control') }}
+      {% endif %}
+
+      <ul class="list-unstyled help-block">
+        {% for error in field.errors %}
+          <small class="text-danger">{{ error }}</small>
+        {% endfor %}
+        <li>{{ field.description }}</li>
+      </ul>
+    </div>
+  {% endfor %}
+{%- endmacro %}
