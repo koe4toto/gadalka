@@ -163,28 +163,31 @@ def data_area(id):
         flash('Нет подключения', 'danger')
 
     # Получение описания предметной области (меры и измерения)
-    cursor.execute('SELECT * FROM area_description WHERE data_area_id = %s;', [id])
+    cursor.execute('''
+    SELECT
+        area_description.id,
+        area_description.column_name,
+        area_description.description,
+        area_description.user_id,
+        area_description.data_area_id,
+        area_description.type,
+        refs.name,
+        area_description.kind_of_metering
+    FROM
+        area_description
+    LEFT JOIN refs ON area_description.ref_id = refs.id
+    WHERE
+        area_description.data_area_id = %s;''', [id])
     descriptions = cursor.fetchall()
 
+
+    # TODO нужно вынести в базу данных справочники видов и типов измерений и избавиться от тупого кода до return
     # Замена идентификаторов значениями справочника
     # Перевод кортэжа в список. Приведение к редактируемому формату списка
     desc = []
     for i in descriptions:
         desc.append(list(i))
 
-    # Получение списка идентификаторов справочников
-    ref_id = tuple([i[6] for i in descriptions if i[6] != None])
-
-    # Получение списка данных о справочниках указанных для предметной области
-    if len(ref_id) >= 1:
-        cursor.execute('''SELECT * FROM refs WHERE id in ''' + str(ref_id))
-        refs_name = cursor.fetchall()
-
-        # Замена идентификаторов именами справочника в списке мер и измерений
-        for i in desc:
-            if i[6] in [k[0] for k in refs_name]:
-                m = [k[1] for k in refs_name if k[0] == i[6]]
-                i[6] = m[0]
 
     # Переворачиваются словарь, для поиска ключенй по значению
     adt = {value: key for key, value in constants.AREA_DESCRIPTION_TYPE.items()}
