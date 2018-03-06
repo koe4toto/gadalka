@@ -12,8 +12,6 @@ import constants
 from test_math import tryit, allowed_file, looking
 from forms import *
 
-# Констранты
-
 # Настройки
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = constants.UPLOAD_FOLDER
