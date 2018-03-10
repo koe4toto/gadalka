@@ -823,7 +823,7 @@ def measure(id):
             except:
                 pre = []
                 stats = []
-                flash('Не верный формат данных. Невозможно отобразить отчет.', 'danger')
+                flash('Не верный формат данных. Нехорошо получилось 8(', 'danger')
     except:
         the_measure = None
         flash('Нет подключения', 'danger')
