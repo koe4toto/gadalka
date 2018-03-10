@@ -19,44 +19,76 @@ class Series:
 
     # Список статистик
     def stats_line(self):
-        sline = [
+        sline = {
             # Размер выборки
-            len(self.line),
+            'Размер выборки': len(self.line),
 
             # Сумма
-            np.sum(self.line),
+            'Сумма': np.sum(self.line),
 
             # Минимум
-            np.min(self.line),
+            'Минимум': np.min(self.line),
 
             # Максимум
-            np.max(self.line),
+            'Максимум': np.max(self.line),
 
             # Размах
-            np.ptp(self.line),
+            'Размах': np.ptp(self.line),
 
             # Среднее
-            np.mean(self.line),
+            'Среднее': np.mean(self.line),
 
             # Медиана
-            np.median(self.line),
+            'Медиана': np.median(self.line),
 
             # Средневзвешенное
-            np.average(self.line),
+            'Средневзвешенное': np.average(self.line),
 
             # Стандартное отклонение
-            np.std(self.line),
+            'Стандартное отклонение': np.std(self.line),
 
             # Дисперсия
-            np.var(self.line)
-        ]
+            'Дисперсия': np.var(self.line)
+        }
         return sline
 
     # Распределение частот и вероятности
     def freq_line(self):
         return itemfreq(self.line)
 
+    # Распределение частот и вероятности для интерфейса
+    def freq_line_view(self, limit):
+        if len(self.line) >= limit:
+            i = 0
+            pop = []
+            while i < len(self.line):
+                pop.append(self.line[i])
+                i += int(len(self.line) / limit)
+            return itemfreq(pop)
+        else:
+            return itemfreq(self.line)
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+'''
 # Сумма
 Summa = np.sum(OneList)
 
@@ -199,7 +231,7 @@ def probability(data, DataQualitative = True, x1=None, x2=None):
         Qualitative = QuaLim/QuaAll
     return Qualitative
 
-print('Вероятность в заданном промежутке: ', probability(FashionTrand, True, -3, 54))
+#print('Вероятность в заданном промежутке: ', probability(FashionTrand, True, -3, 54))
 
 # Математическое ожидание: для дискредной величины, для неприрывной (СЛОЖНА!!)
 def MathExpect(data, Probability):
@@ -229,7 +261,7 @@ def MathExpect(data, Probability):
     return low, up
 
 
-print('Математическое ожидание (пока не в точности соответствует вероятности в заданном проемежутке): ', MathExpect(FashionTrand, 0.90))
+#print('Математическое ожидание (пока не в точности соответствует вероятности в заданном проемежутке): ', MathExpect(FashionTrand, 0.90))
 # Выбор модели
 
 
@@ -256,12 +288,11 @@ def LineModel(x, y):
 
 B1 = [LineModel(Xaxis, Yaxis)[0], LineModel(Xaxis, Yaxis)[1], LineModel(Xaxis, Yaxis)[2], LineModel(Xaxis, Yaxis)[3], LineModel(Xaxis, Yaxis)[4]]
 
-print('Коэффициенты линейной модели:', '{:f}'.format(B1[0]), '{:f}'.format(B1[1]), B1[2], '{:f}'.format(B1[3]), '{:f}'.format(B1[4]))
+#print('Коэффициенты линейной модели:', '{:f}'.format(B1[0]), '{:f}'.format(B1[1]), B1[2], '{:f}'.format(B1[3]), '{:f}'.format(B1[4]))
 
 
 
 test = Series(OneList)
-'''
 print('Сума:', test.sum)
 print('Объём выборки:', test.sample_size)
 print('Минимум:', test.minimum)
@@ -270,11 +301,11 @@ print('Частота распределения:', test.itemfreq)
 print('Размах:', test.swipe)
 print('Медиана:', test.median)
 print('Среднее:', test.mean)
-'''
+
 
 print('Пр: ', test.stats_line())
 print('Пр: ', test.freq_line())
-
+'''
 
 
 

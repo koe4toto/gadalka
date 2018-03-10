@@ -790,6 +790,7 @@ def measure(id):
     database_port = data_a[0][8]
     database_table = data_a[0][9]
 
+    # Данные
     try:
         conn2 = psycopg2.connect(
             database=database,
@@ -800,16 +801,29 @@ def measure(id):
         cur = conn2.cursor()
         cur.execute('SELECT column_name FROM information_schema.columns WHERE table_name=%s;', [database_table])
         tc = cur.fetchall()
+
         if str(tc) == '[]':
             flash('Указаной таблицы нет в базе данных', 'danger')
         else:
-            cur.execute('''SELECT ''' + the_measure[0][1] + ''' FROM ''' + database_table)
-            measure_data = cur.fetchall()
-            mline = [i[0] for i in measure_data]
-            to_print = Series(mline)
-            prep = to_print.freq_line()
-            pre = [[i[0], i[1]] for i in prep]
-            stats = to_print.stats_line()
+            # Получение данных
+            try:
+                cur.execute('''SELECT ''' + the_measure[0][1] + ''' FROM ''' + database_table)
+                measure_data = cur.fetchall()
+
+                # Данные в списко
+                mline = [i[0] for i in measure_data]
+
+                # Получение экземпляра класса обработки данных
+                to_print = Series(mline)
+
+                # Получение частотного распределения для отображения в графике
+                prep = to_print.freq_line_view(500)
+                pre = [[i[0], i[1]] for i in prep]
+                stats = to_print.stats_line()
+            except:
+                pre = []
+                stats = []
+                flash('Не верный формат данных. Невозможно отобразить отчет.', 'danger')
     except:
         the_measure = None
         flash('Нет подключения', 'danger')

@@ -2,66 +2,160 @@
 
 {% block body %}
     <h1>{{ the_measure[0][2] }}</h1>
+    {% if sd %}
+    <div class="row">
+      <div class="col-md-9">
+          <h5>График распределения</h5>
+
+          <!--Load the AJAX API-->
+            <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+            <script type="text/javascript">
+                google.charts.load('current', {'packages':['corechart']});
+                google.charts.setOnLoadCallback(drawChart);
+
+                function drawChart() {
+                      var data = new google.visualization.DataTable();
+                      data.addColumn('number', 'X');
+                      data.addColumn('number', 'Частота');
+
+                      data.addRows(
+                        {{ sdata }}
+                      );
 
 
 
-    <!--Load the AJAX API-->
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+                      var options = {
+                        vAxis: {
+                            gridlines: {color: '#414951'}
+                        },
+                        hAxis: {
+                            gridlines: {count: 0},
+                        },
+                        chartArea: {
+                            left:0,
+                            top:0,
+                            width:'1000%',
+                            height:'100%'
+                        },
+                        bar: {
+                            gap: 1
+                        },
+                        colors: ['#fff'],
+                        dataOpacity: 0.8,
 
-    <script type="text/javascript">
-        google.charts.load('current', {packages: ['corechart', 'bar']});
-        google.charts.setOnLoadCallback(drawCrosshairs);
+                        legend: {
+                            position: 'none'
+                        },
+                        height: 300,
+                        backgroundColor: {
+                            fill:'#343A40'
+                        }
+                      };
 
-        function drawCrosshairs() {
-              var data = new google.visualization.DataTable();
-              data.addColumn('number', 'X');
-              data.addColumn('number', 'Частота');
+                      var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
 
-              data.addRows(
-                {{ sdata }}
-              );
+                      chart.draw(data, options);
+
+            }
+            </script>
+
+            <!--Div that will hold the pie chart-->
+            <div id="chart_div"></div>
+
+      </div>
+
+      <div class="col-md-3 ml-auto">
+          <h5>Вероятность событий</h5>
+          <form>
+              <label>Доверительный инетрвал</label>
+              <div class="form-row">
+
+                <div class="form-group col-md-6">
+                  <input type="email" class="form-control" id="inputEmail4" placeholder="20">
+                </div>
+                <div class="form-group col-md-6">
+                  <input type="password" class="form-control" id="inputPassword4" placeholder="94">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="inputAddress">Вероятность</label>
+                <input type="text" class="form-control" id="inputAddress" placeholder="90">
+              </div>
+              <div class="form-group">
+                <label for="inputAddress2">Математическое ожидание</label>
+                <input type="text" class="form-control" id="inputAddress2" placeholder="57">
+              </div>
+
+              <button type="submit" class="btn btn-outline-primary">Пересчитать</button>
+            </form>
+      </div>
+    </div>
 
 
+    <br>
+    <br>
 
-              var options = {
-                vAxis: {
-                    gridlines: {color: '#343a40'}
-                },
-                hAxis: {
-                    gridlines: {count: 0},
-                },
-                chartArea: {
-                    left:0,
-                    top:0,
-                    width:'1000%',
-                    height:'100%'
-                },
-                bar: {
-                    gap: 1
-                },
-                colors: ['#99d999'],
-                dataOpacity: 0.8,
+    <div class="row">
+        <div class="col-md-9">
+            <h2>Статистики</h2>
 
-                legend: {
-                    position: 'none'
-                },
-                height: 400,
-                backgroundColor: {
-                    fill:'#343a40'
-                }
-              };
+            <table class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col">Статистика</th>
+                  <th scope="col">Значение</th>
+                </tr>
+              </thead>
+              <tbody>
+              {% for i in sd %}
+                <tr>
+                  <td>{{ i }}</td>
+                  <td>{{ sd[i] }}</td>
+                </tr>
+              {% endfor %}
+              </tbody>
+            </table>
+        </div>
+        <div class="col-md-3 ml-auto">
+            <h2>Фильтры</h2>
+            <form>
+              <label>Время</label>
+              <div class="form-row">
 
-              var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+                <div class="form-group col-md-6">
+                  <input type="email" class="form-control" id="inputEmail4" placeholder="20">
+                </div>
+                <div class="form-group col-md-6">
+                  <input type="password" class="form-control" id="inputPassword4" placeholder="94">
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="exampleFormControlSelect1">Уровни образования</label>
+                    <select class="form-control" id="exampleFormControlSelect1">
+                      <option>1</option>
+                      <option>2</option>
+                      <option>3</option>
+                      <option>4</option>
+                      <option>5</option>
+                    </select>
+              </div>
+              <div class="form-group">
+                <label for="exampleFormControlSelect1">Районы</label>
+                    <select class="form-control" id="exampleFormControlSelect1">
+                      <option>1</option>
+                      <option>2</option>
+                      <option>3</option>
+                      <option>4</option>
+                      <option>5</option>
+                    </select>
+              </div>
 
-              chart.draw(data, options);
-
-    }
-    </script>
-
-    <!--Div that will hold the pie chart-->
-    <div id="chart_div"></div>
-<br>
-    <p class="lead">{{ the_measure }}</p>
-    <p class="lead">{{ sd }}</p>
-
+              <button type="submit" class="btn btn-outline-dark">Пересчитать</button>
+            </form>
+        </div>
+    </div>
+    {% else %}
+        <p class="lead">Нехорошо получилось 8(</p>
+    {% endif %}
 {% endblock %}

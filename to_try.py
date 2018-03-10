@@ -29,4 +29,18 @@ pik = cursor.fetchall()
 cursor.execute("SELECT * FROM area_description WHERE id = %s", [19])
 the_measure = cursor.fetchall()
 
-print(the_measure[0][4])
+
+
+line = [i+1 for i in range(200)]
+pre = 10
+
+print(len(line))
+if len(line) >= pre:
+    i = 0
+    pop = []
+    while i < len(line):
+        pop.append(line[i])
+        i += int(len(line) / pre)
+    print(pop)
+else:
+    print('Не получилось')
