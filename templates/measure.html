@@ -2,8 +2,66 @@
 
 {% block body %}
     <h1>{{ the_measure[0][2] }}</h1>
-    <br>
-    <p class="lead">{{ the_measure }}</p>
 
+
+
+    <!--Load the AJAX API-->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+    <script type="text/javascript">
+        google.charts.load('current', {packages: ['corechart', 'bar']});
+        google.charts.setOnLoadCallback(drawCrosshairs);
+
+        function drawCrosshairs() {
+              var data = new google.visualization.DataTable();
+              data.addColumn('number', 'X');
+              data.addColumn('number', 'Частота');
+
+              data.addRows(
+                {{ sdata }}
+              );
+
+
+
+              var options = {
+                vAxis: {
+                    gridlines: {color: '#343a40'}
+                },
+                hAxis: {
+                    gridlines: {count: 0},
+                },
+                chartArea: {
+                    left:0,
+                    top:0,
+                    width:'1000%',
+                    height:'100%'
+                },
+                bar: {
+                    gap: 1
+                },
+                colors: ['#99d999'],
+                dataOpacity: 0.8,
+
+                legend: {
+                    position: 'none'
+                },
+                height: 400,
+                backgroundColor: {
+                    fill:'#343a40'
+                }
+              };
+
+              var chart = new google.visualization.ColumnChart(document.getElementById('chart_div'));
+
+              chart.draw(data, options);
+
+    }
+    </script>
+
+    <!--Div that will hold the pie chart-->
+    <div id="chart_div"></div>
+<br>
+    <p class="lead">{{ the_measure }}</p>
+    <p class="lead">{{ sd }}</p>
 
 {% endblock %}

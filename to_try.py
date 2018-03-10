@@ -26,4 +26,7 @@ cursor.execute('''
         area_description.data_area_id = '28';''')
 pik = cursor.fetchall()
 
-print(pik)
+cursor.execute("SELECT * FROM area_description WHERE id = %s", [19])
+the_measure = cursor.fetchall()
+
+print(the_measure[0][4])

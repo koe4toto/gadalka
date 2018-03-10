@@ -6,6 +6,7 @@ from functools import wraps
 import psycopg2
 import xlrd
 import os
+from statistic_math import Series
 import constants
 
 # Мои модули
@@ -128,6 +129,7 @@ def about():
 def data_areas():
     return render_template('data_areas.html', list = tryit(session['user_id']))
 
+# TODO нужно вынести в базу данных справочники видов и типов измерений и избавиться от тупого кода до return
 # Предметная область
 @app.route("/data_area/<string:id>/")
 def data_area(id):
@@ -773,11 +775,46 @@ def measures():
 # Мера
 @app.route("/measure/<string:id>/")
 def measure(id):
-    # Подключение к базе данных
+    # Получение данных о мере
     cursor.execute("SELECT * FROM area_description WHERE id = %s", [id])
     the_measure = cursor.fetchall()
 
-    return render_template('measure.html', id = id, the_measure = the_measure)
+    cursor.execute("SELECT * FROM data_area WHERE id = %s", [the_measure[0][4]])
+    data_a = cursor.fetchall()
+    conn.commit()
+
+    database = data_a[0][4]
+    database_user = data_a[0][5]
+    database_password = data_a[0][6]
+    database_host = data_a[0][7]
+    database_port = data_a[0][8]
+    database_table = data_a[0][9]
+
+    try:
+        conn2 = psycopg2.connect(
+            database=database,
+            user=database_user,
+            password=database_password,
+            host=database_host,
+            port=database_port)
+        cur = conn2.cursor()
+        cur.execute('SELECT column_name FROM information_schema.columns WHERE table_name=%s;', [database_table])
+        tc = cur.fetchall()
+        if str(tc) == '[]':
+            flash('Указаной таблицы нет в базе данных', 'danger')
+        else:
+            cur.execute('''SELECT ''' + the_measure[0][1] + ''' FROM ''' + database_table)
+            measure_data = cur.fetchall()
+            mline = [i[0] for i in measure_data]
+            to_print = Series(mline)
+            prep = to_print.freq_line()
+            pre = [[i[0], i[1]] for i in prep]
+            stats = to_print.stats_line()
+    except:
+        the_measure = None
+        flash('Нет подключения', 'danger')
+
+    return render_template('measure.html', id = id, the_measure = the_measure, sdata = pre, sd = stats)
 
 
 # Запуск сервера

@@ -1,34 +1,76 @@
 import psycopg2, numpy as np
-
+from scipy.stats import itemfreq
 
 # Указываем название файла базы данных
 conn = psycopg2.connect(database="test111", user="postgres", password="gbcmrf", host="localhost", port="5432")
 cursor = conn.cursor()
 
+# Добавление выборки в список
+cursor.execute('SELECT statisticdata FROM statdata ORDER BY statisticdata')
+OneList = [i[0] for i in cursor.fetchall()]
+
+class Series:
+
+    def __init__(self, line):
+
+        # Список значений
+        self.line = line
+
+
+    # Список статистик
+    def stats_line(self):
+        sline = [
+            # Размер выборки
+            len(self.line),
+
+            # Сумма
+            np.sum(self.line),
+
+            # Минимум
+            np.min(self.line),
+
+            # Максимум
+            np.max(self.line),
+
+            # Размах
+            np.ptp(self.line),
+
+            # Среднее
+            np.mean(self.line),
+
+            # Медиана
+            np.median(self.line),
+
+            # Средневзвешенное
+            np.average(self.line),
+
+            # Стандартное отклонение
+            np.std(self.line),
+
+            # Дисперсия
+            np.var(self.line)
+        ]
+        return sline
+
+    # Распределение частот и вероятности
+    def freq_line(self):
+        return itemfreq(self.line)
+
+
 # Сумма
-cursor.execute('SELECT SUM(statisticdata) FROM statdata')
-Summa = cursor.fetchall() [0][0]
-print('Сума:', Summa)
+Summa = np.sum(OneList)
 
 # Объём выборки
-cursor.execute('SELECT COUNT(statisticdata) FROM statdata')
-SampleSize = cursor.fetchall() [0][0]
-print('Объём выборки:', SampleSize)
+SampleSize = len(OneList)
+
 
 # Минимум
-cursor.execute('SELECT MIN(statisticdata) FROM statdata')
-Minimum = cursor.fetchall() [0][0]
-print('Минимум:', Minimum)
+Minimum = np.min(OneList)
+
 
 # Максимум
-cursor.execute('SELECT MAX(statisticdata) FROM statdata')
-Maximum = cursor.fetchall() [0][0]
-print('Максимум:', Maximum)
+Maximum = np.max(OneList)
 
-
-# Добавление выборки в список
-cursor.execute('SELECT * FROM statdata ORDER BY statisticdata')
-mi = cursor.fetchall()
 
 
 # Выборка уникальных значений
@@ -36,16 +78,11 @@ cursor.execute('SELECT DISTINCT statisticdata FROM statdata ORDER BY statisticda
 di = cursor.fetchall()
 
 
-cursor.close()
-conn.close()
 
-# Ряд агрегатов
-OneList =[i[1] for i in mi]
-#print('Ряд агрегатов:', OneList)
 
 
 # Ряд уникальных агрегатов
-UniqueList = [i[0] for i in di]
+UniqueList = [i for i in di]
 #print('Ряд уникальных агрегатов:', UniqueList)
 
 
@@ -93,7 +130,7 @@ def MathQuartile (x):
         return x // 4
 
 Quartile = MathQuartile(SampleSize)
-IQR = OneList [Quartile*3] - OneList [Quartile*2]
+IQR = OneList[Quartile*3] - OneList[Quartile*2]
 print('Квартильный размах:', IQR)
 
 # Выбросы
@@ -223,6 +260,20 @@ print('Коэффициенты линейной модели:', '{:f}'.format(B
 
 
 
+test = Series(OneList)
+'''
+print('Сума:', test.sum)
+print('Объём выборки:', test.sample_size)
+print('Минимум:', test.minimum)
+print('Максимум:', test.maximum)
+print('Частота распределения:', test.itemfreq)
+print('Размах:', test.swipe)
+print('Медиана:', test.median)
+print('Среднее:', test.mean)
+'''
+
+print('Пр: ', test.stats_line())
+print('Пр: ', test.freq_line())
 
 
 
