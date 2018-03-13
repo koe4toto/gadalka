@@ -1,5 +1,4 @@
-import psycopg2, numpy as np
-from scipy.stats import itemfreq
+import psycopg2, numpy as np, scipy.stats as sci
 
 # Указываем название файла базы данных
 conn = psycopg2.connect(database="test111", user="postgres", password="gbcmrf", host="localhost", port="5432")
@@ -14,11 +13,19 @@ class Series:
     def __init__(self, line):
 
         # Список значений
-        self.line = line
+        self.line = np.array(line)
+
+        # Частотное распределение
+        self.freq = sci.itemfreq(self.line)
+
+        # Список значений игнорируя 0
+        self.nonzero = self.line.ravel()[np.flatnonzero(self.line)]
 
 
     # Список статистик
     def stats_line(self):
+
+
         sline = {
             # Размер выборки
             'Размер выборки': len(self.line),
@@ -41,6 +48,9 @@ class Series:
             # Медиана
             'Медиана': np.median(self.line),
 
+            # Мода
+            'Мода': sci.mode(self.line)[0][0],
+
             # Средневзвешенное
             'Средневзвешенное': np.average(self.line),
 
@@ -48,25 +58,34 @@ class Series:
             'Стандартное отклонение': np.std(self.line),
 
             # Дисперсия
-            'Дисперсия': np.var(self.line)
+            'Дисперсия': np.var(self.line),
+
+            # Стандартная ошибка средней
+            'Стандартная ошибка средней': sci.sem(self.line),
+
+            # Межквартильный размах
+            'Межквартильный размах': sci.iqr(self.line)
+
         }
         return sline
 
-    # Распределение частот и вероятности
-    def freq_line(self):
-        return itemfreq(self.line)
 
     # Распределение частот и вероятности для интерфейса
     def freq_line_view(self, limit):
-        if len(self.line) >= limit:
+        lenfreq = len(self.freq)
+
+        if lenfreq >= limit:
             i = 0
+            step = int(lenfreq / limit)
             pop = []
-            while i < len(self.line):
-                pop.append(self.line[i])
-                i += int(len(self.line) / limit)
-            return itemfreq(pop)
+            while i < lenfreq:
+                pop.append(self.freq[i])
+                i += step
+            return pop
         else:
-            return itemfreq(self.line)
+            return self.freq
+
+
 
 
 
@@ -89,18 +108,18 @@ class Series:
 
 
 '''
-# Сумма
+# Сумма.
 Summa = np.sum(OneList)
 
-# Объём выборки
+# Объём выборки.
 SampleSize = len(OneList)
 
 
-# Минимум
+# Минимум.
 Minimum = np.min(OneList)
 
 
-# Максимум
+# Максимум.
 Maximum = np.max(OneList)
 
 
@@ -118,7 +137,7 @@ UniqueList = [i for i in di]
 #print('Ряд уникальных агрегатов:', UniqueList)
 
 
-# Частотное распределение
+# Частотное распределение.
 FashionTrand = []
 for i in di:
     FashionTrand.append((i[0], OneList.count(i[0]), OneList.count(i[0]) / SampleSize))
@@ -132,29 +151,29 @@ for i in FashionTrand:
 
 
 
-# Максимальная частота
+# Максимальная частота.
 MaxFrequency = max([i[1] for i in FashionTrand])
 Fashion = FashionTrand[[i[1] for i in FashionTrand].index(MaxFrequency)][0]
 print('Мода: ', Fashion)
 print('Максимальная частота: ', MaxFrequency)
 
 
-# Размах
+# Размах.
 swipe = Maximum - Minimum
 print('Размах:', swipe)
 
 
-# Среднее
+# Среднее.
 Secondary = np.mean(OneList)
 print('Среднее:', Secondary)
 
 
-# Медиана
+# Медиана.
 Median = np.median(UniqueList)
 print('Медиана:', Median)
 
 
-# Квартильный размах
+# Квартильный размах.
 def MathQuartile (x):
     if x % 4 >= 2:
         return x // 4 + 1
@@ -186,18 +205,18 @@ print('Количество умеренных выбросов: ', MinDischarge
 print('Количество выбросов: ', MaxDischargeCount)
 
 
-# Дисперсия
+# Дисперсия.
 Dispersion = np.var(OneList)
 print('Дисперсия: ', Dispersion)
 
 
-# Стандартное отклонение
+# Стандартное отклонение.
 StandardDeviation = np.std(OneList)
 
 print('Стандартное отклонение: ', StandardDeviation)
 
 
-# Коэффициент вариаци
+# Коэффициент вариаци.
 try:
     СoefficientOfVariation = StandardDeviation/Secondary
 except ZeroDivisionError:
@@ -206,7 +225,7 @@ except ZeroDivisionError:
 print('Коэффициент вариации: ', СoefficientOfVariation)
 
 
-# Асимметрия
+# Асимметрия. Не нужна в действительности для первичного анализа
 try:
     Asymmetry = (Secondary - Median)/StandardDeviation
 except ZeroDivisionError:
@@ -233,7 +252,7 @@ def probability(data, DataQualitative = True, x1=None, x2=None):
 
 #print('Вероятность в заданном промежутке: ', probability(FashionTrand, True, -3, 54))
 
-# Математическое ожидание: для дискредной величины, для неприрывной (СЛОЖНА!!)
+# Математическое ожидание: для дискредной величины, для неприрывной (Вычислять с помощью stats.bayes_mvs(data, alpha=0.95))
 def MathExpect(data, Probability):
     xox = sorted([i[0] for i in data])
     c0 = 0
@@ -265,7 +284,7 @@ def MathExpect(data, Probability):
 # Выбор модели
 
 
-# Проверка линейной модели y = b1*x + b0
+# Проверка линейной модели y = b1*x + b0 (Переписать для stats.linregress(x, y) и stats.pearsonr(a, b) )
 def LineModel(x, y):
     # Это рабочая схема
     # Перобразовывает ряд в матрицу для поиска коэффициентов
@@ -277,7 +296,7 @@ def LineModel(x, y):
     y1 = np.array([b1 * i + b0 for i in x])
     x1 = np.array([(i - b0)/b1 for i in y])
 
-    # Коэффициент корреляции Пирсона
+    # Коэффициент корреляции Пирсона (Переписать для stats.pearsonr(a, b)  узнать про дополнительные проверки)
     kp = np.corrcoef(y,y1) [0,1]
 
     # Оценка статистической значимости

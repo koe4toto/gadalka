@@ -2,6 +2,9 @@ import xlrd
 import os
 import psycopg2
 from datetime import datetime
+from statistic_math import Series
+import numpy as np, scipy.stats as sci
+
 
 # Подключение к базе данных
 conn = psycopg2.connect(database="test111", user="postgres", password="gbcmrf", host="localhost", port="5432")
@@ -31,16 +34,20 @@ the_measure = cursor.fetchall()
 
 
 
-line = [i+1 for i in range(200)]
-pre = 10
+# Добавление выборки в список
+cursor.execute('SELECT job FROM edu_test ORDER BY job')
+OneList = [i[0] for i in cursor.fetchall()]
 
-print(len(line))
-if len(line) >= pre:
-    i = 0
-    pop = []
-    while i < len(line):
-        pop.append(line[i])
-        i += int(len(line) / pre)
-    print(pop)
-else:
-    print('Не получилось')
+x = [1,2,2,2,3,4,5,6,0]
+z = np.array(OneList)
+
+y = z.ravel()[np.flatnonzero(z)]
+
+mi = np.amin(z)
+r = np.array([i-mi+1 for i in OneList])
+k = sci.hmean(r) + mi - 1
+print(sci.mode(OneList))
+print(z)
+print(k)
+
+
