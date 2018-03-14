@@ -817,8 +817,7 @@ def measure(id):
                 to_print = Series(mline)
 
                 # Получение частотного распределения для отображения в графике
-                prep = to_print.freq_line_view(500)
-                pre = [[i[0], i[1]] for i in prep]
+                pre = to_print.freq_line_view(1000)
                 stats = to_print.stats_line()
             except:
                 pre = []

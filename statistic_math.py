@@ -1,12 +1,4 @@
-import psycopg2, numpy as np, scipy.stats as sci
-
-# Указываем название файла базы данных
-conn = psycopg2.connect(database="test111", user="postgres", password="gbcmrf", host="localhost", port="5432")
-cursor = conn.cursor()
-
-# Добавление выборки в список
-cursor.execute('SELECT statisticdata FROM statdata ORDER BY statisticdata')
-OneList = [i[0] for i in cursor.fetchall()]
+import numpy as np, scipy.stats as sci
 
 class Series:
 
@@ -70,7 +62,7 @@ class Series:
         return sline
 
 
-    # Распределение частот и вероятности для интерфейса
+    # Распределение частот и вероятности для графика в интерфейсе
     def freq_line_view(self, limit):
         lenfreq = len(self.freq)
 
@@ -79,11 +71,12 @@ class Series:
             step = int(lenfreq / limit)
             pop = []
             while i < lenfreq:
-                pop.append(self.freq[i])
+                pop.append([self.freq[i][0], self.freq[i][1]])
                 i += step
             return pop
         else:
-            return self.freq
+            pop = [[i[0], i[1]] for i in self.freq]
+            return pop
 
 
 

@@ -5,6 +5,8 @@ from datetime import datetime
 from statistic_math import Series
 import numpy as np, scipy.stats as sci
 
+from statistic_math import Series
+
 
 # Подключение к базе данных
 conn = psycopg2.connect(database="test111", user="postgres", password="gbcmrf", host="localhost", port="5432")
@@ -41,13 +43,13 @@ OneList = [i[0] for i in cursor.fetchall()]
 x = [1,2,2,2,3,4,5,6,0]
 z = np.array(OneList)
 
-y = z.ravel()[np.flatnonzero(z)]
+y = Series(OneList)
 
-mi = np.amin(z)
-r = np.array([i-mi+1 for i in OneList])
-k = sci.hmean(r) + mi - 1
-print(sci.mode(OneList))
-print(z)
-print(k)
+x = y.freq
+x1 = np.array([x[0]])
+m = y.stats_line()
 
+
+print(m['Минимум'])
+print(m['Максимум'])
 
