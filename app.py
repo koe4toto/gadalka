@@ -213,13 +213,14 @@ def data_area(id):
     # Данные для представления
     view_table = []
 
-    for i in columns:
-        # Проверка наличия описания для данной колонки
-        look2 = looking(i, desc)
-        if look2 == None:
-            view_table.append((i, None, None, None, None, None, None, None, None))
-        else:
-            view_table.append(look2)
+    if columns != None:
+        for i in columns:
+            # Проверка наличия описания для данной колонки
+            look2 = looking(i, desc)
+            if look2 == None:
+                view_table.append((i, None, None, None, None, None, None, None, None))
+            else:
+                view_table.append(look2)
 
     return render_template('data_area.html', id = id, data_area = data_a, columns=view_table)
 
@@ -350,6 +351,102 @@ def edit_data_connection(id):
             return redirect(url_for('data_area', id=id))
 
     return render_template('edit_connection.html', form=form)
+
+# Загрузка данных из файла
+@app.route("/upload_data_area_from_file/<string:id>", methods =['GET', 'POST'] )
+@is_logged_in
+def upload_data_area_from_file(id):
+
+    # Подключение к базе данных
+    cursor.execute("SELECT name, database_table FROM data_area WHERE id = %s", [id])
+    data_a = cursor.fetchall()
+
+    if request.method == 'POST':
+
+        # Проверка наличия файла
+        if 'file' not in request.files:
+            flash('Вы не указали файл для загрузки', 'danger')
+            return redirect(request.url)
+
+        file = request.files['file']
+
+        if file and allowed_file(file.filename):
+            # Генерируется имя из идентификатора пользователя и врамени загрузки файла
+            # Текущее время в сточку только цифрами
+            filename = str(session['user_id']) + file.filename + '.xlsx'
+
+            # Загружается файл
+            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+
+            # Открывается сохраненный файл
+            rb = xlrd.open_workbook(constants.UPLOAD_FOLDER + filename)
+            sheet = rb.sheet_by_index(0)
+
+            # Запсиь строчек справочника в базу данных
+            in_table = range(sheet.nrows)
+
+            try:
+                row = sheet.row_values(in_table[0])
+
+                if data_a[0][1] != None:
+                    # Удаление предыдущих данных
+                    cursor.execute("DROP TABLE " + data_a[0][1])
+                    conn.commit()
+
+                # Формирование списка колонок для создания новой таблицы
+                rows = str('"' + str(row[0]) + '" ' + 'varchar')
+                for i in row:
+                    if row.index(i) > 0:
+                        rows += ', "' + str(i) + '" ' + 'varchar'
+
+                # Формирование названия таблицы хранения данных
+                table_name = 'data_' + str(session['user_id']) + str(id)
+
+                # Добавление данных в таблицу
+                cursor.execute('UPDATE data_area SET '
+                               'database=%s, '
+                               'database_user=%s, '
+                               'database_password=%s, '
+                               'database_host=%s, '
+                               'database_port=%s, '
+                               'database_table=%s '
+                               'WHERE id=%s;',
+                               (constants.DATABASE_NAME,
+                                constants.DATABASE_USER,
+                                constants.DATABASE_PASSWORD,
+                                constants.DATABASE_HOST,
+                                constants.DATABASE_PORT,
+                                table_name,
+                                id))
+                conn.commit()
+
+
+                try:
+                    # Создание новой таблицы
+                    cursor.execute('''CREATE TABLE ''' + table_name + ''' (''' + rows + ''');''')
+                    conn.commit()
+
+                    # Удаление загруженного файла
+                    os.remove(constants.UPLOAD_FOLDER + filename)
+                except:
+                    flash('Таблица не добавилась 8(', 'danger')
+                    return redirect(request.url)
+
+
+                # Загрузка данных из файла
+                # TODO загрузить данные
+
+                flash('Даные успешно обновлены', 'success')
+                return redirect(url_for('data_area', id=id))
+
+            except:
+                flash('Неверный формат данных в файле', 'danger')
+                return redirect(request.url)
+
+        else:
+            flash('Неверный формат файла. Справочник должен быть в формате .xlsx', 'danger')
+
+    return render_template('upload_data_area_from_file.html', form=form)
 
 # Добавление измерения
 @app.route("/data_area/<string:id>/add_measure_to_<string:item>", methods =['GET', 'POST'] )

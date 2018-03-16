@@ -52,4 +52,14 @@ m = y.stats_line()
 
 print(m['Минимум'])
 print(m['Максимум'])
+print(the_measure)
 
+k = the_measure[0][0]
+
+mir = str('"'+str(the_measure[0][0])+'" '+'varchar')
+for i in the_measure[0]:
+    if the_measure[0].index(i) > 0:
+        mir += ', "'+str(i)+'" '+'varchar'
+
+
+print(mir)

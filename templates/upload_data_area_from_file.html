@@ -1,0 +1,21 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <h1>Загрузка данных из справочника</h1>
+    {% from "includes/_formtamplate.html" import render_field %}
+    <div class="row">
+        <div class="col-6">
+            <form method="POST" action="" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="exampleFormControlFile1">*Данные в формате .xlsx</label>
+                    <input type="file" name="file" class="form-control-file">
+                </div>
+                <p>
+                    <input type="submit" class="btn btn-primary" value="Сохранить">
+                    <a class="btn btn-link" onclick="javascript:history.back(-2); return false;">Отменить</a>
+                </p>
+
+            </form>
+        </div>
+    </div>
+{% endblock %}
