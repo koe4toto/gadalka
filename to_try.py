@@ -35,31 +35,12 @@ cursor.execute("SELECT * FROM area_description WHERE id = %s", [19])
 the_measure = cursor.fetchall()
 
 
+table_name = 'data_837'
+sheet = ['code', 'value', 'parent_code']
+str1 = ''.join(str(e)+', ' for e in sheet)
+row = [1.0, 'Дошкольное образование', '']
+str2 = ''.join(str(e)+', ' for e in row)
+cursor.execute('''INSERT INTO ''' + table_name + ''' ('''+str1+''') VALUES ('''+str2+''');''')
+conn.commit()
 
-# Добавление выборки в список
-cursor.execute('SELECT job FROM edu_test ORDER BY job')
-OneList = [i[0] for i in cursor.fetchall()]
-
-x = [1,2,2,2,3,4,5,6,0]
-z = np.array(OneList)
-
-y = Series(OneList)
-
-x = y.freq
-x1 = np.array([x[0]])
-m = y.stats_line()
-
-
-print(m['Минимум'])
-print(m['Максимум'])
-print(the_measure)
-
-k = the_measure[0][0]
-
-mir = str('"'+str(the_measure[0][0])+'" '+'varchar')
-for i in the_measure[0]:
-    if the_measure[0].index(i) > 0:
-        mir += ', "'+str(i)+'" '+'varchar'
-
-
-print(mir)
+print('Всё')

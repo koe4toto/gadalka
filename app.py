@@ -10,7 +10,7 @@ from statistic_math import Series
 import constants
 
 # Мои модули
-from test_math import tryit, allowed_file, looking
+from test_math import tryit, allowed_file, looking, sqllist, sqlvar
 from forms import *
 
 # Настройки
@@ -278,10 +278,19 @@ def edit_data_area(id):
 @is_logged_in
 def delete_data_area(id):
 
-    # Execute
+    # Получение свдений о предметной области
+    cursor.execute("SELECT database_table FROM data_area WHERE id = %s", [id])
+    data_a = cursor.fetchall()
+
+    # Удаление данных из таблиц
     cursor.execute("DELETE FROM data_area WHERE id = %s", [id])
     cursor.execute("DELETE FROM area_description WHERE data_area_id = %s", [id])
     conn.commit()
+
+    print(data_a[0][0])
+    if data_a[0][0] is not None:
+        cursor.execute("DROP TABLE " + data_a[0][0])
+        conn.commit()
 
     flash('Предметная область удалена', 'success')
 
@@ -434,7 +443,25 @@ def upload_data_area_from_file(id):
 
 
                 # Загрузка данных из файла
-                # TODO загрузить данные
+                try:
+                    for rownum in in_table:
+                        if rownum == 0:
+                            ta = sqllist(sheet.row_values(rownum))
+                        elif rownum >= 1:
+                            row = sheet.row_values(rownum)
+                            va = sqlvar(row)
+                            print(ta)
+                            print(va)
+
+                            cursor.execute(
+                                '''INSERT INTO ''' + table_name + ''' ('''+
+                                ta +''') VALUES ('''+
+                                va+''');''')
+                            conn.commit()
+
+                except:
+                    flash('Не удалось загрузить данные', 'danger')
+                    return redirect(url_for('data_area', id=id))
 
                 flash('Даные успешно обновлены', 'success')
                 return redirect(url_for('data_area', id=id))

@@ -19,3 +19,23 @@ def looking(item, list):
     for i in list:
         if i[1] == item:
             return i
+
+def sqllist(row):
+    rows = str(row[0])
+    for i in row:
+        if row.index(i) > 0:
+            if i != '':
+                rows += ', ' + str(i)
+            else:
+                rows += ', None'
+    return rows
+
+def sqlvar(row):
+    rows = "'" +str(row[0]) + "'"
+    for i in row:
+        if row.index(i) > 0:
+            if i != '':
+                rows += ", '" + str(i) + "'"
+            else:
+                rows += ", 'None'"
+    return rows
