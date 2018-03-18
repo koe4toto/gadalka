@@ -7,7 +7,7 @@ from decorators import is_logged_in
 import constants
 
 # Мои модули
-from test_math import tryit, allowed_file, looking, sqllist, sqlvar
+from foo import tryit, allowed_file, looking, sqllist, sqlvar
 from forms import *
 from app import conn, cursor
 
