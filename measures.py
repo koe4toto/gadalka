@@ -6,11 +6,19 @@ import constants
 # Мои модули
 from foo import tryit, allowed_file, looking, sqllist, sqlvar
 from forms import *
-from app import conn, cursor
+#from app import conn, cursor
 from statistic_math import Series
 
 mod = Blueprint('measures', __name__)
 
+# Подключение к базе данных
+conn = psycopg2.connect(
+    database=constants.DATABASE_NAME,
+    user=constants.DATABASE_USER,
+    password=constants.DATABASE_PASSWORD,
+    host=constants.DATABASE_HOST,
+    port=constants.DATABASE_PORT)
+cursor = conn.cursor()
 
 # Меры
 @mod.route("/measures")

@@ -3,17 +3,23 @@ import psycopg2
 import xlrd
 import os
 from decorators import is_logged_in
-from decorators import is_logged_in
 import constants
 
 # Мои модули
-from foo import tryit, allowed_file, looking, sqllist, sqlvar
+from foo import *
 from forms import *
-from app import conn, cursor
+# from app import conn, cursor
 
 mod = Blueprint('data_areas', __name__)
 
-
+# Подключение к базе данных
+conn = psycopg2.connect(
+    database=constants.DATABASE_NAME,
+    user=constants.DATABASE_USER,
+    password=constants.DATABASE_PASSWORD,
+    host=constants.DATABASE_HOST,
+    port=constants.DATABASE_PORT)
+cursor = conn.cursor()
 
 # Предметные области
 @mod.route("/data_areas")
@@ -131,7 +137,7 @@ def add_data_area():
         conn.commit()
 
         flash('Предметная область добавлена', 'success')
-        return redirect(url_for('data_areas'))
+        return redirect(url_for('data_areas.data_areas'))
     return render_template('add_data_area.html', form=form)
 
 # Редактирование предметной области
@@ -162,7 +168,7 @@ def edit_data_area(id):
             conn.commit()
 
             flash('Данные обновлены', 'success')
-            return redirect(url_for('data_area', id=id))
+            return redirect(url_for('data_areas.data_area', id=id))
     return render_template('edit_data_area.html', form=form)
 
 # Удаление предметной области
@@ -175,8 +181,8 @@ def delete_data_area(id):
     data_a = cursor.fetchall()
 
     # Удаление данных из таблиц
-    cursor.execute("DELETE FROM data_area WHERE id = %s", [id])
     cursor.execute("DELETE FROM area_description WHERE data_area_id = %s", [id])
+    cursor.execute("DELETE FROM data_area WHERE id = %s", [id])
     conn.commit()
 
     print(data_a[0][0])
@@ -186,7 +192,7 @@ def delete_data_area(id):
 
     flash('Предметная область удалена', 'success')
 
-    return redirect(url_for('data_areas'))
+    return redirect(url_for('data_areas.data_areas'))
 
 # Удаление описания колонки
 @mod.route('/delete_data_measure/<string:id>?data_area_id=<string:data_area_id>', methods=['POST'])
@@ -199,10 +205,10 @@ def delete_data_measure(id, data_area_id):
 
     flash('Предметная область удалена', 'success')
 
-    return redirect(url_for('data_area', id=data_area_id))
+    return redirect(url_for('data_areas.data_area', id=data_area_id))
 
 # Подключение к базе данных по предметной области
-@app.route("/edit_connection/<string:id>", methods =['GET', 'POST'] )
+@mod.route("/edit_connection/<string:id>", methods =['GET', 'POST'] )
 @is_logged_in
 def edit_data_connection(id):
 
@@ -249,12 +255,12 @@ def edit_data_connection(id):
                             id))
             conn.commit()
             flash('Данные обновлены', 'success')
-            return redirect(url_for('data_area', id=id))
+            return redirect(url_for('data_areas.data_area', id=id))
 
     return render_template('edit_connection.html', form=form)
 
 # Загрузка данных из файла
-@app.route("/upload_data_area_from_file/<string:id>", methods =['GET', 'POST'] )
+@mod.route("/upload_data_area_from_file/<string:id>", methods =['GET', 'POST'] )
 @is_logged_in
 def upload_data_area_from_file(id):
 
@@ -277,7 +283,7 @@ def upload_data_area_from_file(id):
             filename = str(session['user_id']) + file.filename + '.xlsx'
 
             # Загружается файл
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            file.save(os.path.join(constants.UPLOAD_FOLDER, filename))
 
             # Открывается сохраненный файл
             rb = xlrd.open_workbook(constants.UPLOAD_FOLDER + filename)
@@ -353,10 +359,10 @@ def upload_data_area_from_file(id):
 
                 except:
                     flash('Не удалось загрузить данные', 'danger')
-                    return redirect(url_for('data_area', id=id))
+                    return redirect(url_for('data_areas.data_area', id=id))
 
                 flash('Даные успешно обновлены', 'success')
-                return redirect(url_for('data_area', id=id))
+                return redirect(url_for('data_areas.data_area', id=id))
 
             except:
                 flash('Неверный формат данных в файле', 'danger')
@@ -395,7 +401,7 @@ def add_measure(id, item):
         conn.commit()
 
         flash('Мера добавлена', 'success')
-        return redirect(url_for('data_area', id=id))
+        return redirect(url_for('data_areas.data_area', id=id))
     return render_template('add_measure.html', form=form)
 
 # Редактирование измерения
@@ -428,7 +434,7 @@ def edit_measure(id, measure_id):
             conn.commit()
 
             flash('Данные обновлены', 'success')
-            return redirect(url_for('data_area', id=id))
+            return redirect(url_for('data_areas.data_area', id=id))
     return render_template('edit_measure.html', form=form)
 
 # Добавление измерения времени
@@ -459,7 +465,7 @@ def add_time(id, item):
         conn.commit()
 
         flash('Измерение времени добавлено', 'success')
-        return redirect(url_for('data_area', id=id))
+        return redirect(url_for('data_areas.data_area', id=id))
     return render_template('add_time.html', form=form)
 
 # Редактирование измерения времени
@@ -492,7 +498,7 @@ def edit_time(id, measure_id):
             conn.commit()
 
             flash('Данные обновлены', 'success')
-            return redirect(url_for('data_area', id=id))
+            return redirect(url_for('data_areas.data_area', id=id))
     return render_template('edit_time.html', form=form)
 
 # Добавление измерения по справочнику
@@ -531,7 +537,7 @@ def add_mref(id, item):
         conn.commit()
 
         flash('Измерение по справочнику добавлено', 'success')
-        return redirect(url_for('data_area', id=id))
+        return redirect(url_for('data_areas.data_area', id=id))
     return render_template('add_mref.html', form=form)
 
 # Редактирование измерения по справочнику
@@ -570,5 +576,5 @@ def edit_mref(id, measure_id):
             conn.commit()
 
             flash('Данные обновлены', 'success')
-            return redirect(url_for('data_area', id=id))
+            return redirect(url_for('data_areas.data_area', id=id))
     return render_template('edit_mref.html', form=form)

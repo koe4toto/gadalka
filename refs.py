@@ -3,14 +3,24 @@ import psycopg2
 import xlrd
 import os
 from decorators import is_logged_in
+from datetime import datetime
 import constants
 
 # Мои модули
 from foo import allowed_file, looking, sqllist, sqlvar
 from forms import *
-from app import conn, cursor
+#from app import conn, cursor
 
 mod = Blueprint('refs', __name__)
+
+# Подключение к базе данных
+conn = psycopg2.connect(
+    database=constants.DATABASE_NAME,
+    user=constants.DATABASE_USER,
+    password=constants.DATABASE_PASSWORD,
+    host=constants.DATABASE_HOST,
+    port=constants.DATABASE_PORT)
+cursor = conn.cursor()
 
 # Справочники
 @mod.route("/refs")
@@ -62,7 +72,7 @@ def add_ref():
             now = ''.join(c for c in str(datetime.now()) if c not in '- :.')
             filename = 'ref_' + str(session['user_id']) + '_' + now + '.xlsx'
             # Загружается файл
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            file.save(os.path.join(constants.UPLOAD_FOLDER, filename))
 
             # Создаётся запись в базе данных
             # Генерируется имя для таблицы с данными
@@ -96,7 +106,7 @@ def add_ref():
             os.remove(constants.UPLOAD_FOLDER + filename)
 
             flash('Справочник добавлен', 'success')
-            return redirect(url_for('refs'))
+            return redirect(url_for('refs.refs'))
         else:
             flash('Неверный формат файла. Справочник должен быть в формате .xlsx', 'danger')
 
@@ -116,7 +126,7 @@ def delete_ref(id):
 
     flash('Справочник удалён', 'success')
 
-    return redirect(url_for('refs'))
+    return redirect(url_for('refs.refs'))
 
 # Редактироваение справочника
 @mod.route("/edit_ref/<string:id>", methods =['GET', 'POST'] )
@@ -145,7 +155,7 @@ def edit_ref(id):
             conn.commit()
 
             flash('Данные обновлены', 'success')
-            return redirect(url_for('ref', id=id))
+            return redirect(url_for('refs.ref', id=id))
 
     return render_template('edit_ref.html', form=form)
 
@@ -203,7 +213,7 @@ def update_ref(id):
             os.remove(constants.UPLOAD_FOLDER + filename)
 
             flash('Данные обновлены', 'success')
-            return redirect(url_for('ref', id=id))
+            return redirect(url_for('refs.ref', id=id))
         else:
             flash('Неверный формат файла. Справочник должен быть в формате .xlsx', 'danger')
 

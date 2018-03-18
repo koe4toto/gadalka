@@ -6,7 +6,7 @@
       <h1>{{ data_area[0][1] }}</h1>
   </div>
 <div class="col-2">
-  <form action="{{url_for('delete_data_area', id=data_area[0][0])}}" method="post">
+  <form action="{{url_for('data_areas.delete_data_area', id=data_area[0][0])}}" method="post">
       <input type="hidden" name="_method" value="DELETE">
       <input type="submit" value=" Удалить" class="btn btn-link float-right text-danger">
   </form>
@@ -106,7 +106,7 @@
                 </td>
             <td>
                 <ul class="nav navbar-nav float-right">
-                    <form action="{{url_for('delete_data_measure', id=i[0], data_area_id=data_area[0][0])}}" method="post">
+                    <form action="{{url_for('data_areas.delete_data_measure', id=i[0], data_area_id=data_area[0][0])}}" method="post">
                           <input type="hidden" name="_method" value="DELETE">
                           <input type="submit" value=" Удалить" class="btn btn-link float-right text-danger">
                     </form>
