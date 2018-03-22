@@ -8,7 +8,7 @@ import constants
 # Мои модули
 from foo import *
 from forms import *
-# from app import conn, cursor
+#from app import conn, cursor
 
 mod = Blueprint('data_areas', __name__)
 
