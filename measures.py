@@ -4,7 +4,6 @@ from decorators import is_logged_in
 import constants
 
 # Мои модули
-from foo import tryit, allowed_file, looking, sqllist, sqlvar
 from forms import *
 #from app import conn, cursor
 from statistic_math import Series
@@ -32,7 +31,7 @@ def measures():
     return render_template('measures.html', list = measures_list)
 
 # Мера
-@mod.route("/measure/<string:id>/")
+@mod.route("/measure/<string:id>/", methods =['GET', 'POST'])
 @is_logged_in
 def measure(id):
     # Получение данных о мере
@@ -49,6 +48,17 @@ def measure(id):
     database_host = data_a[0][7]
     database_port = data_a[0][8]
     database_table = data_a[0][9]
+
+    probability = [22, 95, 91, 58]
+    form1 = ProbabilityForm(request.form)
+    form1.di_from.data = probability[0]
+    form1.di_to.data = probability[1]
+    form1.probability.data = probability[2]
+    form1.exp_val.data = probability[3]
+
+    form2 = MeFilterForm(request.form)
+    form2.test1.data = probability[0]
+    form2.test2.data = probability[1]
 
     # Данные
     try:
@@ -79,6 +89,7 @@ def measure(id):
                 # Получение частотного распределения для отображения в графике
                 pre = to_print.freq_line_view(1000)
                 stats = to_print.stats_line()
+
             except:
                 pre = []
                 stats = []
@@ -87,4 +98,14 @@ def measure(id):
         the_measure = None
         flash('Нет подключения', 'danger')
 
-    return render_template('measure.html', id = id, the_measure = the_measure, sdata = pre, sd = stats)
+    return render_template('measure.html', id = id, the_measure = the_measure, sdata = pre, sd = stats, form1=form1, form2=form2, probability = probability)
+
+# Парная модель
+@mod.route("/pair_models")
+def pair_models():
+    return render_template('pair_models.html')
+
+# Многомерная модель
+@mod.route("/multiple_models")
+def multiple_models():
+    return render_template('multiple_models.html')

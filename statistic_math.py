@@ -1,5 +1,6 @@
 import numpy as np, scipy.stats as sci
 
+# Статистики ряда
 class Series:
 
     def __init__(self, line):
@@ -17,7 +18,6 @@ class Series:
     # Список статистик
     def stats_line(self):
 
-
         sline = {
             # Размер выборки
             'Размер выборки': len(self.line),
@@ -30,6 +30,9 @@ class Series:
 
             # Максимум
             'Максимум': np.max(self.line),
+
+            # Максимальная частота
+            'Максимальная частота': np.max(self.freq),
 
             # Размах
             'Размах': np.ptp(self.line),
@@ -78,10 +81,77 @@ class Series:
             pop = [[i[0], i[1]] for i in self.freq]
             return pop
 
+    # Математическое ожидание для среднего
+    def mbayes(self):
+        mean, var, std = sci.bayes_mvs(self.line)
+        return mean
+
+    # Вероятность событий: для дискредной величины, для неприрывной
+    def probability(self, DataQualitative=True, x1=None, x2=None):
+        qlen = len(self.freq)
+        if DataQualitative == None:
+            DataQualitative = True
+        if x1 == None:
+            x1 = self.freq.min(axis=0)[0]
+        if x2 == None:
+            x2 = self.freq.max(axis=0)[0]
+        if DataQualitative == True:
+            Qualitative = np.sum([i[1]/qlen for i in self.freq if i[0] >= x1 and i[0] <= x2])
+        else:
+            QuaAll = np.trapz([i[1]/qlen for i in self.freq], [i[0] for i in self.freq])
+            QuaLim = np.trapz([i[1]/qlen for i in self.freq if i[0] >= x1 and i[0] <= x2],
+                              [i[1]/qlen for i in self.freq if i[0] >= x1 and i[0] <= x2])
+            Qualitative = QuaLim / QuaAll
+        return Qualitative
 
 
+# Парные модели
+class Pairs:
+
+    def __init__(self, x, y, user):
+
+        # Первый ряд
+        self.x = np.array(x)
+
+        # Второй ряд
+        self.y = np.array(y)
+
+        # Идентификатор пользователя
+        self.user = user
 
 
+    # Линейная модель
+    def linereg(self):
+        slope, intercept, r_value, p_value, std_err = sci.linregress(self.x, self.y)
+        return slope, intercept, r_value, p_value, std_err
+
+    # Гиперболическая модель
+    def expreg(self):
+        x1 = 1/self.x
+        slope, intercept, r_value, p_value, std_err = sci.linregress(x1, self.y)
+        return slope, intercept, r_value, p_value, std_err
+
+    # Степенная модель
+    def powerreg(self):
+        x1 = np.log10(self.x)
+        y1 = np.log10(self.y)
+        slope1, intercept, r_value, p_value, std_err = sci.linregress(x1, y1)
+        slope = np.power(10, slope1)
+        return slope, intercept, r_value, p_value, std_err
+
+    # Поток рассчета парных моделей
+    def pair_regressions(self):
+        # Получить данные о пользователе, в данных которого надо искать связи
+        # Проверить есть ли чего анализировать
+            # Если нет, то закрыть поток или процесс
+            # Если да, то проверить есть ли пары без результатов анализа
+                # Если нет, то начать анализировать заново пару с самой ранней датой обновления
+                # Если да, то начать анализировать первую в списке
+                    # Получить выборку из базы
+                    # Найти коэф моделей коэф корреляции проверку достоверности
+                    # Записать результаты анализа
+                    # Запустить данную процедуру заново
+        print('Вот')
 
 
 
@@ -101,82 +171,6 @@ class Series:
 
 
 '''
-# Сумма.
-Summa = np.sum(OneList)
-
-# Объём выборки.
-SampleSize = len(OneList)
-
-
-# Минимум.
-Minimum = np.min(OneList)
-
-
-# Максимум.
-Maximum = np.max(OneList)
-
-
-
-# Выборка уникальных значений
-cursor.execute('SELECT DISTINCT statisticdata FROM statdata ORDER BY statisticdata')
-di = cursor.fetchall()
-
-
-
-
-
-# Ряд уникальных агрегатов
-UniqueList = [i for i in di]
-#print('Ряд уникальных агрегатов:', UniqueList)
-
-
-# Частотное распределение.
-FashionTrand = []
-for i in di:
-    FashionTrand.append((i[0], OneList.count(i[0]), OneList.count(i[0]) / SampleSize))
-print('Частотное рапределение: ', FashionTrand)
-# Создается матрицу для рассчета коэффициентов моделей
-Xaxis = []
-Yaxis = []
-for i in FashionTrand:
-    Xaxis.append(float(i[0]))
-    Yaxis.append(float(i[1]))
-
-
-
-# Максимальная частота.
-MaxFrequency = max([i[1] for i in FashionTrand])
-Fashion = FashionTrand[[i[1] for i in FashionTrand].index(MaxFrequency)][0]
-print('Мода: ', Fashion)
-print('Максимальная частота: ', MaxFrequency)
-
-
-# Размах.
-swipe = Maximum - Minimum
-print('Размах:', swipe)
-
-
-# Среднее.
-Secondary = np.mean(OneList)
-print('Среднее:', Secondary)
-
-
-# Медиана.
-Median = np.median(UniqueList)
-print('Медиана:', Median)
-
-
-# Квартильный размах.
-def MathQuartile (x):
-    if x % 4 >= 2:
-        return x // 4 + 1
-    else:
-        return x // 4
-
-Quartile = MathQuartile(SampleSize)
-IQR = OneList[Quartile*3] - OneList[Quartile*2]
-print('Квартильный размах:', IQR)
-
 # Выбросы
 MinDischarge = (OneList [Quartile*2] - IQR*1.5, OneList [Quartile*3] + IQR*1.5)
 MaxDischarge = (OneList [Quartile*2] - IQR*3, OneList [Quartile*3] + IQR*3)
@@ -198,125 +192,6 @@ print('Количество умеренных выбросов: ', MinDischarge
 print('Количество выбросов: ', MaxDischargeCount)
 
 
-# Дисперсия.
-Dispersion = np.var(OneList)
-print('Дисперсия: ', Dispersion)
-
-
-# Стандартное отклонение.
-StandardDeviation = np.std(OneList)
-
-print('Стандартное отклонение: ', StandardDeviation)
-
-
-# Коэффициент вариаци.
-try:
-    СoefficientOfVariation = StandardDeviation/Secondary
-except ZeroDivisionError:
-    СoefficientOfVariation = None
-    print('Ошибка. Нет данных для обработки.')
-print('Коэффициент вариации: ', СoefficientOfVariation)
-
-
-# Асимметрия. Не нужна в действительности для первичного анализа
-try:
-    Asymmetry = (Secondary - Median)/StandardDeviation
-except ZeroDivisionError:
-    Asymmetry = None
-    print('Ошибка. Нет данных для обработки.')
-print('Асимметрия: ', Asymmetry)
-
-
-# Вероятность событий: для дискредной величины, для неприрывной
-def probability(data, DataQualitative = True, x1=None, x2=None):
-    if DataQualitative == None:
-        DataQualitative = True
-    if x1 == None:
-        x1 = min([i[0] for i in data])
-    if x2 == None:
-        x2 = max([i[0] for i in data])
-    if DataQualitative == True:
-        Qualitative = np.sum([i[2] for i in data if i[0]>=x1 and i[0]<=x2])
-    else:
-        QuaAll = np.trapz([i[2] for i in data], [i[0] for i in data])
-        QuaLim = np.trapz([i[2] for i in data if i[0]>=x1 and i[0]<=x2], [i[0] for i in data if i[0]>=x1 and i[0]<=x2])
-        Qualitative = QuaLim/QuaAll
-    return Qualitative
-
-#print('Вероятность в заданном промежутке: ', probability(FashionTrand, True, -3, 54))
-
-# Математическое ожидание: для дискредной величины, для неприрывной (Вычислять с помощью stats.bayes_mvs(data, alpha=0.95))
-def MathExpect(data, Probability):
-    xox = sorted([i[0] for i in data])
-    c0 = 0
-    bottom = probability(data, True, xox[0], xox[c0])
-    while bottom <= (1 - Probability) / 2:
-        c0 += 1
-        bottom = probability(data, True, xox[0], xox[c0])
-    if bottom >= (1 - Probability) / 2:
-        c0 -= 1
-        bottom = probability(data, True, xox[0], xox[c0])
-
-    c1 = len(xox)-1
-    top = probability(data, True, xox[c1], xox[len(xox)-1])
-    while top <= (1 - Probability) / 2:
-        c1 -= 1
-        top = probability(data, True, xox[c1], xox[len(xox)-1])
-    if top >= (1 - Probability) / 2:
-        c1 += 1
-        top = probability(data, True, xox[c1], xox[len(xox)-1])
-
-    # Нижний уровень доверительного интервала
-    low = xox[c0]
-    # Верхний уровень доверительного интервала
-    up  = xox[c1]
-    return low, up
-
-
-#print('Математическое ожидание (пока не в точности соответствует вероятности в заданном проемежутке): ', MathExpect(FashionTrand, 0.90))
-# Выбор модели
-
-
-# Проверка линейной модели y = b1*x + b0 (Переписать для stats.linregress(x, y) и stats.pearsonr(a, b) )
-def LineModel(x, y):
-    # Это рабочая схема
-    # Перобразовывает ряд в матрицу для поиска коэффициентов
-    A = np.vstack([x, np.ones(len(x))]).T
-
-    # При вызове метода лучше придерживаться этого синтаксиса: linalg.lstsq(x, y, rcond=-1)
-    b1, b0 = np.linalg.lstsq(A, np.array(y), rcond=-1)[0]
-    # Показания по модели
-    y1 = np.array([b1 * i + b0 for i in x])
-    x1 = np.array([(i - b0)/b1 for i in y])
-
-    # Коэффициент корреляции Пирсона (Переписать для stats.pearsonr(a, b)  узнать про дополнительные проверки)
-    kp = np.corrcoef(y,y1) [0,1]
-
-    # Оценка статистической значимости
-    si = kp * np.sqrt(SampleSize-2)/np.sqrt(1-kp**2)
-
-    return b1, b0, 'Линейниая зависимость', kp, si, x1, y1
-
-
-B1 = [LineModel(Xaxis, Yaxis)[0], LineModel(Xaxis, Yaxis)[1], LineModel(Xaxis, Yaxis)[2], LineModel(Xaxis, Yaxis)[3], LineModel(Xaxis, Yaxis)[4]]
-
-#print('Коэффициенты линейной модели:', '{:f}'.format(B1[0]), '{:f}'.format(B1[1]), B1[2], '{:f}'.format(B1[3]), '{:f}'.format(B1[4]))
-
-
-
-test = Series(OneList)
-print('Сума:', test.sum)
-print('Объём выборки:', test.sample_size)
-print('Минимум:', test.minimum)
-print('Максимум:', test.maximum)
-print('Частота распределения:', test.itemfreq)
-print('Размах:', test.swipe)
-print('Медиана:', test.median)
-print('Среднее:', test.mean)
-
-
-print('Пр: ', test.stats_line())
-print('Пр: ', test.freq_line())
 '''
 
 

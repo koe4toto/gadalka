@@ -48,7 +48,7 @@
                         legend: {
                             position: 'none'
                         },
-                        height: 300,
+                        height: 380,
                         backgroundColor: {
                             fill:'#343A40'
                         }
@@ -69,27 +69,13 @@
       <div class="col-md-3 ml-auto">
           <br>
           <h4>Вероятность событий</h4>
-          <form>
-              <label>Доверительный инетрвал</label>
-              <div class="form-row">
+          {% from "includes/_formtamplate.html" import form_render %}
+          <form method="POST" action="" enctype="multipart/form-data">
+                {{ form_render(form1) }}
+                <p>
+                    <input type="submit" class="btn btn-primary" value="Посмотреть">
+                </p>
 
-                <div class="form-group col-md-6">
-                  <input type="email" class="form-control" id="inputEmail4" placeholder="20">
-                </div>
-                <div class="form-group col-md-6">
-                  <input type="password" class="form-control" id="inputPassword4" placeholder="94">
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="inputAddress">Вероятность</label>
-                <input type="text" class="form-control" id="inputAddress" placeholder="90">
-              </div>
-              <div class="form-group">
-                <label for="inputAddress2">Математическое ожидание</label>
-                <input type="text" class="form-control" id="inputAddress2" placeholder="57">
-              </div>
-
-              <button type="submit" class="btn btn-outline-primary">Пересчитать</button>
             </form>
       </div>
     </div>
@@ -120,39 +106,12 @@
         </div>
         <div class="col-md-3 ml-auto">
             <h4>Фильтры</h4>
-            <form>
-              <label>Время</label>
-              <div class="form-row">
+            <form method="POST" action="" enctype="multipart/form-data">
+                {{ form_render(form2) }}
+                <p>
+                    <input type="submit" class="btn btn-outline-dark" value="Посмотреть">
+                </p>
 
-                <div class="form-group col-md-6">
-                  <input type="email" class="form-control" id="inputEmail4" placeholder="20">
-                </div>
-                <div class="form-group col-md-6">
-                  <input type="password" class="form-control" id="inputPassword4" placeholder="94">
-                </div>
-              </div>
-              <div class="form-group">
-                <label for="exampleFormControlSelect1">Уровни образования</label>
-                    <select class="form-control" id="exampleFormControlSelect1">
-                      <option>1</option>
-                      <option>2</option>
-                      <option>3</option>
-                      <option>4</option>
-                      <option>5</option>
-                    </select>
-              </div>
-              <div class="form-group">
-                <label for="exampleFormControlSelect1">Районы</label>
-                    <select class="form-control" id="exampleFormControlSelect1">
-                      <option>1</option>
-                      <option>2</option>
-                      <option>3</option>
-                      <option>4</option>
-                      <option>5</option>
-                    </select>
-              </div>
-
-              <button type="submit" class="btn btn-outline-dark">Пересчитать</button>
             </form>
         </div>
     </div>

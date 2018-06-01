@@ -2,7 +2,7 @@
   {% if session.logged_in %}
   <a class="navbar-brand" href="/dashboard"><i class="fab fa-hubspot"></i> Гадалка</a>
   {% else %}
-  <a class="navbar-brand" href="/"><i class="fab fa-hubspot"></i> Гадалка</></a>
+  <a class="navbar-brand" href="/"><i class="fab fa-hubspot"></i> Гадалка</a>
   {% endif %}
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
@@ -12,7 +12,15 @@
     <ul class="navbar-nav mr-auto">
       {% if session.logged_in %}
       <li class="nav-item"><a class="nav-link" href="/measures">Меры</a></li>
-      <li class="nav-item"><a class="nav-link" href="/about">Модели</a></li>
+      <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+           Модели
+          </a>
+          <div class="dropdown-menu dropdown-menu-left" aria-labelledby="navbarDropdownMenuLink">
+            <a class="dropdown-item" href="/pair_models">Двумерные</a>
+            <a class="dropdown-item" href="/multiple_models">Многомерные</a>
+          </div>
+        </li>
       <li class="nav-item"><a class="nav-link" href="/about">Отчеты</a></li>
       {% else %}
       {% endif %}

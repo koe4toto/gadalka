@@ -18,3 +18,4 @@ def index():
 @is_logged_in
 def dashboard():
     return render_template('dashboard.html')
+

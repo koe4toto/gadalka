@@ -35,12 +35,6 @@ cursor.execute("SELECT * FROM area_description WHERE id = %s", [19])
 the_measure = cursor.fetchall()
 
 
-table_name = 'data_837'
-sheet = ['code', 'value', 'parent_code']
-str1 = ''.join(str(e)+', ' for e in sheet)
-row = [1.0, 'Дошкольное образование', '']
-str2 = ''.join(str(e)+', ' for e in row)
-cursor.execute('''INSERT INTO ''' + table_name + ''' ('''+str1+''') VALUES ('''+str2+''');''')
-conn.commit()
 
-print('Всё')
+
+

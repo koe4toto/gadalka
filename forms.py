@@ -40,3 +40,15 @@ class RefMeasureForm(Form):
 class RefForm(Form):
     name = StringField('Название', [validators.required(message='Обязательное поле')])
     description = TextAreaField('Комментарий')
+
+# Форма вероятности измерения
+class ProbabilityForm(Form):
+    di_from = StringField('Доверительный интерфал от', [validators.required(message='Обязательное поле')])
+    di_to = StringField('Доверительный интерфал до', [validators.required(message='Обязательное поле')])
+    probability = StringField('Вероятность', [validators.required(message='Обязательное поле')])
+    exp_val = StringField('Математическое ожидание', [validators.required(message='Обязательное поле')])
+
+# Форма фильтра меры
+class MeFilterForm(Form):
+    test1 = StringField('тест1', [validators.required(message='Обязательное поле')])
+    test2 = StringField('тест1', [validators.required(message='Обязательное поле')])
