@@ -19,6 +19,7 @@
                       var data = new google.visualization.DataTable();
                       data.addColumn('number', 'X');
                       data.addColumn('number', 'Частота');
+                      data.addColumn('number', 'Вероятность');
 
                       data.addRows(
                         {{ sdata }}
@@ -42,7 +43,7 @@
                         bar: {
                             gap: 1
                         },
-                        colors: ['#fff'],
+                        colors: ['#fff', '#28a745'],
                         dataOpacity: 0.8,
 
                         legend: {
@@ -73,7 +74,7 @@
           <form method="POST" action="" enctype="multipart/form-data">
                 {{ form_render(form1) }}
                 <p>
-                    <input type="submit" class="btn btn-primary" value="Посмотреть">
+                    <input type="submit" class="btn btn-success" value="Посмотреть">
                 </p>
 
             </form>

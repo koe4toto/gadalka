@@ -1,4 +1,5 @@
 import numpy as np, scipy.stats as sci
+import json
 
 # Статистики ряда
 class Series:
@@ -68,22 +69,30 @@ class Series:
     # Распределение частот и вероятности для графика в интерфейсе
     def freq_line_view(self, limit):
         lenfreq = len(self.freq)
-
+        pop = []
         if lenfreq >= limit:
             i = 0
             step = int(lenfreq / limit)
-            pop = []
             while i < lenfreq:
-                pop.append([self.freq[i][0], self.freq[i][1]])
+                if self.freq[i][0]<10:
+                    pop.append([self.freq[i][0], self.freq[i][1], 0])
+                elif self.freq[i][0]>=10:
+                    pop.append([self.freq[i][0], self.freq[i][1], self.freq[i][1]])
+                elif self.freq[i][0] > 80:
+                    pop.append([self.freq[i][0], self.freq[i][1], 0])
                 i += step
             return pop
         else:
-            pop = [[i[0], i[1]] for i in self.freq]
-            return pop
+            for i in self.freq:
+                if i[0]<10 or i[0] > 80:
+                    pop.append([i[0], i[1], None])
+                elif i[0]>10:
+                    pop.append([i[0], i[1], i[1]])
+            return json.dumps(pop)
 
     # Математическое ожидание для среднего
-    def mbayes(self):
-        mean, var, std = sci.bayes_mvs(self.line)
+    def mbayes(self, a):
+        mean, var, std = sci.bayes_mvs(self.line, alpha=a)
         return mean
 
     # Вероятность событий: для дискредной величины, для неприрывной

@@ -31,9 +31,9 @@ def measures():
     return render_template('measures.html', list = measures_list)
 
 # Мера
-@mod.route("/measure/<string:id>/", methods =['GET', 'POST'])
+@mod.route("/measure/<string:id>/<string:prob1>", methods =['GET', 'POST'])
 @is_logged_in
-def measure(id):
+def measure(id,prob1):
     # Получение данных о мере
     cursor.execute("SELECT * FROM area_description WHERE id = %s", [id])
     the_measure = cursor.fetchall()
@@ -49,7 +49,7 @@ def measure(id):
     database_port = data_a[0][8]
     database_table = data_a[0][9]
 
-    probability = [22, 95, 91, 58]
+    probability = prob1.split('&')
     form1 = ProbabilityForm(request.form)
     form1.di_from.data = probability[0]
     form1.di_to.data = probability[1]
