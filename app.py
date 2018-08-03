@@ -36,7 +36,7 @@ def register():
 
         flash('Вы зарегистрированны и можете войти', 'success')
 
-        return redirect(url_for('index'))
+        return redirect(url_for('about.index'))
     return render_template('register.html', form=form)
 
 # Форма входа
@@ -64,7 +64,7 @@ def login():
                 session['user_id'] = result[0][0]
 
                 flash('You are now logged in', 'success')
-                return redirect(url_for('dashboard'))
+                return redirect(url_for('about.dashboard'))
             else:
                 error = 'Не верный пароль'
                 return render_template('login.html', error=error)

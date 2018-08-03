@@ -400,7 +400,10 @@ def add_measure(id, item):
                         ))
         conn.commit()
 
-        flash('Мера добавлена', 'success')
+        # Создание моделей для пар с другими параметрами
+
+
+        flash('Параметр добавлен', 'success')
         return redirect(url_for('data_areas.data_area', id=id))
     return render_template('add_measure.html', form=form)
 
