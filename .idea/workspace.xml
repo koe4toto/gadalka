@@ -5,18 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6d1f0f4e-5d78-4151-b6e1-b4794cf75cd2" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/gadalka.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gadalka.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app.py" beforeDir="false" afterPath="$PROJECT_DIR$/app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data_areas.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_areas.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db_script.py" beforeDir="false" afterPath="$PROJECT_DIR$/db_script.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/add_measure.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/add_measure.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/edit_measure.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/edit_measure.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/includes/_navbar.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/includes/_navbar.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/measures.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/measures.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/register.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/register.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -40,7 +30,7 @@
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="html" value="14" />
-          <entry key="py" value="21" />
+          <entry key="py" value="22" />
           <entry key="txt" value="2" />
         </counts>
       </usages-collector>
@@ -48,7 +38,7 @@
         <counts>
           <entry key="HTML" value="61" />
           <entry key="Hoi4 file" value="3" />
-          <entry key="Python" value="199" />
+          <entry key="Python" value="836" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
@@ -56,13 +46,13 @@
           <entry key="HTML" value="14" />
           <entry key="Hoi4 file" value="1" />
           <entry key="PLAIN_TEXT" value="1" />
-          <entry key="Python" value="21" />
+          <entry key="Python" value="22" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="html" value="61" />
-          <entry key="py" value="199" />
+          <entry key="py" value="836" />
           <entry key="txt" value="3" />
         </counts>
       </usages-collector>
@@ -73,7 +63,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/measures.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-710">
+            <state relative-caret-position="272">
               <caret line="42" column="4" selection-start-line="42" selection-start-column="4" selection-end-line="42" selection-end-column="17" />
               <folding>
                 <element signature="e#0#88#0" expanded="true" />
@@ -87,6 +77,15 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="170">
               <caret line="10" column="28" selection-start-line="10" selection-start-column="28" selection-end-line="10" selection-end-column="28" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/to_try.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="85">
+              <caret line="5" column="7" selection-start-line="5" selection-start-column="7" selection-end-line="5" selection-end-column="12" />
             </state>
           </provider>
         </entry>
@@ -109,11 +108,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/db_script.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="935">
-              <caret line="112" column="172" selection-start-line="112" selection-start-column="172" selection-end-line="112" selection-end-column="172" />
+            <state relative-caret-position="221">
+              <caret line="55" lean-forward="true" selection-start-line="55" selection-end-line="55" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
               </folding>
@@ -121,25 +120,13 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/data_areas.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="392">
-              <caret line="402" column="56" lean-forward="true" selection-start-line="402" selection-start-column="56" selection-end-line="402" selection-end-column="56" />
+            <state relative-caret-position="167">
+              <caret line="421" column="33" selection-start-line="421" selection-start-column="33" selection-end-line="421" selection-end-column="33" />
               <folding>
                 <element signature="e#0#88#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/app.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="191">
-              <caret line="36" column="45" selection-start-line="36" selection-start-column="45" selection-end-line="36" selection-end-column="45" />
-              <folding>
-                <element signature="e#13#28#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -235,8 +222,8 @@
         <option value="$PROJECT_DIR$/templates/edit_measure.html" />
         <option value="$PROJECT_DIR$/templates/includes/_navbar.html" />
         <option value="$PROJECT_DIR$/templates/measures.html" />
-        <option value="$PROJECT_DIR$/data_areas.py" />
         <option value="$PROJECT_DIR$/db_script.py" />
+        <option value="$PROJECT_DIR$/data_areas.py" />
       </list>
     </option>
   </component>
@@ -409,12 +396,12 @@
     <frame x="-8" y="-8" width="1382" height="744" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.22991072" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.22991072" />
       <window_info id="Structure" order="1" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.14590164" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.14590164" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -570,13 +557,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/to_try.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="5" column="7" selection-start-line="5" selection-start-column="7" selection-end-line="5" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/requirements.txt">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="255">
@@ -714,7 +694,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/measures.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-710">
+        <state relative-caret-position="272">
           <caret line="42" column="4" selection-start-line="42" selection-start-column="4" selection-end-line="42" selection-end-column="17" />
           <folding>
             <element signature="e#0#88#0" expanded="true" />
@@ -722,22 +702,29 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/data_areas.py">
+    <entry file="file://$PROJECT_DIR$/to_try.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="392">
-          <caret line="402" column="56" lean-forward="true" selection-start-line="402" selection-start-column="56" selection-end-line="402" selection-end-column="56" />
-          <folding>
-            <element signature="e#0#88#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="85">
+          <caret line="5" column="7" selection-start-line="5" selection-start-column="7" selection-end-line="5" selection-end-column="12" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/db_script.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="935">
-          <caret line="112" column="172" selection-start-line="112" selection-start-column="172" selection-end-line="112" selection-end-column="172" />
+        <state relative-caret-position="221">
+          <caret line="55" lean-forward="true" selection-start-line="55" selection-end-line="55" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_areas.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="167">
+          <caret line="421" column="33" selection-start-line="421" selection-start-column="33" selection-end-line="421" selection-end-column="33" />
+          <folding>
+            <element signature="e#0#88#0" expanded="true" />
           </folding>
         </state>
       </provider>

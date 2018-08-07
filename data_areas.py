@@ -1,6 +1,7 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, session, request
 import psycopg2
 import xlrd
+import itertools
 import os
 from decorators import is_logged_in
 import constants
@@ -201,6 +202,7 @@ def delete_data_measure(id, data_area_id):
 
     # Execute
     cursor.execute("DELETE FROM area_description WHERE id = %s", [id])
+    cursor.execute("DELETE FROM math_models WHERE area_description_2 = %s", [id])
     conn.commit()
 
     flash('Предметная область удалена', 'success')
@@ -390,7 +392,7 @@ def add_measure(id, item):
                        'data_area_id, '
                        'type, '
                        'kind_of_metering) '
-                       'VALUES (%s, %s, %s, %s, %s, %s);',
+                       'VALUES (%s, %s, %s, %s, %s, %s) RETURNING id;',
                        (item,
                         description,
                         session['user_id'],
@@ -398,10 +400,24 @@ def add_measure(id, item):
                         constants.AREA_DESCRIPTION_TYPE['Мера'],
                         kind_of_metering
                         ))
+        meg_id = cursor.fetchone()
         conn.commit()
 
         # Создание моделей для пар с другими параметрами
-
+        # meg_id - идентификатор новой меры
+        # Получить идентификаторы всех остальных измерений
+        cursor.execute("SELECT id FROM area_description WHERE type = %s AND id != %s;", ['1', meg_id])
+        megs_a = cursor.fetchall()
+        megs = [i[0] for i in megs_a]
+        # Получить список идентификаторов гипотез
+        cursor.execute("SELECT id FROM hypotheses;")
+        hypotheses_id_a = cursor.fetchall()
+        hypotheses_id = [i[0] for i in hypotheses_id_a]
+        # Создать записи для каждой новой пары и каждой гипотезы)
+        arrays = [hypotheses_id, megs, [meg_id[0]]]
+        tup = list(itertools.product(*arrays))
+        args_str = str(tup).strip('[]')
+        cursor.execute("INSERT INTO math_models (hypothesis, area_description_1, area_description_2) VALUES " + args_str)
 
         flash('Параметр добавлен', 'success')
         return redirect(url_for('data_areas.data_area', id=id))

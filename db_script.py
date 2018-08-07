@@ -56,11 +56,14 @@ age = [i for i in range(6,19)]
 
 
 # Список из списков
-arrays = [level, region, age]
+arrays = [level, region, [1]]
+
 
 # Генерирует кортэж из свех возможных уникальных комбинаций четырёх справочников выше
 cp = list(itertools.product(*arrays))
-
+print(cp)
+args_str = str(cp).strip('[]')
+print(args_str)
 
 # Генератор тестовых данных
 def generator():
