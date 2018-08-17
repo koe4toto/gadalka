@@ -202,7 +202,7 @@ def delete_data_measure(id, data_area_id):
 
     # Execute
     cursor.execute("DELETE FROM area_description WHERE id = %s", [id])
-    cursor.execute("DELETE FROM math_models WHERE area_description_2 = %s", [id])
+    cursor.execute("DELETE FROM math_models WHERE area_description_2 = %s OR area_description_1 = %s", [id, id])
     conn.commit()
 
     flash('Предметная область удалена', 'success')
@@ -409,15 +409,20 @@ def add_measure(id, item):
         cursor.execute("SELECT id FROM area_description WHERE type = %s AND id != %s;", ['1', meg_id])
         megs_a = cursor.fetchall()
         megs = [i[0] for i in megs_a]
-        # Получить список идентификаторов гипотез
-        cursor.execute("SELECT id FROM hypotheses;")
-        hypotheses_id_a = cursor.fetchall()
-        hypotheses_id = [i[0] for i in hypotheses_id_a]
-        # Создать записи для каждой новой пары и каждой гипотезы)
-        arrays = [hypotheses_id, megs, [meg_id[0]]]
-        tup = list(itertools.product(*arrays))
-        args_str = str(tup).strip('[]')
-        cursor.execute("INSERT INTO math_models (hypothesis, area_description_1, area_description_2) VALUES " + args_str)
+
+        if len(megs) >= 1:
+            # Получить список идентификаторов гипотез
+            cursor.execute("SELECT id FROM hypotheses;")
+            hypotheses_id_a = cursor.fetchall()
+            hypotheses_id = [i[0] for i in hypotheses_id_a]
+
+            # Создать записи для каждой новой пары и каждой гипотезы)
+            arrays = [hypotheses_id, megs, [meg_id[0]]]
+            tup = list(itertools.product(*arrays))
+            args_str = str(tup).strip('[]')
+
+            # Записать данные
+            cursor.execute("INSERT INTO math_models (hypothesis, area_description_1, area_description_2) VALUES " + args_str)
 
         flash('Параметр добавлен', 'success')
         return redirect(url_for('data_areas.data_area', id=id))

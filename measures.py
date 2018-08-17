@@ -100,10 +100,24 @@ def measure(id,prob1):
 
     return render_template('measure.html', id = id, the_measure = the_measure, sdata = pre, sd = stats, form1=form1, form2=form2, probability = probability)
 
-# Парная модель
+# Пары
 @mod.route("/pair_models")
 def pair_models():
-    return render_template('pair_models.html')
+    # Список пар
+    cursor.execute(
+        '''select h.name, m1.kk, a1.description, a2.description, m1.area_description_1, m1.area_description_2 from math_models m1
+            inner join hypotheses h on m1.hypothesis = h.id
+            inner join area_description a1 on m1.area_description_1 = a1.id
+            inner join area_description a2 on m1.area_description_2 = a2.id
+            where hypothesis = '1';''')
+    list = cursor.fetchall()
+    return render_template('pair_models.html', list=list)
+
+# Пара
+@mod.route("/pair/<string:id1>/<string:id2>")
+def pair(id1, id2):
+    list = [id1, id2]
+    return render_template('pair.html', list=list)
 
 # Многомерная модель
 @mod.route("/multiple_models")

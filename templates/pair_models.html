@@ -1,6 +1,16 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-<h1>Двумерные модели</h1>
-
+<h1>Парные связи</h1>
+<br>
+    <div class="list-group">
+    {% for i in list %}
+      <a href="pair/{{ i[4] }}/{{ i[5] }}" class="list-group-item list-group-item-action flex-column align-items-start">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1 text-primary">{{ i[2] }} - {{ i[3] }}</h5>
+        </div>
+          <p class="mb-1">{{ i[0] }}, {{ i[1] }}</p>
+      </a>
+    {% endfor %}
+    </div>
 {% endblock %}
