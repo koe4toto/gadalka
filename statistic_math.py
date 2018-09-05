@@ -147,7 +147,7 @@ class Pairs:
         return slope, intercept, r_value, p_value, std_err
 
     # Гиперболическая модель 1
-    def expreg1(self):
+    def hyperbolicreg1(self):
         # Замена переменных
         x1 = 1/self.x
 
@@ -157,7 +157,7 @@ class Pairs:
         return slope, intercept, r_value, p_value, std_err
 
     # Гиперболическая модель 2
-    def expreg2(self):
+    def hyperbolicreg2(self):
         # Замена переменных
         y1 = 1/self.y
 
@@ -167,7 +167,7 @@ class Pairs:
         return slope, intercept, r_value, p_value, std_err
 
     # Гиперболическая модель 3
-    def expreg2(self):
+    def hyperbolicreg3(self):
         # Замена переменных
         x1 = 1 / self.x
         y1 = 1/self.y
@@ -188,7 +188,7 @@ class Pairs:
         return slope, intercept, r_value, p_value, std_err
 
     # Экспоненциальная модель
-    def logarithmic(self):
+    def exponential(self):
         # Замена переменных
         y1 = np.exp(self.y)
 
@@ -199,6 +199,7 @@ class Pairs:
         slope = np.exp(slope1)
 
         return slope, intercept, r_value, p_value, std_err
+
 
 
     # Поток рассчета парных моделей

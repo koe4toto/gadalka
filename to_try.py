@@ -40,24 +40,23 @@ def search_model(data):
     x = [0.1, 1, 2, 3, 4, 5]
     y = [5, 4, 3, 2, 1, 0.1]
     pairs = sm.Pairs(x, y)
-    slope, intercept, r_value, p_value, std_err = pairs.logarithmic()
-    print(slope, intercept, r_value, p_value, std_err)
 
-    slope, intercept, r_value, p_value, std_err = pairs.linereg()
+    hypotheses = {
+        1: pairs.linereg,
+        2: pairs.powerreg,
+        3: pairs.hyperbolicreg1,
+        4: pairs.hyperbolicreg2,
+        5: pairs.hyperbolicreg3,
+        6: pairs.logarithmic,
+        7: pairs.exponential
+    }
+
+    # Рассчета показателей по указанной в базе модели
+    slope, intercept, r_value, p_value, std_err = hypotheses[model[0][0]]()
     print(slope, intercept, r_value, p_value, std_err)
 
     print('Готово!')
 
-#search_model('edu_test')
+search_model('edu_test')
 
-def t1():
-    print('test 1')
 
-def t2():
-    print('test 2')
-
-mig = {1:t1, 2:t2}
-
-pik = mig[2]()
-
-print(pik)
