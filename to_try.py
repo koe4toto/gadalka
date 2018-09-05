@@ -1,6 +1,7 @@
 import psycopg2
 import constants
 import statistic_math as sm
+import foo
 
 # Подключение к базе данных
 conn = psycopg2.connect(
@@ -13,50 +14,69 @@ cursor = conn.cursor()
 
 data = 'edu_test'
 
-def search_model(data):
+
+# Рассчета свойств модели и запись результатов в базу данных
+def search_model(hypothesis, adid1, adid2):
     print('Старт!')
 
-    cursor.execute("SELECT * FROM math_models m1 WHERE NOT (m1.kk IS NOT NULL) LIMIT 1;")
-    model = cursor.fetchall()
-    print(model)
-    # Рассчитать знаяение параметров указанной модели, запистаь в базу и вывести в консоли
+    # Получение списков данных
+    x = foo.numline(adid1)
+    y = foo.numline(adid2)
 
-    '''
-    # Выбрать значения первой переменной
-    cursor.execute("SELECT * FROM math_models m1 WHERE NOT (m1.kk IS NOT NULL) LIMIT 1;")
-    X = cursor.fetchall()
-    print(X)
-
-    # Выбрать значения второй переменной
-    cursor.execute("SELECT * FROM math_models m1 WHERE NOT (m1.kk IS NOT NULL) LIMIT 1;")
-    Y = cursor.fetchall()
-    print(Y)
-
-    # Рассчитать показатели
-    slope, intercept, r_value, p_value, std_err = statistic_math.Pairs.linereg(X,Y)
-    print(slope, intercept, r_value, p_value, std_err)
-    '''
-
-    x = [0.1, 1, 2, 3, 4, 5]
-    y = [5, 4, 3, 2, 1, 0.1]
+    # Экземпляр класса обработки данных по парам
     pairs = sm.Pairs(x, y)
 
+    # Справочник гипотез
     hypotheses = {
         1: pairs.linereg,
         2: pairs.powerreg,
-        3: pairs.hyperbolicreg1,
-        4: pairs.hyperbolicreg2,
-        5: pairs.hyperbolicreg3,
-        6: pairs.logarithmic,
-        7: pairs.exponential
+        3: pairs.exponentialreg2,
+        4: pairs.hyperbolicreg1,
+        5: pairs.hyperbolicreg2,
+        6: pairs.hyperbolicreg3,
+        7: pairs.logarithmic,
+        8: pairs.exponentialreg2
     }
 
     # Рассчета показателей по указанной в базе модели
-    slope, intercept, r_value, p_value, std_err = hypotheses[model[0][0]]()
-    print(slope, intercept, r_value, p_value, std_err)
+    slope, intercept, r_value, p_value, std_err = hypotheses[hypothesis]()
+
+    # Сохранение результатов в базу данных
+    cursor.execute('UPDATE math_models SET '
+                   'a0=%s, '
+                   'a1=%s, '
+                   'kk=%s '
+                   'WHERE '
+                   'area_description_1 = %s '
+                   'AND area_description_2 = %s '
+                   'AND hypothesis = %s;',
+                   (slope,
+                    intercept,
+                    r_value,
+                    adid1,
+                    adid2,
+                    hypothesis
+                    ))
+    conn.commit()
 
     print('Готово!')
 
-search_model('edu_test')
+
+# Обработка моделей с пустыми значениями
+def primal_calc():
+    # Выбор модели для рассчета
+    cursor.execute("SELECT * FROM math_models m1 WHERE NOT (m1.kk IS NOT NULL) LIMIT 1;")
+    model = cursor.fetchall()
+    print(model)
+
+    while model != '[]':
+        print(model[0][0])
+        search_model(model[0][0], model[0][4], model[0][5])
+
+        # Выбор модели для рассчета
+        cursor.execute("SELECT * FROM math_models m1 WHERE NOT (m1.kk IS NOT NULL) LIMIT 1;")
+        model = cursor.fetchall()
+        print(model)
 
 
+primal_calc()

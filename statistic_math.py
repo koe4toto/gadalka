@@ -126,6 +126,7 @@ class Pairs:
         self.y = np.array(y)
 
 
+
     # Линейная модель
     def linereg(self):
         slope, intercept, r_value, p_value, std_err = sci.linregress(self.x, self.y)
@@ -143,6 +144,22 @@ class Pairs:
 
         # Замена коэфициентов
         slope = np.power(10, slope1)
+
+        return slope, intercept, r_value, p_value, std_err
+
+    # Показательная модель
+    def exponentialreg1(self):
+
+        # Замена переменных
+        x1 = self.x
+        y1 = np.log10(self.y)
+
+        # Вычисление коэфициентов
+        slope1, intercept1, r_value, p_value, std_err = sci.linregress(x1, y1)
+
+        # Замена коэфициентов
+        slope = np.power(10, slope1)
+        intercept = np.power(10, intercept1)
 
         return slope, intercept, r_value, p_value, std_err
 
@@ -169,7 +186,7 @@ class Pairs:
     # Гиперболическая модель 3
     def hyperbolicreg3(self):
         # Замена переменных
-        x1 = 1 / self.x
+        x1 = 1/self.x
         y1 = 1/self.y
 
         # Вычисление коэфициентов
@@ -188,7 +205,7 @@ class Pairs:
         return slope, intercept, r_value, p_value, std_err
 
     # Экспоненциальная модель
-    def exponential(self):
+    def exponentialreg2(self):
         # Замена переменных
         y1 = np.exp(self.y)
 
