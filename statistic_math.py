@@ -183,7 +183,7 @@ class Pairs:
         x1 = np.log10(self.x)
 
         # Вычисление коэфициентов
-        slope, intercept, r_value, p_value, std_err = sci.linregress(x1, y1)
+        slope, intercept, r_value, p_value, std_err = sci.linregress(x1, self.y)
 
         return slope, intercept, r_value, p_value, std_err
 
