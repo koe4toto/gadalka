@@ -2,6 +2,7 @@ import psycopg2
 import constants
 import statistic_math as sm
 import foo
+import numpy as np
 
 # Подключение к базе данных
 conn = psycopg2.connect(
@@ -30,7 +31,7 @@ def search_model(hypothesis, adid1, adid2):
     hypotheses = {
         1: pairs.linereg,
         2: pairs.powerreg,
-        3: pairs.exponentialreg2,
+        3: pairs.exponentialreg1,
         4: pairs.hyperbolicreg1,
         5: pairs.hyperbolicreg2,
         6: pairs.hyperbolicreg3,
@@ -79,4 +80,9 @@ def primal_calc():
         print(model)
 
 
-primal_calc()
+# primal_calc()
+
+x = np.array([1,2,3,4,5,6])
+xm = x.min()
+y=x+xm +0.1
+print(y)

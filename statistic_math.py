@@ -125,6 +125,10 @@ class Pairs:
         # Второй ряд
         self.y = np.array(y)
 
+        # Смещение распределения для исключения отрицательных и нулевых значений
+        self.x_div = self.x + np.fabs(self.x.min) + 1
+        self.y_div = self.y + np.fabs(self.y.min) + 1
+
 
 
     # Линейная модель
@@ -136,8 +140,8 @@ class Pairs:
     def powerreg(self):
 
         # Замена переменных
-        x1 = np.log10(self.x)
-        y1 = np.log10(self.y)
+        x1 = np.log10(self.x_div)
+        y1 = np.log10(self.y_div)
 
         # Вычисление коэфициентов
         slope1, intercept, r_value, p_value, std_err = sci.linregress(x1, y1)
@@ -151,8 +155,8 @@ class Pairs:
     def exponentialreg1(self):
 
         # Замена переменных
-        x1 = self.x
-        y1 = np.log10(self.y)
+        x1 = self.x_div
+        y1 = np.log10(self.y_div)
 
         # Вычисление коэфициентов
         slope1, intercept1, r_value, p_value, std_err = sci.linregress(x1, y1)
@@ -165,29 +169,31 @@ class Pairs:
 
     # Гиперболическая модель 1
     def hyperbolicreg1(self):
+
         # Замена переменных
-        x1 = 1/self.x
+        x1 = 1/self.x_div
 
         # Вычисление коэфициентов
-        slope, intercept, r_value, p_value, std_err = sci.linregress(x1, self.y)
+        slope, intercept, r_value, p_value, std_err = sci.linregress(x1, self.y_div)
 
         return slope, intercept, r_value, p_value, std_err
 
     # Гиперболическая модель 2
     def hyperbolicreg2(self):
+
         # Замена переменных
-        y1 = 1/self.y
+        y1 = 1/self.y_div
 
         # Вычисление коэфициентов
-        slope, intercept, r_value, p_value, std_err = sci.linregress(self.x, y1)
+        slope, intercept, r_value, p_value, std_err = sci.linregress(self.x_div, y1)
 
         return slope, intercept, r_value, p_value, std_err
 
     # Гиперболическая модель 3
     def hyperbolicreg3(self):
         # Замена переменных
-        x1 = 1/self.x
-        y1 = 1/self.y
+        x1 = 1/self.x_div
+        y1 = 1/self.y_div
 
         # Вычисление коэфициентов
         slope, intercept, r_value, p_value, std_err = sci.linregress(x1, y1)
@@ -197,20 +203,20 @@ class Pairs:
     # Логарифмическая модель
     def logarithmic(self):
         # Замена переменных
-        x1 = np.log10(self.x)
+        x1 = np.log10(self.x_div)
 
         # Вычисление коэфициентов
-        slope, intercept, r_value, p_value, std_err = sci.linregress(x1, self.y)
+        slope, intercept, r_value, p_value, std_err = sci.linregress(x1, self.y_div)
 
         return slope, intercept, r_value, p_value, std_err
 
     # Экспоненциальная модель
     def exponentialreg2(self):
         # Замена переменных
-        y1 = np.exp(self.y)
+        y1 = np.exp(self.y_div)
 
         # Вычисление коэфициентов
-        slope1, intercept, r_value, p_value, std_err = sci.linregress(self.x, y1)
+        slope1, intercept, r_value, p_value, std_err = sci.linregress(self.x_div, y1)
 
         # Замена коэфициентов
         slope = np.exp(slope1)
