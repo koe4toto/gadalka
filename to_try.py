@@ -3,6 +3,7 @@ import constants
 import statistic_math as sm
 import foo
 import numpy as np
+import json
 
 # Подключение к базе данных
 conn = psycopg2.connect(
@@ -82,7 +83,17 @@ def primal_calc():
 
 # primal_calc()
 
-x = np.array([1,2,3,4,5,6])
-xm = x.min()
-y=x+xm +0.1
-print(y)
+pop = [["Age", "Weight"]]
+
+x = np.array(foo.numline(44))
+y = np.array(foo.numline(50))
+# Получение экземпляра класса обработки данных
+xy = np.vstack((x, y))
+for_graf = xy.transpose()
+
+for i in for_graf:
+    pop.append([i[0], i[1]])
+
+popa = json.dumps(pop)
+str1 = ''.join(popa)
+print(popa)

@@ -1,7 +1,11 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, session, request
+from flask.json import JSONEncoder, JSONDecoder
 import psycopg2
 from decorators import is_logged_in
 import constants
+import foo
+import json
+import numpy as np
 
 # Мои модули
 from forms import *
@@ -117,7 +121,24 @@ def pair_models():
 @mod.route("/pair/<string:id1>/<string:id2>")
 def pair(id1, id2):
     list = [id1, id2]
-    return render_template('pair.html', list=list)
+    pop = [["Age", "Weight"]]
+
+    x = np.array(foo.numline(id1))
+    y = np.array(foo.numline(id2))
+    # Получение экземпляра класса обработки данных
+    xy = np.vstack((x, y))
+    for_graf = xy.transpose()
+
+    for i in for_graf:
+        pop.append([i[0], i[1]])
+
+    popa = json.dumps(pop, ensure_ascii=False)
+    str1 = ''.join(popa)
+
+
+
+    return render_template('pair.html', list=list, for_graf=str1)
+
 
 # Многомерная модель
 @mod.route("/multiple_models")

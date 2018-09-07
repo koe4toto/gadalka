@@ -40,7 +40,7 @@ def sqlvar(row):
                 rows += ", 'None'"
     return rows
 
-
+# Получение данных по идентификатору меры
 def numline(id):
 
     # Подключение к базе данных
@@ -84,7 +84,7 @@ def numline(id):
         else:
             # Получение данных
             try:
-                cur.execute('''SELECT ''' + the_measure[0][1] + ''' FROM ''' + database_table)
+                cur.execute('''SELECT ''' + the_measure[0][1] + ''' FROM ''' + database_table + ''' LIMIT 100''')
                 measure_data = cur.fetchall()
 
                 # Данные в список
