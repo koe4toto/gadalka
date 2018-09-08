@@ -1,0 +1,45 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<h1>Пара {{ list[0] }} - {{ list[1] }}</h1>
+<br>
+<div class="row">
+
+      <div class="col-md-9">
+          <br>
+          <h4>График распределения</h4>
+
+          <!--Load the AJAX API-->
+            <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+            <script type="text/javascript">
+                google.charts.load("current", {packages:["corechart"]});
+                 google.charts.setOnLoadCallback(drawChart);
+                 function drawChart() {
+                   var data = google.visualization.arrayToDataTable(
+                    {{ for_graf }}
+                   );
+
+
+
+                   var options = {
+                      title: 'Age vs. Weight comparison',
+                      hAxis: {title: 'Age', minValue: 0, maxValue: 15},
+                      vAxis: {title: 'Weight', minValue: 0, maxValue: 15},
+                      legend: 'none'
+                    };
+
+                   var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
+                   chart.draw(data, options);
+                 }
+            </script>
+
+            <!--Div that will hold the pie chart-->
+            <div id="chart_div"></div>
+
+      </div>
+    </div>
+<p>Модели</p>
+{{ for_graf }}
+
+{% endblock %}

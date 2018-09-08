@@ -1,40 +1,99 @@
-import xlrd
-import os
 import psycopg2
-from datetime import datetime
-from statistic_math import Series
-import numpy as np, scipy.stats as sci
-
-from statistic_math import Series
-
+import constants
+import statistic_math as sm
+import foo
+import numpy as np
+import json
 
 # Подключение к базе данных
-conn = psycopg2.connect(database="test111", user="postgres", password="gbcmrf", host="localhost", port="5432")
+conn = psycopg2.connect(
+    database=constants.DATABASE_NAME,
+    user=constants.DATABASE_USER,
+    password=constants.DATABASE_PASSWORD,
+    host=constants.DATABASE_HOST,
+    port=constants.DATABASE_PORT)
 cursor = conn.cursor()
 
-
-cursor.execute('''
-    SELECT
-        area_description.id,
-        area_description.column_name,
-        area_description.description,
-        area_description.type,
-        refs.name,
-        area_description.kind_of_metering
-    FROM
-        area_description
-    LEFT JOIN
-        refs
-    ON
-        area_description.ref_id = refs.id
-    WHERE
-        area_description.data_area_id = '28';''')
-pik = cursor.fetchall()
-
-cursor.execute("SELECT * FROM area_description WHERE id = %s", [19])
-the_measure = cursor.fetchall()
+data = 'edu_test'
 
 
+# Рассчета свойств модели и запись результатов в базу данных
+def search_model(hypothesis, adid1, adid2):
+    print('Старт!')
+
+    # Получение списков данных
+    x = foo.numline(adid1)
+    y = foo.numline(adid2)
+
+    # Экземпляр класса обработки данных по парам
+    pairs = sm.Pairs(x, y)
+
+    # Справочник гипотез
+    hypotheses = {
+        1: pairs.linereg,
+        2: pairs.powerreg,
+        3: pairs.exponentialreg1,
+        4: pairs.hyperbolicreg1,
+        5: pairs.hyperbolicreg2,
+        6: pairs.hyperbolicreg3,
+        7: pairs.logarithmic,
+        8: pairs.exponentialreg2
+    }
+
+    # Рассчета показателей по указанной в базе модели
+    slope, intercept, r_value, p_value, std_err = hypotheses[hypothesis]()
+
+    # Сохранение результатов в базу данных
+    cursor.execute('UPDATE math_models SET '
+                   'a0=%s, '
+                   'a1=%s, '
+                   'kk=%s '
+                   'WHERE '
+                   'area_description_1 = %s '
+                   'AND area_description_2 = %s '
+                   'AND hypothesis = %s;',
+                   (slope,
+                    intercept,
+                    r_value,
+                    adid1,
+                    adid2,
+                    hypothesis
+                    ))
+    conn.commit()
+
+    print('Готово!')
 
 
+# Обработка моделей с пустыми значениями
+def primal_calc():
+    # Выбор модели для рассчета
+    cursor.execute("SELECT * FROM math_models m1 WHERE NOT (m1.kk IS NOT NULL) LIMIT 1;")
+    model = cursor.fetchall()
+    print(model)
 
+    while model != '[]':
+        print(model[0][0])
+        search_model(model[0][0], model[0][4], model[0][5])
+
+        # Выбор модели для рассчета
+        cursor.execute("SELECT * FROM math_models m1 WHERE NOT (m1.kk IS NOT NULL) LIMIT 1;")
+        model = cursor.fetchall()
+        print(model)
+
+
+# primal_calc()
+
+pop = [["Age", "Weight"]]
+
+x = np.array(foo.numline(44))
+y = np.array(foo.numline(50))
+# Получение экземпляра класса обработки данных
+xy = np.vstack((x, y))
+for_graf = xy.transpose()
+
+for i in for_graf:
+    pop.append([i[0], i[1]])
+
+popa = json.dumps(pop)
+str1 = ''.join(popa)
+print(popa)

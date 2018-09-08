@@ -1,4 +1,5 @@
 import numpy as np, scipy.stats as sci
+import scipy as sp
 import json
 
 # Статистики ряда
@@ -7,7 +8,7 @@ class Series:
     def __init__(self, line):
 
         # Список значений
-        self.line = np.array(line)
+        self.line = 1.0*np.array(line)
 
         # Частотное распределение
         self.freq = sci.itemfreq(self.line)
@@ -67,33 +68,35 @@ class Series:
 
 
     # Распределение частот и вероятности для графика в интерфейсе
-    def freq_line_view(self, limit):
+    def freq_line_view(self, limit, m_from = None, m_to = None):
         lenfreq = len(self.freq)
         pop = []
         if lenfreq >= limit:
             i = 0
             step = int(lenfreq / limit)
             while i < lenfreq:
-                if self.freq[i][0]<10:
-                    pop.append([self.freq[i][0], self.freq[i][1], 0])
-                elif self.freq[i][0]>=10:
+                if self.freq[i][0] < m_from or self.freq[i][0] < m_to:
+                    pop.append([self.freq[i][0], self.freq[i][1], None])
+                elif self.freq[i][0] >= m_from:
                     pop.append([self.freq[i][0], self.freq[i][1], self.freq[i][1]])
-                elif self.freq[i][0] > 80:
-                    pop.append([self.freq[i][0], self.freq[i][1], 0])
                 i += step
-            return pop
+            return json.dumps(pop)
         else:
             for i in self.freq:
-                if i[0]<10 or i[0] > 80:
+                if i[0] < m_from or i[0] > m_to:
                     pop.append([i[0], i[1], None])
-                elif i[0]>10:
+                elif i[0] > m_from:
                     pop.append([i[0], i[1], i[1]])
             return json.dumps(pop)
 
     # Математическое ожидание для среднего
     def mbayes(self, a):
-        mean, var, std = sci.bayes_mvs(self.line, alpha=a)
-        return mean
+        data = self.line
+        n = len(self.line)
+
+        m, se = np.mean(data), sci.sem(data)
+        h = se * sp.stats.t._ppf((1 + a) / 2., n - 1)
+        return m, m-h, m+h
 
     # Вероятность событий: для дискредной величины, для неприрывной
     def probability(self, DataQualitative=True, x1=None, x2=None):
@@ -113,11 +116,38 @@ class Series:
             Qualitative = QuaLim / QuaAll
         return Qualitative
 
+    # Математическое ожидание: для дискредной величины, для неприрывной (СЛОЖНА!!)
+    def MathExpect(self, Probability):
+        xox = sorted([i[0] for i in self.line])
+        c0 = 0
+        bottom = self.probability(self.linea, True, xox[0], xox[c0])
+        while bottom <= (1 - Probability) / 2:
+            c0 += 1
+            bottom = self.probability(self.line, True, xox[0], xox[c0])
+        if bottom >= (1 - Probability) / 2:
+            c0 -= 1
+            bottom = self.probability(self.line, True, xox[0], xox[c0])
+
+        c1 = len(xox) - 1
+        top = self.probability(self.line, True, xox[c1], xox[len(xox) - 1])
+        while top <= (1 - Probability) / 2:
+            c1 -= 1
+            top = self.probability(self.line, True, xox[c1], xox[len(xox) - 1])
+        if top >= (1 - Probability) / 2:
+            c1 += 1
+            top = self.probability(self.line, True, xox[c1], xox[len(xox) - 1])
+
+        # Нижний уровень доверительного интервала
+        low = xox[c0]
+        # Верхний уровень доверительного интервала
+        up = xox[c1]
+        return low, up
+
 
 # Парные модели
 class Pairs:
 
-    def __init__(self, x, y, user):
+    def __init__(self, x, y):
 
         # Первый ряд
         self.x = np.array(x)
@@ -125,8 +155,10 @@ class Pairs:
         # Второй ряд
         self.y = np.array(y)
 
-        # Идентификатор пользователя
-        self.user = user
+        # Смещение распределения для исключения отрицательных и нулевых значений
+        self.x_div = self.x + np.fabs(self.x.min) + 1
+        self.y_div = self.y + np.fabs(self.y.min) + 1
+
 
 
     # Линейная модель
@@ -134,19 +166,94 @@ class Pairs:
         slope, intercept, r_value, p_value, std_err = sci.linregress(self.x, self.y)
         return slope, intercept, r_value, p_value, std_err
 
-    # Гиперболическая модель
-    def expreg(self):
-        x1 = 1/self.x
-        slope, intercept, r_value, p_value, std_err = sci.linregress(x1, self.y)
-        return slope, intercept, r_value, p_value, std_err
-
     # Степенная модель
     def powerreg(self):
-        x1 = np.log10(self.x)
-        y1 = np.log10(self.y)
+
+        # Замена переменных
+        x1 = np.log10(self.x_div)
+        y1 = np.log10(self.y_div)
+
+        # Вычисление коэфициентов
         slope1, intercept, r_value, p_value, std_err = sci.linregress(x1, y1)
+
+        # Замена коэфициентов
         slope = np.power(10, slope1)
+
         return slope, intercept, r_value, p_value, std_err
+
+    # Показательная модель
+    def exponentialreg1(self):
+
+        # Замена переменных
+        x1 = self.x_div
+        y1 = np.log10(self.y_div)
+
+        # Вычисление коэфициентов
+        slope1, intercept1, r_value, p_value, std_err = sci.linregress(x1, y1)
+
+        # Замена коэфициентов
+        slope = np.power(10, slope1)
+        intercept = np.power(10, intercept1)
+
+        return slope, intercept, r_value, p_value, std_err
+
+    # Гиперболическая модель 1
+    def hyperbolicreg1(self):
+
+        # Замена переменных
+        x1 = 1/self.x_div
+
+        # Вычисление коэфициентов
+        slope, intercept, r_value, p_value, std_err = sci.linregress(x1, self.y_div)
+
+        return slope, intercept, r_value, p_value, std_err
+
+    # Гиперболическая модель 2
+    def hyperbolicreg2(self):
+
+        # Замена переменных
+        y1 = 1/self.y_div
+
+        # Вычисление коэфициентов
+        slope, intercept, r_value, p_value, std_err = sci.linregress(self.x_div, y1)
+
+        return slope, intercept, r_value, p_value, std_err
+
+    # Гиперболическая модель 3
+    def hyperbolicreg3(self):
+        # Замена переменных
+        x1 = 1/self.x_div
+        y1 = 1/self.y_div
+
+        # Вычисление коэфициентов
+        slope, intercept, r_value, p_value, std_err = sci.linregress(x1, y1)
+
+        return slope, intercept, r_value, p_value, std_err
+
+    # Логарифмическая модель
+    def logarithmic(self):
+        # Замена переменных
+        x1 = np.log10(self.x_div)
+
+        # Вычисление коэфициентов
+        slope, intercept, r_value, p_value, std_err = sci.linregress(x1, self.y_div)
+
+        return slope, intercept, r_value, p_value, std_err
+
+    # Экспоненциальная модель
+    def exponentialreg2(self):
+        # Замена переменных
+        y1 = np.exp(self.y_div)
+
+        # Вычисление коэфициентов
+        slope1, intercept, r_value, p_value, std_err = sci.linregress(self.x_div, y1)
+
+        # Замена коэфициентов
+        slope = np.exp(slope1)
+
+        return slope, intercept, r_value, p_value, std_err
+
+
 
     # Поток рассчета парных моделей
     def pair_regressions(self):

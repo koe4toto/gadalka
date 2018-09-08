@@ -74,7 +74,17 @@
           <form method="POST" action="" enctype="multipart/form-data">
                 {{ form_render(form1) }}
                 <p>
-                    <input type="submit" class="btn btn-success" value="Посмотреть">
+                    <input type="submit" class="btn btn-success" value="Рассчитать вероятность">
+                </p>
+
+            </form>
+
+          <h6>Математическое ожидание</h6>
+          <p><kbd>{{ probability }}, {{ test }}</kbd></p>
+          <form method="POST" action="" enctype="multipart/form-data">
+                {{ form_render(form2) }}
+                <p>
+                    <input type="submit" class="btn btn-success" value="Рассчитать дов. интервал">
                 </p>
 
             </form>
@@ -108,7 +118,7 @@
         <div class="col-md-3 ml-auto">
             <h4>Фильтры</h4>
             <form method="POST" action="" enctype="multipart/form-data">
-                {{ form_render(form2) }}
+                {{ form_render(form3) }}
                 <p>
                     <input type="submit" class="btn btn-outline-dark" value="Посмотреть">
                 </p>

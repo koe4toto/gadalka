@@ -39,3 +39,65 @@ def sqlvar(row):
             else:
                 rows += ", 'None'"
     return rows
+
+# Получение данных по идентификатору меры
+def numline(id):
+
+    # Подключение к базе данных
+    conn = psycopg2.connect(
+        database=constants.DATABASE_NAME,
+        user=constants.DATABASE_USER,
+        password=constants.DATABASE_PASSWORD,
+        host=constants.DATABASE_HOST,
+        port=constants.DATABASE_PORT)
+    cursor = conn.cursor()
+
+    # Получение данных о мере
+    cursor.execute("SELECT * FROM area_description WHERE id = %s", [id])
+    the_measure = cursor.fetchall()
+
+    cursor.execute("SELECT * FROM data_area WHERE id = %s", [the_measure[0][4]])
+    data_a = cursor.fetchall()
+    conn.commit()
+
+    database = data_a[0][4]
+    database_user = data_a[0][5]
+    database_password = data_a[0][6]
+    database_host = data_a[0][7]
+    database_port = data_a[0][8]
+    database_table = data_a[0][9]
+
+    # Данные
+    try:
+        conn2 = psycopg2.connect(
+            database=database,
+            user=database_user,
+            password=database_password,
+            host=database_host,
+            port=database_port)
+        cur = conn2.cursor()
+        cur.execute('SELECT column_name FROM information_schema.columns WHERE table_name=%s;', [database_table])
+        tc = cur.fetchall()
+
+        if str(tc) == '[]':
+            return 'Указаной таблицы нет в базе данных'
+        else:
+            # Получение данных
+            try:
+                cur.execute('''SELECT ''' + the_measure[0][1] + ''' FROM ''' + database_table + ''' LIMIT 100''')
+                measure_data = cur.fetchall()
+
+                # Данные в список
+                mline = [float(i[0]) for i in measure_data]
+
+                return mline
+
+            except:
+                pre = []
+                stats = []
+                return 'Нет данных'
+    except:
+        the_measure = None
+        return 'Нет подключения'
+
+
