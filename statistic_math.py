@@ -177,6 +177,7 @@ class Pairs:
         slope1, intercept, r_value, p_value, std_err = sci.linregress(x1, y1)
 
         # Замена коэфициентов
+<<<<<<< HEAD
         slope = np.power(10, slope1)
 
         return slope, intercept, r_value, p_value, std_err
@@ -193,6 +194,24 @@ class Pairs:
 
         # Замена коэфициентов
         slope = np.power(10, slope1)
+=======
+        slope = np.power(10, slope1)
+
+        return slope, intercept, r_value, p_value, std_err
+
+    # Показательная модель
+    def exponentialreg1(self):
+
+        # Замена переменных
+        x1 = self.x_div
+        y1 = np.log10(self.y_div)
+
+        # Вычисление коэфициентов
+        slope1, intercept1, r_value, p_value, std_err = sci.linregress(x1, y1)
+
+        # Замена коэфициентов
+        slope = np.power(10, slope1)
+>>>>>>> db7485fe02230466cba5dff7ab1a30d4a19d0500
         intercept = np.power(10, intercept1)
 
         return slope, intercept, r_value, p_value, std_err
@@ -206,6 +225,7 @@ class Pairs:
         # Вычисление коэфициентов
         slope, intercept, r_value, p_value, std_err = sci.linregress(x1, self.y_div)
 
+<<<<<<< HEAD
         return slope, intercept, r_value, p_value, std_err
 
     # Гиперболическая модель 2
@@ -219,6 +239,21 @@ class Pairs:
 
         return slope, intercept, r_value, p_value, std_err
 
+=======
+        return slope, intercept, r_value, p_value, std_err
+
+    # Гиперболическая модель 2
+    def hyperbolicreg2(self):
+
+        # Замена переменных
+        y1 = 1/self.y_div
+
+        # Вычисление коэфициентов
+        slope, intercept, r_value, p_value, std_err = sci.linregress(self.x_div, y1)
+
+        return slope, intercept, r_value, p_value, std_err
+
+>>>>>>> db7485fe02230466cba5dff7ab1a30d4a19d0500
     # Гиперболическая модель 3
     def hyperbolicreg3(self):
         # Замена переменных

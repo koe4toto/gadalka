@@ -106,6 +106,7 @@ def measure(id, probal):
         the_measure = None
         flash('Нет подключения', 'danger')
 
+<<<<<<< HEAD
     return render_template('measure.html',
                            id = id,
                            the_measure = the_measure,
@@ -117,6 +118,9 @@ def measure(id, probal):
                            probability = probal,
                            test = [m, down, up]
                            )
+=======
+    return render_template('measure.html', id = id, the_measure = the_measure, sdata = pre, sd = stats, form1=form1, form2=form2, probability = probability)
+>>>>>>> db7485fe02230466cba5dff7ab1a30d4a19d0500
 
 # Пары
 @mod.route("/pair_models")
