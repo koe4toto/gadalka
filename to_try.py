@@ -48,7 +48,9 @@ def search_model(hypothesis, adid1, adid2):
     cursor.execute('UPDATE math_models SET '
                    'slope=%s, '
                    'intercept=%s, '
-                   'r_value=%s '
+                   'r_value=%s, '
+                   'p_value=%s, '
+                   'std_err=%s '
                    'WHERE '
                    'area_description_1 = %s '
                    'AND area_description_2 = %s '
@@ -56,6 +58,8 @@ def search_model(hypothesis, adid1, adid2):
                    (slope,
                     intercept,
                     r_value,
+                    p_value,
+                    std_err,
                     adid1,
                     adid2,
                     hypothesis
