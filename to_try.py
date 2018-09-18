@@ -42,12 +42,13 @@ def search_model(hypothesis, adid1, adid2):
 
     # Рассчета показателей по указанной в базе модели
     slope, intercept, r_value, p_value, std_err = hypotheses[hypothesis]()
+    print(slope, intercept, r_value, p_value, std_err)
 
     # Сохранение результатов в базу данных
     cursor.execute('UPDATE math_models SET '
-                   'a0=%s, '
-                   'a1=%s, '
-                   'kk=%s '
+                   'slope=%s, '
+                   'intercept=%s, '
+                   'r_value=%s '
                    'WHERE '
                    'area_description_1 = %s '
                    'AND area_description_2 = %s '
@@ -67,33 +68,20 @@ def search_model(hypothesis, adid1, adid2):
 # Обработка моделей с пустыми значениями
 def primal_calc():
     # Выбор модели для рассчета
-    cursor.execute("SELECT * FROM math_models m1 WHERE NOT (m1.kk IS NOT NULL) LIMIT 1;")
+    cursor.execute("SELECT * FROM math_models m1 WHERE NOT (m1.r_value IS NOT NULL) LIMIT 1;")
     model = cursor.fetchall()
     print(model)
 
     while model != '[]':
-        print(model[0][0])
-        search_model(model[0][0], model[0][4], model[0][5])
+        print(model[0][1])
+        search_model(model[0][1], model[0][7], model[0][8])
 
         # Выбор модели для рассчета
-        cursor.execute("SELECT * FROM math_models m1 WHERE NOT (m1.kk IS NOT NULL) LIMIT 1;")
+        cursor.execute("SELECT * FROM math_models m1 WHERE NOT (m1.r_value IS NOT NULL) LIMIT 1;")
         model = cursor.fetchall()
         print(model)
 
 
-# primal_calc()
+primal_calc()
 
-pop = [["Age", "Weight"]]
 
-x = np.array(foo.numline(44))
-y = np.array(foo.numline(50))
-# Получение экземпляра класса обработки данных
-xy = np.vstack((x, y))
-for_graf = xy.transpose()
-
-for i in for_graf:
-    pop.append([i[0], i[1]])
-
-popa = json.dumps(pop)
-str1 = ''.join(popa)
-print(popa)

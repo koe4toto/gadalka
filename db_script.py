@@ -61,9 +61,9 @@ arrays = [level, region, [1]]
 
 # Генерирует кортэж из свех возможных уникальных комбинаций четырёх справочников выше
 cp = list(itertools.product(*arrays))
-print(cp)
+#print(cp)
 args_str = str(cp).strip('[]')
-print(args_str)
+#print(args_str)
 
 # Генератор тестовых данных
 def generator():
@@ -86,7 +86,7 @@ def generator():
     print('Готово!')
 
 # Запуск генератора
-#generator()
+generator()
 
 
 #cursor.execute('INSERT INTO statdata (statisticdata) VALUES (2);')
@@ -112,13 +112,24 @@ cursor.execute('''CREATE TABLE area_description ("id" integer PRIMARY KEY NOT NU
 cursor.execute('''CREATE TABLE hypotheses ("id" integer PRIMARY KEY NOT NULL, "name" varchar(300), "description" varchar(300));''')
 
 # Модели
-cursor.execute('''CREATE TABLE math_models ("hypothesis" integer, "a0" varchar(300), "a1" varchar(300), "kk" varchar(300), "area_description_1" integer, "area_description_2" integer);''')
+cursor.execute('''CREATE SEQUENCE auto_id_math_models;''')
+cursor.execute('''
+CREATE TABLE math_models 
+("id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_refs'), 
+"hypothesis" integer, 
+"slope" varchar(300), 
+"intercept" varchar(300), 
+"r_value" varchar(300), 
+"p_value" varchar(300), 
+"std_err" varchar(300),
+"area_description_1" integer, 
+"area_description_2" integer);
+''')
 """
 
 
-
 # Удаление табицы, если требуется
-#cursor.execute('DROP TABLE statdata')
+#cursor.execute('DROP TABLE math_models')
 
 
 #line = cursor.fetchall()

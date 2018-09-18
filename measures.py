@@ -106,7 +106,7 @@ def measure(id, probal):
         the_measure = None
         flash('Нет подключения', 'danger')
 
-<<<<<<< HEAD
+
     return render_template('measure.html',
                            id = id,
                            the_measure = the_measure,
@@ -118,20 +118,18 @@ def measure(id, probal):
                            probability = probal,
                            test = [m, down, up]
                            )
-=======
-    return render_template('measure.html', id = id, the_measure = the_measure, sdata = pre, sd = stats, form1=form1, form2=form2, probability = probability)
->>>>>>> db7485fe02230466cba5dff7ab1a30d4a19d0500
+
 
 # Пары
 @mod.route("/pair_models")
 def pair_models():
     # Список пар
     cursor.execute(
-        '''select h.name, m1.kk, a1.description, a2.description, m1.area_description_1, m1.area_description_2 from math_models m1
+        '''select h.name, m1.r_value, a1.description, a2.description, m1.area_description_1, m1.area_description_2 from math_models m1
             inner join hypotheses h on m1.hypothesis = h.id
             inner join area_description a1 on m1.area_description_1 = a1.id
             inner join area_description a2 on m1.area_description_2 = a2.id
-            where hypothesis = '1';''')
+            ;''')
     list = cursor.fetchall()
     return render_template('pair_models.html', list=list)
 
@@ -139,7 +137,7 @@ def pair_models():
 @mod.route("/pair/<string:id1>/<string:id2>")
 def pair(id1, id2):
     list = [id1, id2]
-    pop = [["Age", "Weight"]]
+    pop = [['Age', 'Weight']]
 
     x = np.array(foo.numline(id1))
     y = np.array(foo.numline(id2))
@@ -147,15 +145,13 @@ def pair(id1, id2):
     xy = np.vstack((x, y))
     for_graf = xy.transpose()
 
+    # Данные собираются в список для отображения
     for i in for_graf:
         pop.append([i[0], i[1]])
 
     popa = json.dumps(pop, ensure_ascii=False)
-    str1 = ''.join(popa)
 
-
-
-    return render_template('pair.html', list=list, for_graf=str1)
+    return render_template('pair.html', list=list, for_graf=popa)
 
 
 # Многомерная модель

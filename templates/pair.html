@@ -13,11 +13,21 @@
             <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
             <script type="text/javascript">
+
+            var encodedStr = '{{ for_graf }}';
+
+            var parser = new DOMParser;
+            var dom = parser.parseFromString(
+                '<!doctype html><body>' + encodedStr,
+                'text/html');
+            var decodedString = dom.body.textContent;
+
+            console.log(decodedString);
                 google.charts.load("current", {packages:["corechart"]});
                  google.charts.setOnLoadCallback(drawChart);
                  function drawChart() {
                    var data = google.visualization.arrayToDataTable(
-                    {{ for_graf }}
+                    JSON.parse(decodedString)
                    );
 
 
@@ -40,6 +50,5 @@
       </div>
     </div>
 <p>Модели</p>
-{{ for_graf }}
 
 {% endblock %}
