@@ -33,10 +33,6 @@
 
 
                    var options = {
-                      title: 'Age vs. Weight comparison',
-                      hAxis: {title: 'Age', minValue: 0, maxValue: 15},
-                      vAxis: {title: 'Weight', minValue: 0, maxValue: 15},
-                      legend: 'none'
                     };
 
                    var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
@@ -50,5 +46,5 @@
       </div>
     </div>
 <p>Модели</p>
-
+{{ model }}
 {% endblock %}

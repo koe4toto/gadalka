@@ -6,6 +6,7 @@ import constants
 import foo
 import json
 import numpy as np
+import statistic_math as sm
 
 # Мои модули
 from forms import *
@@ -125,7 +126,15 @@ def measure(id, probal):
 def pair_models():
     # Список пар
     cursor.execute(
-        '''select h.name, m1.r_value, a1.description, a2.description, m1.area_description_1, m1.area_description_2 from math_models m1
+        '''select 
+            h.name, 
+            m1.r_value, 
+            a1.description, 
+            a2.description, 
+            m1.area_description_1, 
+            m1.area_description_2, 
+            m1.id 
+            from math_models m1
             inner join hypotheses h on m1.hypothesis = h.id
             inner join area_description a1 on m1.area_description_1 = a1.id
             inner join area_description a2 on m1.area_description_2 = a2.id
@@ -134,24 +143,50 @@ def pair_models():
     return render_template('pair_models.html', list=list)
 
 # Пара
-@mod.route("/pair/<string:id1>/<string:id2>")
-def pair(id1, id2):
+@mod.route("/pair/<string:id1>/<string:id2>/<string:model_id>")
+def pair(id1, id2, model_id):
     list = [id1, id2]
-    pop = [['Age', 'Weight']]
+    pop = [[id1, id2, 'Модель']]
 
+    # Получение данных о модели
+    cursor.execute('''SELECT * FROM math_models WHERE id=%s;''', [model_id])
+    model = cursor.fetchall()
+
+    slope = float(model[0][2])
+    intercept = float(model[0][3])
+
+    # Получение данных для графика
     x = np.array(foo.numline(id1))
     y = np.array(foo.numline(id2))
+
     # Получение экземпляра класса обработки данных
-    xy = np.vstack((x, y))
-    for_graf = xy.transpose()
+    model_data = sm.Pairs(x, y)
+
+    # Справочник гипотез
+    hypotheses = {
+        1: model_data.linereg_line,
+        2: model_data.powerreg_line,
+        3: model_data.exponentialreg1_line,
+        4: model_data.hyperbolicreg1_line,
+        5: model_data.hyperbolicreg2_line,
+        6: model_data.hyperbolicreg3_line,
+        7: model_data.logarithmic_line,
+        8: model_data.exponentialreg2_line
+    }
+
+    # Получение данных для графика по модели
+    Y = hypotheses[model[0][1]](slope, intercept)
 
     # Данные собираются в список для отображения
+    xy = np.vstack((x, y, Y))
+    for_graf = xy.transpose()
+
     for i in for_graf:
-        pop.append([i[0], i[1]])
+        pop.append([i[0], i[1], i[2]])
 
     popa = json.dumps(pop, ensure_ascii=False)
 
-    return render_template('pair.html', list=list, for_graf=popa)
+    return render_template('pair.html', list=list, for_graf=popa, model=model)
 
 
 # Многомерная модель

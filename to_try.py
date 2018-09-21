@@ -86,6 +86,6 @@ def primal_calc():
         print(model)
 
 
-primal_calc()
+#primal_calc()
 
 

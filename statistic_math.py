@@ -1,6 +1,7 @@
 import numpy as np, scipy.stats as sci
 import scipy as sp
 import json
+import math
 
 # Статистики ряда
 class Series:
@@ -166,6 +167,13 @@ class Pairs:
         slope, intercept, r_value, p_value, std_err = sci.linregress(self.x, self.y)
         return slope, intercept, r_value, p_value, std_err
 
+    # Данные линейной модели
+    def linereg_line(self, slope, intercept):
+        Y = slope * self.x + intercept
+        return Y
+
+
+
     # Степенная модель
     def powerreg(self):
 
@@ -181,7 +189,14 @@ class Pairs:
 
         return slope, intercept, r_value, p_value, std_err
 
-    # Показательная модель
+    # Данные степенной модели
+    def powerreg_line(self, slope, intercept):
+        Y = intercept * np.power(slope, self.x)
+        return Y
+
+
+
+    # Показательная модель 1
     def exponentialreg1(self):
 
         # Замена переменных
@@ -189,28 +204,20 @@ class Pairs:
         y1 = np.log10(self.y_div)
 
         # Вычисление коэфициентов
-        slope1, intercept1, r_value, p_value, std_err = sci.linregress(x1, y1)
+        slope1, intercept, r_value, p_value, std_err = sci.linregress(x1, y1)
 
         # Замена коэфициентов
         slope = np.power(10, slope1)
 
         return slope, intercept, r_value, p_value, std_err
 
-    # Показательная модель
-    def exponentialreg1(self):
+    # Данные показательной модели 1
+    def exponentialreg1_line(self, slope, intercept):
+        Y = slope * np.power(self.x, intercept)
+        return Y
 
-        # Замена переменных
-        x1 = self.x_div
-        y1 = np.log10(self.y_div)
 
-        # Вычисление коэфициентов
-        slope1, intercept1, r_value, p_value, std_err = sci.linregress(x1, y1)
 
-        # Замена коэфициентов
-        slope = np.power(10, slope1)
-        intercept = np.power(10, intercept1)
-
-        return slope, intercept, r_value, p_value, std_err
 
     # Гиперболическая модель 1
     def hyperbolicreg1(self):
@@ -223,16 +230,13 @@ class Pairs:
 
         return slope, intercept, r_value, p_value, std_err
 
-    # Гиперболическая модель 2
-    def hyperbolicreg2(self):
+    # Данные гиперболической модели 1
+    def hyperbolicreg1_line(self, slope, intercept):
+        Y = slope / self.x + intercept
+        return Y
 
-        # Замена переменных
-        y1 = 1/self.y_div
 
-        # Вычисление коэфициентов
-        slope, intercept, r_value, p_value, std_err = sci.linregress(self.x_div, y1)
 
-        return slope, intercept, r_value, p_value, std_err
 
     # Гиперболическая модель 2
     def hyperbolicreg2(self):
@@ -244,6 +248,13 @@ class Pairs:
         slope, intercept, r_value, p_value, std_err = sci.linregress(self.x_div, y1)
 
         return slope, intercept, r_value, p_value, std_err
+
+    # Данные гиперболической модели 2
+    def hyperbolicreg2_line(self, slope, intercept):
+        Y = 1 / (slope * self.x + intercept)
+        return Y
+
+
 
     # Гиперболическая модель 3
     def hyperbolicreg3(self):
@@ -256,6 +267,14 @@ class Pairs:
 
         return slope, intercept, r_value, p_value, std_err
 
+    # Данные гиперболической модели 3
+    def hyperbolicreg3_line(self, slope, intercept):
+        Y = 1 / (slope / self.x + intercept)
+        return Y
+
+
+
+
     # Логарифмическая модель
     def logarithmic(self):
         # Замена переменных
@@ -265,6 +284,13 @@ class Pairs:
         slope, intercept, r_value, p_value, std_err = sci.linregress(x1, self.y_div)
 
         return slope, intercept, r_value, p_value, std_err
+
+    # Данные логарифмической модели
+    def logarithmic_line(self, slope, intercept):
+        Y = slope * np.log10(self.x) + intercept
+        return Y
+
+
 
     # Экспоненциальная модель
     def exponentialreg2(self):
@@ -278,6 +304,11 @@ class Pairs:
         slope = np.exp(slope1)
 
         return slope, intercept, r_value, p_value, std_err
+
+    # Данные экспоненциальной модели 2
+    def exponentialreg2_line(self, slope, intercept):
+        Y = slope * np.power(self.x * intercept, 2.718)
+        return Y
 
 
 
