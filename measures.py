@@ -138,7 +138,7 @@ def pair_models():
             inner join hypotheses h on m1.hypothesis = h.id
             inner join area_description a1 on m1.area_description_1 = a1.id
             inner join area_description a2 on m1.area_description_2 = a2.id
-            ;''')
+            order by m1.r_value DESC;''')
     list = cursor.fetchall()
     return render_template('pair_models.html', list=list)
 
@@ -186,7 +186,7 @@ def pair(id1, id2, model_id):
 
     popa = json.dumps(pop, ensure_ascii=False)
 
-    return render_template('pair.html', list=list, for_graf=popa, model=model)
+    return render_template('pair.html', list=list, for_graf=popa, model=model, x=x, y=y)
 
 
 # Многомерная модель

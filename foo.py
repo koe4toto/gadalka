@@ -84,12 +84,24 @@ def numline(id):
         else:
             # Получение данных
             try:
-                cur.execute('''SELECT ''' + the_measure[0][1] + ''' FROM ''' + database_table + ''' LIMIT 100''')
+                '''
+                cur.execute('select ' + the_measure[0][1] + '
+                from (select row_number() over (order by pupil) num, count(*) over () as count, '
+                            + the_measure[0][1] + '
+                            from ' + database_table + ' p)A
+                            where case 
+                            when count > 100 then num %(count/100) = 0 
+                            else 1 = 1 end;')
                 measure_data = cur.fetchall()
+                '''
+                cursor.execute('select ' + the_measure[0][1] +' from '+ database_table+ ' ;' )
+                measure_data = cursor.fetchall()
+
+
+
 
                 # Данные в список
                 mline = [float(i[0]) for i in measure_data]
-
                 return mline
 
             except:

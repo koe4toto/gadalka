@@ -3,6 +3,8 @@ import constants
 import statistic_math as sm
 import foo
 import numpy as np
+import random
+import xlrd
 import json
 
 # Подключение к базе данных
@@ -21,9 +23,11 @@ data = 'edu_test'
 def search_model(hypothesis, adid1, adid2):
     print('Старт!')
 
+
     # Получение списков данных
     x = foo.numline(adid1)
     y = foo.numline(adid2)
+    print(x)
 
     # Экземпляр класса обработки данных по парам
     pairs = sm.Pairs(x, y)
@@ -77,7 +81,7 @@ def primal_calc():
     print(model)
 
     while model != '[]':
-        print(model[0][1])
+        print(model[0][1], model[0][7], model[0][8])
         search_model(model[0][1], model[0][7], model[0][8])
 
         # Выбор модели для рассчета
@@ -87,5 +91,40 @@ def primal_calc():
 
 
 #primal_calc()
+
+
+def gen_line(x, slope, imtersept):
+    y = slope * x + imtersept
+    Y = [i + random.randint(-10, 15) for i in y]
+    return Y
+
+# Данные степенной модели
+def gen_powerrege(x, slope, intercept):
+    y = intercept * np.power(slope, x)
+    Y = [i + random.randint(-10, 15) for i in y]
+    return Y
+
+def gen_data():
+    x = np.array([random.random() * 100 for i in range(90)])
+    #line_1 = gen_line(x, 3.4, -11.1)
+    #line_2 = gen_line(x, -1.4, 9.5)
+
+    line_1 = np.array([random.random() * 24 for i in range(90)])
+    line_2 = np.array([random.random() * 17 for i in range(90)])
+
+    X = np.vstack((x, line_1, line_2))
+    end = X.transpose()
+
+    for i in end:
+        # Подключение к базе данных
+        cursor.execute('INSERT INTO test_data (x, line_1, line_2) VALUES (%s, %s, %s);',
+                       (i[0], i[1], i[2]))
+        conn.commit()
+    return end
+
+#print(gen_data())
+primal_calc()
+
+#print(foo.numline(70))
 
 

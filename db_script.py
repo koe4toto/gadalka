@@ -129,11 +129,13 @@ CREATE TABLE math_models
 
 
 # Удаление табицы, если требуется
-#cursor.execute('DROP TABLE math_models')
+#cursor.execute('DROP TABLE test_data')
 
+#cursor.execute('''CREATE TABLE test_data ("x" real, "line_1" real, "line_2" real);''')
 
-#line = cursor.fetchall()
-#print(line)
+#cursor.execute('select * from test_data')
+#pik = cursor.fetchall()
+#print(pik)
 
 conn.commit()
 cursor.close()
