@@ -41,7 +41,7 @@ def sqlvar(row):
     return rows
 
 # Получение данных по идентификатору меры
-def numline(id):
+def numline(id, len = None):
 
     # Подключение к базе данных
     conn = psycopg2.connect(
@@ -84,18 +84,17 @@ def numline(id):
         else:
             # Получение данных
             try:
-                '''
-                cur.execute('select ' + the_measure[0][1] + '
-                from (select row_number() over (order by pupil) num, count(*) over () as count, '
-                            + the_measure[0][1] + '
-                            from ' + database_table + ' p)A
-                            where case 
-                            when count > 100 then num %(count/100) = 0 
-                            else 1 = 1 end;')
-                measure_data = cur.fetchall()
-                '''
-                cursor.execute('select ' + the_measure[0][1] +' from '+ database_table+ ' ;' )
-                measure_data = cursor.fetchall()
+                if len != None:
+                    cur.execute('''select ''' + the_measure[0][1] +
+                                ''' from (select row_number() over (order by ''' + the_measure[0][1] +
+                                ''') num, count(*) over () as count, ''' + the_measure[0][1] +
+                                ''' from ''' + database_table + ''' p)A 
+                                where case when count > ''' + str(len) + ''' then num %(count/''' + str(len) +
+                                ''') = 0 else 1 = 1 end;''')
+                    measure_data = cur.fetchall()
+                else:
+                    cursor.execute('select ' + the_measure[0][1] +' from '+ database_table+ ' ;' )
+                    measure_data = cursor.fetchall()
 
 
 

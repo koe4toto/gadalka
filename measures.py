@@ -156,8 +156,9 @@ def pair(id1, id2, model_id):
     intercept = float(model[0][3])
 
     # Получение данных для графика
-    x = np.array(foo.numline(id1))
-    y = np.array(foo.numline(id2))
+    len = 100
+    x = np.array(foo.numline(id1, len=len))
+    y = np.array(foo.numline(id2, len=len))
 
     # Получение экземпляра класса обработки данных
     model_data = sm.Pairs(x, y)

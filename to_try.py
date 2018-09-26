@@ -25,8 +25,8 @@ def search_model(hypothesis, adid1, adid2):
 
 
     # Получение списков данных
-    x = foo.numline(adid1)
-    y = foo.numline(adid2)
+    x = foo.numline(adid1, len=None)
+    y = foo.numline(adid2, len=None)
     print(x)
 
     # Экземпляр класса обработки данных по парам
