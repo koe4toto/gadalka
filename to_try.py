@@ -25,8 +25,8 @@ def search_model(hypothesis, adid1, adid2):
 
 
     # Получение списков данных
-    x = foo.numline(adid1, len=None)
-    y = foo.numline(adid2, len=None)
+    x = foo.numline(adid1, len=100)
+    y = foo.numline(adid2, len=100)
     print(x)
 
     # Экземпляр класса обработки данных по парам
@@ -81,7 +81,6 @@ def primal_calc():
     print(model)
 
     while model != '[]':
-        print(model[0][1], model[0][7], model[0][8])
         search_model(model[0][1], model[0][7], model[0][8])
 
         # Выбор модели для рассчета
