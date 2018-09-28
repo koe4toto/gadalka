@@ -93,7 +93,7 @@ def numline(id, len = None):
                                 ''') = 0 else 1 = 1 end;''')
                     measure_data = cur.fetchall()
                 else:
-                    cursor.execute('select ' + the_measure[0][1] +' from '+ database_table+ ' ;' )
+                    cursor.execute('select ' + the_measure[0][1] +' from '+ database_table+ ' order by ' + the_measure[0][1] +' DESC;' )
                     measure_data = cursor.fetchall()
 
 

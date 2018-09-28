@@ -2,29 +2,82 @@ import psycopg2
 import random
 import itertools
 import datetime
-
-database = 'test111'
-username = 'postgres'
-password = 'gbcmrf'
-host = 'localhost'
-port = '5432'
-table = 'edu_test'
-
-# Указываем название файла базы данных
+import constants
 
 
-try:
-    conn = psycopg2.connect(database=database, user=username, password=password, host=host, port=port)
-    cursor = conn.cursor()
-    #cursor.execute('''INSERT INTO edu_test (institution) VALUES ('12324');''')
-    #cursor.execute('''SELECT * FROM edu_test;''')
-    #proba = cursor.fetchall()
-    #print(proba)
-    conn.commit()
+# Открывается подключение к базе
+class db_connection:
 
-except:
-    print('Нет подключения')
+    def __init__(self):
 
+        # Подключение
+        self.conn = psycopg2.connect(
+            database=constants.DATABASE_NAME,
+            user=constants.DATABASE_USER,
+            password=constants.DATABASE_PASSWORD,
+            host=constants.DATABASE_HOST,
+            port=constants.DATABASE_PORT
+        )
+
+# Предметные оболасти
+class data_area:
+
+    def __init__(self):
+
+        # Подключение
+        self.conn = db_connection().conn
+
+        # Курсор
+        self.cursor = self.conn.cursor()
+
+
+    # Создание таблицы
+    def create(self):
+        # Генератор идентификаторов
+        self.cursor.execute('''CREATE SEQUENCE auto_id_data_area;''')
+
+        # Создание таблицы
+        try:
+            self.cursor.execute(
+                '''CREATE TABLE data_area (
+                "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_data_area'), 
+                "name" varchar(100), 
+                "description" varchar(600), 
+                "user_id" varchar(30), 
+                "database" varchar, 
+                "database_user" varchar, 
+                "database_password" varchar, 
+                "database_host" varchar, 
+                "database_port" varchar, 
+                "database_table" varchar, 
+                "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                );''')
+            self.conn.commit()
+            return True
+        except:
+            return False
+
+    # Удаление табицы
+    def create(self):
+        try:
+            self.cursor.execute('DROP TABLE data_area')
+            return True
+        except:
+            return False
+
+    # Тестовая функция
+    def test_select(self):
+        try:
+            self.cursor.execute('SELECT * FROM data_area')
+            data = self.cursor.fetchall()
+            return data
+        except:
+            return False
+
+
+da = data_area()
+
+#print(da.test_select())
 
 # Создаем таблицу для хранения данных
 #cursor.execute('''CREATE SEQUENCE auto_id_statdata; ''')
@@ -86,7 +139,7 @@ def generator():
     print('Готово!')
 
 # Запуск генератора
-generator()
+# generator()
 
 
 #cursor.execute('INSERT INTO statdata (statisticdata) VALUES (2);')
@@ -137,9 +190,9 @@ CREATE TABLE math_models
 #pik = cursor.fetchall()
 #print(pik)
 
-conn.commit()
-cursor.close()
-conn.close()
+#conn.commit()
+#cursor.close()
+#conn.close()
 
 
 

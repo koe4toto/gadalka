@@ -187,7 +187,8 @@ def pair(id1, id2, model_id):
 
     popa = json.dumps(pop, ensure_ascii=False)
 
-    return render_template('pair.html', list=list, for_graf=popa, model=model, x=x, y=y)
+
+    return render_template('pair.html', list=list, for_graf=popa, model=model)
 
 
 # Многомерная модель

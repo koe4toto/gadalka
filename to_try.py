@@ -6,6 +6,8 @@ import numpy as np
 import random
 import xlrd
 import json
+import database as db
+
 
 # Подключение к базе данных
 conn = psycopg2.connect(
@@ -103,13 +105,47 @@ def gen_powerrege(x, slope, intercept):
     Y = [i + random.randint(-10, 15) for i in y]
     return Y
 
+# Данные показательной модели 1
+def gen_exponentialreg1(x, slope, intercept):
+    y = slope * np.power(x, intercept)
+    Y = [i + random.randint(-10, 15) for i in y]
+    return Y
+
+# Данные гиперболической модели 1
+def gen_hyperbolicreg1(x, slope, intercept):
+    y = slope / x + intercept
+    Y = [i + random.randint(-10, 15) for i in y]
+    return Y
+
+# Данные гиперболической модели 2
+def gen_hyperbolicreg2(x, slope, intercept):
+    y = 1 / (slope * x + intercept)
+    Y = [i + random.randint(-10, 15) for i in y]
+    return Y
+
+# Данные гиперболической модели 3
+def gen_hyperbolicreg3(x, slope, intercept):
+    y = 1 / (slope / x + intercept)
+    Y = [i + random.randint(-10, 15) for i in y]
+    return Y
+
+# Данные логарифмической модели
+def gen_logarithmic(x, slope, intercept):
+    y = slope * np.log10(x) + intercept
+    Y = [i + random.randint(-10, 15) for i in y]
+    return Y
+
+# Данные экспоненциальной модели 2
+def gen_exponentialreg2(x, slope, intercept):
+    y = slope * np.power(x * intercept, 2.718)
+    Y = [i + random.randint(-10, 15) for i in y]
+    return Y
+
+
 def gen_data():
     x = np.array([random.random() * 100 for i in range(90)])
-    #line_1 = gen_line(x, 3.4, -11.1)
-    #line_2 = gen_line(x, -1.4, 9.5)
-
-    line_1 = np.array([random.random() * 24 for i in range(90)])
-    line_2 = np.array([random.random() * 17 for i in range(90)])
+    line_1 = gen_hyperbolicreg1(x, 3, 2)
+    line_2 = gen_hyperbolicreg1(x, 2, 3)
 
     X = np.vstack((x, line_1, line_2))
     end = X.transpose()
@@ -122,8 +158,14 @@ def gen_data():
     return end
 
 #print(gen_data())
-primal_calc()
+#primal_calc()
+
 
 #print(foo.numline(70))
+
+db = db.db_connection()
+
+print(db.conn.cursor())
+
 
 

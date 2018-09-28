@@ -406,7 +406,7 @@ def add_measure(id, item):
         # Создание моделей для пар с другими параметрами
         # meg_id - идентификатор новой меры
         # Получить идентификаторы всех остальных измерений
-        cursor.execute("SELECT id FROM area_description WHERE type = %s AND id != %s;", ['1', meg_id])
+        cursor.execute("SELECT id FROM area_description WHERE type = %s AND id != %s AND data_area_id = %s;", ['1', meg_id, id])
         megs_a = cursor.fetchall()
         megs = [i[0] for i in megs_a]
 

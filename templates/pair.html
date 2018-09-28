@@ -22,13 +22,13 @@
                 'text/html');
             var decodedString = dom.body.textContent;
 
-            console.log(decodedString);
                 google.charts.load("current", {packages:["corechart"]});
                  google.charts.setOnLoadCallback(drawChart);
                  function drawChart() {
                    var data = google.visualization.arrayToDataTable(
                     JSON.parse(decodedString)
                    );
+
 
 
 
@@ -43,9 +43,11 @@
             <!--Div that will hold the pie chart-->
             <div id="chart_div"></div>
 
+
       </div>
     </div>
 <p>Модели</p>
 {{ model }}
 <br>
+
 {% endblock %}
