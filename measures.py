@@ -1,5 +1,4 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, session, request
-from flask.json import JSONEncoder, JSONDecoder
 import psycopg2
 from decorators import is_logged_in
 import constants
@@ -10,7 +9,6 @@ import statistic_math as sm
 
 # Мои модули
 from forms import *
-#from app import conn, cursor
 from statistic_math import Series
 
 mod = Blueprint('measures', __name__)
