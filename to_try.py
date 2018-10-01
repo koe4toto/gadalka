@@ -1,4 +1,3 @@
-import psycopg2
 import constants
 import statistic_math as sm
 import foo
@@ -8,17 +7,6 @@ import xlrd
 import json
 import database as db
 
-
-# Подключение к базе данных
-conn = psycopg2.connect(
-    database=constants.DATABASE_NAME,
-    user=constants.DATABASE_USER,
-    password=constants.DATABASE_PASSWORD,
-    host=constants.DATABASE_HOST,
-    port=constants.DATABASE_PORT)
-cursor = conn.cursor()
-
-data = 'edu_test'
 
 
 # Рассчета свойств модели и запись результатов в базу данных
@@ -163,9 +151,9 @@ def gen_data():
 
 #print(foo.numline(70))
 
-db = db.db_connection()
+db = db.data_area()
 
-print(db.conn.cursor())
+print(db.test_select())
 
 
 

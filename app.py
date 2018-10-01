@@ -1,8 +1,8 @@
 # Библиотеки
-import psycopg2
 from flask import Flask, render_template, flash, redirect, url_for, session, request
 from passlib.hash import sha256_crypt
 import constants
+import database as db
 
 # Мои модули
 from forms import *
@@ -11,14 +11,8 @@ from forms import *
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = constants.UPLOAD_FOLDER
 
-# Подключение к базе данных
-conn = psycopg2.connect(
-    database=constants.DATABASE_NAME,
-    user=constants.DATABASE_USER,
-    password=constants.DATABASE_PASSWORD,
-    host=constants.DATABASE_HOST,
-    port=constants.DATABASE_PORT)
-cursor = conn.cursor()
+# Работа с базами данных
+db_user = db.users()
 
 # Регистрация
 @app.route("/register", methods =['GET', 'POST'] )
@@ -30,9 +24,8 @@ def register():
         email = form.email.data
         password = sha256_crypt.encrypt(str(form.password.data))
 
-        # Подключение к базе данных
-        cursor.execute('INSERT INTO users (name, username, email, password) VALUES (%s, %s, %s, %s);', (name, username, email, password))
-        conn.commit()
+        # Сохранение в базу данных
+        db_user.create(name, username, email, password)
 
         flash('Вы зарегистрированны и можете войти', 'success')
 
@@ -49,8 +42,8 @@ def login():
 
 
         # Поиск пользователя в базе по значению username
-        cursor.execute("SELECT * FROM users WHERE username = %s", [username])
-        result = cursor.fetchall()
+        result = db_user.search(username)
+
         if str(result) == '[]':
             error = 'Пользователь не найден'
             return render_template('login.html', error=error)
