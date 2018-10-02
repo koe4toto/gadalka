@@ -36,11 +36,14 @@ class data_area:
 
     # Удаление табицы
     def delate_table(self):
-        cursor.execute('DROP TABLE data_area')
+        cursor.execute('''DROP SEQUENCE auto_id_data_area;''')
+        cursor.execute('''DROP TABLE data_area''')
+        conn.commit()
 
     # Удаление данных из таблицы
     def delate_data(self):
         cursor.execute('DELETE FROM data_area')
+        conn.commit()
 
     # Тестовая функция
     def test_select(self):
@@ -142,7 +145,7 @@ CREATE TABLE math_models
 
 
 # Удаление табицы, если требуется
-#cursor.execute('DROP TABLE test_data')
+#cursor.execute('DROP TABLE data_area')
 
 #cursor.execute('''CREATE TABLE test_data ("x" real, "line_1" real, "line_2" real);''')
 
