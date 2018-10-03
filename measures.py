@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, flash, redirect, url_for, session,
 import psycopg2
 from decorators import is_logged_in
 import constants
+import itertools
 import foo
 import json
 import numpy as np
@@ -118,6 +119,233 @@ def measure(id, probal):
                            test = [m, down, up]
                            )
 
+# Добавление измерения
+@mod.route("/data_area/<string:id>/add_measure_to_<string:item>", methods =['GET', 'POST'] )
+@is_logged_in
+def add_measure(id, item):
+    form = MeasureForm(request.form)
+    if request.method == 'POST' and form.validate():
+        description = form.description.data
+        kind_of_metering = form.kind_of_metering.data
+
+        # Подключение к базе данных
+        cursor.execute('INSERT INTO area_description '
+                       '(column_name, '
+                       'description, '
+                       'user_id, '
+                       'data_area_id, '
+                       'type, '
+                       'kind_of_metering) '
+                       'VALUES (%s, %s, %s, %s, %s, %s) RETURNING id;',
+                       (item,
+                        description,
+                        session['user_id'],
+                        id,
+                        constants.AREA_DESCRIPTION_TYPE['Мера'],
+                        kind_of_metering
+                        ))
+        meg_id = cursor.fetchone()
+        conn.commit()
+
+        # Создание моделей для пар с другими параметрами
+        # meg_id - идентификатор новой меры
+        # Получить идентификаторы всех остальных измерений
+        cursor.execute("SELECT id FROM area_description WHERE type = %s AND id != %s AND data_area_id = %s;", ['1', meg_id, id])
+        megs_a = cursor.fetchall()
+        megs = [i[0] for i in megs_a]
+
+        if len(megs) >= 1:
+            # Получить список идентификаторов гипотез
+            cursor.execute("SELECT id FROM hypotheses;")
+            hypotheses_id_a = cursor.fetchall()
+            hypotheses_id = [i[0] for i in hypotheses_id_a]
+
+            # Создать записи для каждой новой пары и каждой гипотезы)
+            arrays = [hypotheses_id, megs, [meg_id[0]]]
+            tup = list(itertools.product(*arrays))
+            args_str = str(tup).strip('[]')
+
+            # Записать данные
+            cursor.execute("INSERT INTO math_models (hypothesis, area_description_1, area_description_2) VALUES " + args_str)
+
+        flash('Параметр добавлен', 'success')
+        return redirect(url_for('data_areas.data_area', id=id))
+    return render_template('add_measure.html', form=form)
+
+# Редактирование измерения
+@mod.route("/data_area/<string:id>/edit_measure_<string:measure_id>", methods =['GET', 'POST'] )
+@is_logged_in
+def edit_measure(id, measure_id):
+
+    # Достаётся предметная область из базы по идентификатору
+    cursor.execute("SELECT * FROM area_description WHERE id = %s", [measure_id])
+    result = cursor.fetchone()
+
+    # Форма заполняется данными из базы
+    form = MeasureForm(request.form)
+    form.description.default = result[2]
+    form.kind_of_metering.default = result[7]
+    form.process()
+
+
+    if request.method == 'POST':
+        # Получение данных из формы
+        form.description.data = request.form['description']
+        form.kind_of_metering.data = request.form['kind_of_metering']
+
+        # Если данные из формы валидные
+        if form.validate():
+
+            # Обновление базе данных
+            cursor.execute('UPDATE area_description SET description=%s, kind_of_metering=%s WHERE id=%s;',
+                           (form.description.data, form.kind_of_metering.data, measure_id))
+            conn.commit()
+
+            flash('Данные обновлены', 'success')
+            return redirect(url_for('data_areas.data_area', id=id))
+    return render_template('edit_measure.html', form=form)
+
+# Добавление измерения времени
+@mod.route("/data_area/<string:id>/add_time_to_<string:item>", methods =['GET', 'POST'] )
+@is_logged_in
+def add_time(id, item):
+    form = MeasureForm(request.form)
+    if request.method == 'POST' and form.validate():
+        description = form.description.data
+        kind_of_metering = form.kind_of_metering.data
+
+        # Подключение к базе данных
+        cursor.execute('INSERT INTO area_description '
+                       '(column_name, '
+                       'description, '
+                       'user_id, '
+                       'data_area_id, '
+                       'type, '
+                       'kind_of_metering) '
+                       'VALUES (%s, %s, %s, %s, %s, %s);',
+                       (item,
+                        description,
+                        session['user_id'],
+                        id,
+                        constants.AREA_DESCRIPTION_TYPE['Время'],
+                        kind_of_metering
+                        ))
+        conn.commit()
+
+        flash('Измерение времени добавлено', 'success')
+        return redirect(url_for('data_areas.data_area', id=id))
+    return render_template('add_time.html', form=form)
+
+# Редактирование измерения времени
+@mod.route("/data_area/<string:id>/edit_time_<string:measure_id>", methods =['GET', 'POST'] )
+@is_logged_in
+def edit_time(id, measure_id):
+
+    # Достаётся предметная область из базы по идентификатору
+    cursor.execute("SELECT * FROM area_description WHERE id = %s", [measure_id])
+    result = cursor.fetchone()
+
+    # Форма заполняется данными из базы
+    form = MeasureForm(request.form)
+    form.description.default = result[2]
+    form.kind_of_metering.default = result[7]
+    form.process()
+
+
+    if request.method == 'POST':
+        # Получение данных из формы
+        form.description.data = request.form['description']
+        form.kind_of_metering.data = request.form['kind_of_metering']
+
+        # Если данные из формы валидные
+        if form.validate():
+
+            # Обновление базе данных
+            cursor.execute('UPDATE area_description SET description=%s, kind_of_metering=%s WHERE id=%s;',
+                           (form.description.data, form.kind_of_metering.data, measure_id))
+            conn.commit()
+
+            flash('Данные обновлены', 'success')
+            return redirect(url_for('data_areas.data_area', id=id))
+    return render_template('edit_time.html', form=form)
+
+# Добавление измерения по справочнику
+@mod.route("/data_area/<string:id>/add_mref_to_<string:item>", methods =['GET', 'POST'] )
+@is_logged_in
+def add_mref(id, item):
+
+    # Список справочников пользователя
+    cursor.execute("SELECT id, name FROM refs WHERE user_id = %s", [str(session['user_id'])])
+    result = cursor.fetchall()
+    dif = [(str(i[0]), str(i[1])) for i in result]
+
+    form = RefMeasureForm(request.form)
+    form.ref.choices = dif
+
+    if request.method == 'POST' and form.validate():
+        description = form.description.data
+        ref = form.ref.data
+
+        # Подключение к базе данных
+        cursor.execute('INSERT INTO area_description '
+                       '(column_name, '
+                       'description, '
+                       'user_id, '
+                       'data_area_id, '
+                       'type, '
+                       'ref_id) '
+                       'VALUES (%s, %s, %s, %s, %s, %s);',
+                       (item,
+                        description,
+                        session['user_id'],
+                        id,
+                        constants.AREA_DESCRIPTION_TYPE['Справочник'],
+                        ref
+                        ))
+        conn.commit()
+
+        flash('Измерение по справочнику добавлено', 'success')
+        return redirect(url_for('data_areas.data_area', id=id))
+    return render_template('add_mref.html', form=form)
+
+# Редактирование измерения по справочнику
+@mod.route("/data_area/<string:id>/edit_mref_<string:measure_id>", methods =['GET', 'POST'] )
+@is_logged_in
+def edit_mref(id, measure_id):
+
+    # Достаётся предметная область из базы по идентификатору
+    cursor.execute("SELECT * FROM area_description WHERE id = %s", [measure_id])
+    result = cursor.fetchone()
+
+    # Список справочников пользователя
+    cursor.execute("SELECT id, name FROM refs WHERE user_id = %s", [str(session['user_id'])])
+    result2 = cursor.fetchall()
+    dif = [(str(i[0]), str(i[1])) for i in result2]
+
+    # Форма заполняется данными из базы
+    form = RefMeasureForm(request.form)
+    form.description.default = result[2]
+    form.ref.choices = dif
+    form.ref.default = result[6]
+    form.process()
+
+
+    if request.method == 'POST':
+        # Получение данных из формы
+        form.description.data = request.form['description']
+        form.ref.data = request.form['ref']
+
+        # Если данные из формы валидные
+        if form.validate():
+
+            # Обновление базе данных
+            cursor.execute('UPDATE area_description SET description=%s, ref_id=%s WHERE id=%s;',
+                           (form.description.data, form.ref.data, measure_id))
+            conn.commit()
+
+            flash('Данные обновлены', 'success')
+            return redirect(url_for('data_areas.data_area', id=id))
+    return render_template('edit_mref.html', form=form)
 
 # Пары
 @mod.route("/pair_models")

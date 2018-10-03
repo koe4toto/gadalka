@@ -1,126 +1,66 @@
 {% extends 'layout.html' %}
 
 {% block body %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb">
+      <li class="breadcrumb-item"><a href="/dashboard">Сводка</a></li>
+    <li class="breadcrumb-item"><a href="/data_areas">Предметные области</a></li>
+  </ol>
+</nav>
 <div class="row">
   <div class="col-10">
-      <h1>{{ data_area[0][1] }}</h1>
+      <h1>{{ data_area[1] }}</h1>
   </div>
 <div class="col-2">
-  <form action="{{url_for('data_areas.delete_data_area', id=data_area[0][0])}}" method="post">
+  <form action="{{url_for('data_areas.delete_data_area', id=data_area[0])}}" method="post">
       <input type="hidden" name="_method" value="DELETE">
       <input type="submit" value=" Удалить" class="btn btn-link float-right text-danger">
   </form>
 </div>
 </div>
 
-<p  class="lead">{{ data_area[0][2] }}</p>
-<a class="btn btn-outline-primary" href="/edit_data_area/{{ data_area[0][0] }}"><i class="fas fa-pencil-alt"></i> Редактировать</a>
+<p  class="lead">{{ data_area[2] }}</p>
+
+<a class="btn dropdown-toggle btn-primary"   href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+Добавить параметр
+</a>
+<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+    <a class="dropdown-item" href="/data_area/{{ data_area[0] }}/add_measure_to_{{ data_area[0] }}">Мера</a>
+    <a class="dropdown-item" href="/data_area/{{ data_area[0] }}/add_time_to_{{ data_area[0] }}">Время</a>
+    <a class="dropdown-item" href="/data_area/{{ data_area[0] }}/add_mref_to_{{ data_area[0] }}">Справочник</a>
+</div>
+
+<a class="btn btn-outline-secondary" href="/edit_data_area/{{ data_area[0] }}"><i class="fas fa-pencil-alt"></i> Редактировать</a>
+
+
 
 <hr>
-
-{% if data_area[0][4] %}
-<div id="accordion">
-<div class="card">
-    <div class="card-header" id="headingOne">
-      <h5 class="mb-0">
-        <button class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-          Бза данных: {{ data_area[0][4] }}
-        </button>
-          <div class="float-right">
-            <a class="btn btn-outline-secondary" href="/upload_data_area_from_file/{{ data_area[0][0] }}"><i class="fas fa-cloud-upload-alt"></i></a>
-            <a class="btn btn-outline-secondary" href="/edit_connection/{{ data_area[0][0] }}"><i class="fas fa-database"></i></a>
-          </div>
-      </h5>
-    </div>
-
-    <div id="collapseOne" class="collapse" aria-labelledby="headingOne" data-parent="#accordion">
-      <div class="card-body">
-        <p  class="lead">Пользователь: {{ data_area[0][5] }}</p>
-        <p  class="lead">Хост: {{ data_area[0][7] }}</p>
-        <p  class="lead">Порт: {{ data_area[0][8] }}</p>
-        <p  class="lead">Таблица: {{ data_area[0][9] }}</p>
-      </div>
-    </div>
-  </div>
-</div>
-{% else %}
-    <a class="btn btn-outline-secondary" href="/upload_data_area_from_file/{{ data_area[0][0] }}"><i class="fas fa-cloud-upload-alt"></i> Загрузить данный из файла</a>
-    <a class="btn btn-outline-secondary" href="/edit_connection/{{ data_area[0][0] }}"><i class="fas fa-database"></i> Подключить базу данных</a>
-{% endif %}
-
-{% if columns %}
-<br>
-<br>
-<h2>Колонки</h2>
-<table class="table">
-      <thead>
-        <tr>
-          <th scope="col">Колонка</th>
-          <th scope="col">Описание</th>
-            <th scope="col"></th>
-        </tr>
-      </thead>
-      <tbody>
-      {% for i in columns %}
-        <tr>
-          {% if i[1] == None %}
-              <td>
-                {{ i[0] }}
-            </td>
-            <td>
-                <ul class="nav navbar-nav">
-                        <li class="nav-item dropdown">
-                          <a class="nav-link dropdown-toggle text-secondary" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                           Добавить описание
-                          </a>
-                              <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                                <a class="dropdown-item" href="/data_area/{{ data_area[0][0] }}/add_measure_to_{{ i[0] }}">Мера</a>
-                                <a class="dropdown-item" href="/data_area/{{ data_area[0][0] }}/add_time_to_{{ i[0] }}">Время</a>
-                                <a class="dropdown-item" href="/data_area/{{ data_area[0][0] }}/add_mref_to_{{ i[0] }}">Справочник</a>
-                              </div>
-                        </li>
-                    </ul>
-                </td>
-            <td></td>
-            {% else %}
-            <td>
-                {{ i[1] }}
-                </td>
-                <td>
-                    {% if i[5] == 'Мера' %}
-                        <a href="/data_area/{{ data_area[0][0] }}/edit_measure_{{ i[0] }}">{{ i[2] }}</a>
-                        <br>
-                        {{ i[5] }}. {{ i[7] }}.
-                    {% elif i[5] == 'Время' %}
-                        <a href="/data_area/{{ data_area[0][0] }}/edit_time_{{ i[0] }}">{{ i[2] }}</a>
-                        <br>
-                        {{ i[5] }}. {{ i[7] }}.
-                    {% elif i[5] == 'Справочник' %}
-                        <a href="/data_area/{{ data_area[0][0] }}/edit_mref_{{ i[0] }}">{{ i[2] }}</a>
-                        <br>
-                        {{ i[5] }}: {{ i[6] }}.
-                    {% endif %}
+<h3>
+  {% if data_area[4] == '1' %}
+    <span class="badge badge-light">Нет данных</span>
+    <a class="btn btn-outline-secondary btn-sm" href="/upload_data_area_from_file/{{ data_area[0] }}">
+        <i class="fas fa-cloud-upload-alt"></i> Загрузить данные из файла
+    </a>
+  {% elif data_area[4] == '2' %}
+    <span class="badge badge-secondary">Ожидает обработки</span>
+    {% elif data_area[4] == '3' %}
+    <span class="badge badge-warning">Обрабатывается</span>
+    {% elif data_area[4] == '4' %}
+    <span class="badge badge-danger">Данных не достаточно для анализа</span>
+    <a class="btn btn-outline-secondary btn-sm" href="/upload_data_area_from_file/{{ data_area[0] }}">
+        <i class="fas fa-cloud-upload-alt"></i> Загрузить данные из файла
+    </a>
+    {% elif data_area[4] == '5' %}
+    <span class="badge badge-warning">Поиск связей</span>
+    {% elif data_area[4] == '6' %}
+    <span class="badge badge-success">Обработано</span>
+    <a class="btn btn-outline-secondary btn-sm" href="/upload_data_area_from_file/{{ data_area[0] }}">
+        <i class="fas fa-cloud-upload-alt"></i> Загрузить данные из файла
+    </a>
+  {% endif %}
+</h3>
 
 
-
-                </td>
-            <td>
-                <ul class="nav navbar-nav float-right">
-                    <form action="{{url_for('data_areas.delete_data_measure', id=i[0], data_area_id=data_area[0][0])}}" method="post">
-                          <input type="hidden" name="_method" value="DELETE">
-                          <input type="submit" value=" Удалить" class="btn btn-link float-right text-danger">
-                    </form>
-                    </ul>
-            </td>
-            {% endif %}
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
-{% else %}
-<br>
-<h2>Нет данных</h2>
-{% endif %}
 
 
 {% endblock %}

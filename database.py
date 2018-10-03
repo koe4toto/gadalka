@@ -23,31 +23,77 @@ class data_area:
 
         # Создание таблицы
         cursor.execute(
-            '''CREATE TABLE data_area (
-            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_data_area'), 
+            '''
+            CREATE SEQUENCE auto_id_da;
+            CREATE SEQUENCE auto_id_ref_status;
+            
+            CREATE TABLE data_area (
+            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_da'), 
             "name" varchar(100), 
             "description" varchar(600), 
             "user_id" varchar(30), 
             "status" varchar,
             "database_table" varchar,
             "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );''')
+            );
+            
+            CREATE TABLE ref_status (
+            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_ref_status'), 
+            "code" varchar(100), 
+            "name" varchar(600)
+            );
+            '''
+        )
+
+        conn.commit()
+
+    # Заполнение справочника
+    def update_ref(self):
+        cursor.execute('''INSERT INTO ref_status (code, name) VALUES (%s, %s);''', ('1', 'Нет данных'))
+        cursor.execute('''INSERT INTO ref_status (code, name) VALUES (%s, %s);''', ('2', 'Ожидает обработки'))
+        cursor.execute('''INSERT INTO ref_status (code, name) VALUES (%s, %s);''', ('3', 'Обработка данных'))
+        cursor.execute('''INSERT INTO ref_status (code, name) VALUES (%s, %s);''',
+                       ('4', 'Данных недостаточно для анализа'))
+        cursor.execute('''INSERT INTO ref_status (code, name) VALUES (%s, %s);''', ('5', 'Поиск связей'))
+        cursor.execute('''INSERT INTO ref_status (code, name) VALUES (%s, %s);''', ('6', 'Обработано'))
         conn.commit()
 
     # Удаление табицы
     def delate_table(self):
-        cursor.execute('''DROP SEQUENCE auto_id_data_area;''')
-        cursor.execute('''DROP TABLE data_area''')
+        cursor.execute(
+            '''
+            DROP TABLE data_area;
+            DROP SEQUENCE auto_id_data_area;
+            '''
+        )
         conn.commit()
 
     # Удаление данных из таблицы
     def delate_data(self):
-        cursor.execute('DELETE FROM data_area')
+        cursor.execute(
+            '''
+            DELETE FROM data_area;
+            '''
+        )
         conn.commit()
 
-    # Тестовая функция
-    def test_select(self):
-        cursor.execute('SELECT * FROM data_area')
+    # Список предметных областей
+    def select_da(self, user):
+        cursor.execute(
+            '''
+            SELECT 
+                data_area.id, 
+                data_area.name, 
+                data_area.register_date, 
+                data_area.description, 
+                ref_status.name 
+            FROM 
+                data_area 
+            LEFT JOIN ref_status ON data_area.status = ref_status.code
+            WHERE data_area.user_id=%s
+            ORDER BY data_area.register_date DESC;
+            ''', user
+        )
         data = cursor.fetchall()
         return data
 
@@ -58,18 +104,25 @@ class users:
     # Создание таблицы
     def create_table(self):
         # Генератор идентификаторов
-        cursor.execute('''CREATE SEQUENCE auto_id_users;''')
+        cursor.execute(
+            '''
+            CREATE SEQUENCE auto_id_users;
+            '''
+        )
 
         # Создание таблицы
         cursor.execute(
-            '''CREATE TABLE users (
+            '''
+            CREATE TABLE users (
             "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_users'), 
             "name" varchar(100), 
             "email" varchar(100), 
             "username" varchar(30), 
             "password" varchar, 
             "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );''')
+            );
+            '''
+        )
         conn.commit()
 
     # Удаление табицы
@@ -102,7 +155,7 @@ class users:
     def search(self, username):
         cursor.execute(
             '''SELECT * FROM users WHERE username = %s''',
-            [username]
+            username
             )
         result = cursor.fetchall()
         return result
@@ -145,10 +198,7 @@ CREATE TABLE math_models
 
 
 # Удаление табицы, если требуется
-#cursor.execute('DROP TABLE data_area')
-
-#cursor.execute('''CREATE TABLE test_data ("x" real, "line_1" real, "line_2" real);''')
-
+#cursor.execute('DROP SEQUENCE auto_id_data_area')
 #cursor.execute('select * from test_data')
 #pik = cursor.fetchall()
 #print(pik)
