@@ -152,8 +152,6 @@ def gen_data():
 #print(foo.numline(70))
 
 db = db.data_area()
-user = '1'
-print(db.select_da(user))
 
 
 

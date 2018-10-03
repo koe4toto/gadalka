@@ -37,8 +37,7 @@ def data_areas():
 @mod.route("/data_area/<string:id>/")
 def data_area(id):
     # Подключение к базе данных
-    cursor.execute("SELECT * FROM data_area WHERE id = %s", id)
-    data_a = cursor.fetchall()
+    data_area = db_da.data_area(id)
 
     # Получение описания предметной области (меры и измерения)
     cursor.execute('''
@@ -58,11 +57,7 @@ def data_area(id):
         area_description.data_area_id = %s;''', id)
     descriptions = cursor.fetchall()
 
-
-    # TODO нужно вынести в базу данных справочники видов и типов измерений и избавиться от тупого кода до return
-
-
-    return render_template('data_area.html', id = id, data_area = data_a[0])
+    return render_template('data_area.html', id = id, data_area = data_area[0])
 
 # Добавление предметной области
 @mod.route("/add_data_area", methods =['GET', 'POST'] )
@@ -73,10 +68,8 @@ def add_data_area():
         title = form.title.data
         description = form.description.data
 
-        # Подключение к базе данных
-        cursor.execute('INSERT INTO data_area (name, description, user_id, status) VALUES (%s, %s, %s, %s);',
-                       (title, description, session['user_id'], '1'))
-        conn.commit()
+        # Запись в базу данных
+        db_da.create_data_area(title, description, session['user_id'], '1')
 
         flash('Предметная область добавлена', 'success')
         return redirect(url_for('data_areas.data_areas'))
@@ -88,13 +81,12 @@ def add_data_area():
 def edit_data_area(id):
 
     # Достаётся предметная область из базы по идентификатору
-    cursor.execute("SELECT * FROM data_area WHERE id = %s", [id])
-    result = cursor.fetchone()
+    data_area = db_da.data_area(id)[0]
 
     # Форма заполняется данными из базы
     form = DataAreaForm(request.form)
-    form.title.data = result[1]
-    form.description.data = result[2]
+    form.title.data = data_area[1]
+    form.description.data = data_area[2]
 
     if request.method == 'POST':
         # Получение данных из формы
@@ -136,71 +128,6 @@ def delete_data_area(id):
 
     return redirect(url_for('data_areas.data_areas'))
 
-# Удаление описания колонки
-@mod.route('/delete_data_measure/<string:id>?data_area_id=<string:data_area_id>', methods=['POST'])
-@is_logged_in
-def delete_data_measure(id, data_area_id):
-
-    # Execute
-    cursor.execute("DELETE FROM area_description WHERE id = %s", [id])
-    cursor.execute("DELETE FROM math_models WHERE area_description_2 = %s OR area_description_1 = %s", [id, id])
-    conn.commit()
-
-    flash('Предметная область удалена', 'success')
-
-    return redirect(url_for('data_areas.data_area', id=data_area_id))
-
-# Подключение к базе данных по предметной области
-@mod.route("/edit_connection/<string:id>", methods =['GET', 'POST'] )
-@is_logged_in
-def edit_data_connection(id):
-
-    # Достаётся предметная область из базы по идентификатору
-    cursor.execute("SELECT * FROM data_area WHERE id = %s", [id])
-    result = cursor.fetchall()
-
-    # Форма заполняется данными из базы
-    form = DataConForm(request.form)
-    form.database.data = result[0][4]
-    form.database_user.data = result[0][5]
-    form.database_password.data = result[0][6]
-    form.database_host.data = result[0][7]
-    form.database_port.data = result[0][8]
-    form.database_table.data = result[0][9]
-
-    if request.method == 'POST':
-
-        # Получение данных из формы
-        form.database.data = request.form['database']
-        form.database_user.data = request.form['database_user']
-        form.database_password.data = request.form['database_password']
-        form.database_host.data = request.form['database_host']
-        form.database_port.data = request.form['database_port']
-        form.database_table.data = request.form['database_table']
-
-        # Если данные из формы валидные
-        if form.validate():
-            # Обновление в базе данных
-            cursor.execute('UPDATE data_area SET '
-                           'database=%s, '
-                           'database_user=%s, '
-                           'database_password=%s, '
-                           'database_host=%s, '
-                           'database_port=%s, '
-                           'database_table=%s '
-                           'WHERE id=%s;',
-                           (form.database.data,
-                            form.database_user.data,
-                            form.database_password.data,
-                            form.database_host.data,
-                            form.database_port.data,
-                            form.database_table.data,
-                            id))
-            conn.commit()
-            flash('Данные обновлены', 'success')
-            return redirect(url_for('data_areas.data_area', id=id))
-
-    return render_template('edit_connection.html', form=form)
 
 # Загрузка данных из файла
 @mod.route("/upload_data_area_from_file/<string:id>", methods =['GET', 'POST'] )

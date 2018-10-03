@@ -347,6 +347,20 @@ def edit_mref(id, measure_id):
             return redirect(url_for('data_areas.data_area', id=id))
     return render_template('edit_mref.html', form=form)
 
+# Удаление измерения
+@mod.route('/delete_data_measure/<string:id>?data_area_id=<string:data_area_id>', methods=['POST'])
+@is_logged_in
+def delete_data_measure(id, data_area_id):
+
+    # Execute
+    cursor.execute("DELETE FROM area_description WHERE id = %s", [id])
+    cursor.execute("DELETE FROM math_models WHERE area_description_2 = %s OR area_description_1 = %s", [id, id])
+    conn.commit()
+
+    flash('Предметная область удалена', 'success')
+
+    return redirect(url_for('data_areas.data_area', id=data_area_id))
+
 # Пары
 @mod.route("/pair_models")
 def pair_models():
