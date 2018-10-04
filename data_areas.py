@@ -23,6 +23,7 @@ cursor = conn.cursor()
 
 # Работа с базами данных
 db_da = db.data_area()
+db_measure = db.measures()
 
 # Предметные области
 @mod.route("/data_areas")
@@ -32,32 +33,17 @@ def data_areas():
     list = db_da.select_da(user)
     return render_template('data_areas.html', list = list)
 
-# TODO нужно вынести в базу данных справочники видов и типов измерений и избавиться от тупого кода до return
+
 # Предметная область
 @mod.route("/data_area/<string:id>/")
 def data_area(id):
-    # Подключение к базе данных
+    # Поолучение данных о предметной области
     data_area = db_da.data_area(id)
 
-    # Получение описания предметной области (меры и измерения)
-    cursor.execute('''
-    SELECT
-        area_description.id,
-        area_description.column_name,
-        area_description.description,
-        area_description.user_id,
-        area_description.data_area_id,
-        area_description.type,
-        refs.name,
-        area_description.kind_of_metering
-    FROM
-        area_description
-    LEFT JOIN refs ON area_description.ref_id = refs.id
-    WHERE
-        area_description.data_area_id = %s;''', id)
-    descriptions = cursor.fetchall()
+    # Получение описания параметров
+    measures = db_measure.select_measures_to_data_area(id)
 
-    return render_template('data_area.html', id = id, data_area = data_area[0])
+    return render_template('data_area.html', data_area=data_area[0], measures=measures)
 
 # Добавление предметной области
 @mod.route("/add_data_area", methods =['GET', 'POST'] )
@@ -97,9 +83,7 @@ def edit_data_area(id):
         if form.validate():
 
             # Обновление базе данных
-            cursor.execute('UPDATE data_area SET name=%s, description=%s WHERE id=%s;',
-                           (form.title.data, form.description.data, id))
-            conn.commit()
+            db_da.update_data_area(form.title.data, form.description.data, data_area[4], id)
 
             flash('Данные обновлены', 'success')
             return redirect(url_for('data_areas.data_area', id=id))
@@ -115,11 +99,10 @@ def delete_data_area(id):
     data_a = cursor.fetchall()
 
     # Удаление данных из таблиц
-    cursor.execute("DELETE FROM area_description WHERE data_area_id = %s", [id])
+    cursor.execute("DELETE FROM measures WHERE data_area_id = %s", [id])
     cursor.execute("DELETE FROM data_area WHERE id = %s", [id])
     conn.commit()
 
-    print(data_a[0][0])
     if data_a[0][0] is not None:
         cursor.execute("DROP TABLE " + data_a[0][0])
         conn.commit()

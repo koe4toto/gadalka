@@ -1,7 +1,9 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-    <h1>Новый параметр</h1>
+    <a href="/data_area/{{ data_area[0] }}">{{ data_area[1] }}</a><br>
+    &#8595;
+    <h1>{{ title }}</h1>
     {% from "includes/_formtamplate.html" import form_render %}
     <div class="row">
         <div class="col-6">

@@ -28,13 +28,14 @@ class DataConForm(Form):
 
 # Форма создания меры
 class MeasureForm(Form):
-    description = StringField('Комментарий', [validators.required(message='Обязательное поле')])
-    kind_of_metering = RadioField('Величина', choices=constants.KIND_OF_METERING)
+    column_name = StringField('Название колонки в таблице', [validators.required(message='Обязательное поле')])
+    description = StringField('Название парамтера', [validators.required(message='Обязательное поле')])
 
 # Форма создания измерения-справочника
 class RefMeasureForm(Form):
-    description = StringField('Комментарий', [validators.required(message='Обязательное поле')])
-    ref = SelectField('Величина')
+    column_name = StringField('Название колонки в таблице', [validators.required(message='Обязательное поле')])
+    description = StringField('Название парамтера', [validators.required(message='Обязательное поле')])
+    ref = SelectField('Справочник')
 
 # Форма добавления справочника
 class RefForm(Form):

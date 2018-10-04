@@ -1,7 +1,7 @@
 import psycopg2
 import constants
 
-# Подключение
+# Подключение к транзакционной базе
 conn = psycopg2.connect(
     database=constants.DATABASE_NAME,
     user=constants.DATABASE_USER,
@@ -10,8 +10,20 @@ conn = psycopg2.connect(
     port=constants.DATABASE_PORT
 )
 
-# Курсор
+# Подключение к хранилищу данных
+data_conn = psycopg2.connect(
+    database=constants.USERS_DATABASE_NAME,
+    user=constants.DATABASE_USER,
+    password=constants.DATABASE_PASSWORD,
+    host=constants.DATABASE_HOST,
+    port=constants.DATABASE_PORT
+)
+
+# Курсор для транзакционной базы
 cursor = conn.cursor()
+
+# Курсор для базы с данными
+data_cursor = conn.cursor()
 
 # Предметные оболасти
 class data_area:
@@ -109,6 +121,37 @@ class data_area:
             ))
         conn.commit()
 
+    # Редактирование предметной области
+    def update_data_area(self, name, username, status, id):
+        cursor.execute(
+            '''
+            UPDATE data_area SET
+                name=%s, 
+                description=%s, 
+                status=%s
+            WHERE id=%s;
+            ''',
+            (
+                name,
+                username,
+                status,
+                id
+            ))
+        conn.commit()
+
+    # Удаление предметной области
+    def delate_data_area(self, id):
+        cursor.execute(
+            '''
+            DELETE 
+            FROM 
+                data_area 
+            WHERE id=%s;
+            ''', id
+        )
+        conn.commit()
+
+
 # Параметры
 class measures:
 
@@ -116,10 +159,10 @@ class measures:
 
         # Типы параметров
         self.types = {
-            1: 'Количественные',
-            2: 'Качественные',
-            3: 'По справочнику',
-            4: 'Времмя',
+            1: 'Количественные данные',
+            2: 'Качественные данные',
+            3: 'Данные по справочнику',
+            4: 'Время',
             5: 'Дата',
             6: 'Время и дата'
         }
@@ -181,8 +224,30 @@ class measures:
             ORDER BY data_area.register_date DESC;
             ''', user
         )
-        data = cursor.fetchall()
-        return data
+        result = cursor.fetchall()
+        return result
+
+
+    # Список измерений
+    def select_measures_to_data_area(self, data_area_id):
+        cursor.execute(
+            '''
+            SELECT 
+                measures.id, 
+                measures.column_name,
+                measures.description, 
+                ref_measures_type.name, 
+                measures.status
+            FROM 
+                measures 
+            LEFT JOIN ref_measures_type ON measures.type = ref_measures_type.id
+            LEFT JOIN ref_measures_status ON measures.status = ref_measures_status.id
+            WHERE measures.data_area_id=%s
+            ORDER BY measures.type DESC;
+            ''', data_area_id
+        )
+        result = cursor.fetchall()
+        return result
 
 
 # Пользователи
@@ -240,12 +305,12 @@ class users:
 
 
 # Заполнение справочника
-def update_ref(ref):
+def update_ref(ref, name):
     for i in ref:
         cursor.execute(
             '''
             INSERT 
-            INTO ref_status (
+            INTO '''+ name +''' (
                 code, 
                 name
                 ) 
@@ -279,16 +344,6 @@ def delate_data(name):
 # Справочники
 cursor.execute('''CREATE SEQUENCE auto_id_refs;''')
 cursor.execute('''CREATE TABLE refs ("id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_refs'), "name" varchar(100), "description" varchar(600), "user_id" varchar(30), "data" varchar, "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP);''')
-
-# Описание содержание предметной области
-cursor.execute('''CREATE SEQUENCE auto_id_area_description;''')
-cursor.execute('''CREATE TABLE area_description ("id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_area_description'), 
-"column_name" varchar(300), 
-"description" varchar(300), 
-"data_area_id" varchar(30), 
-"type" int, 
-"status" int, 
-"ref_id" int);''')
 
 # Справочник гипотез моделей (заполняется разработчиком)
 cursor.execute('''CREATE TABLE hypotheses ("id" integer PRIMARY KEY NOT NULL, "name" varchar(300), "description" varchar(300));''')

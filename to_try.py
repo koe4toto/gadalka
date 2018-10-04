@@ -151,7 +151,32 @@ def gen_data():
 
 #print(foo.numline(70))
 
-db = db.data_area()
+
+# Создание моделей для пар с другими параметрами
+# meg_id - идентификатор новой меры
+# Получить идентификаторы всех остальных измерений
+'''
+cursor.execute("SELECT id FROM measures WHERE type = %s AND id != %s AND data_area_id = %s;", ['1', meg_id, id])
+megs_a = cursor.fetchall()
+megs = [i[0] for i in megs_a]
+
+if len(megs) >= 1:
+    # Получить список идентификаторов гипотез
+    cursor.execute("SELECT id FROM hypotheses;")
+    hypotheses_id_a = cursor.fetchall()
+    hypotheses_id = [i[0] for i in hypotheses_id_a]
+
+    # Создать записи для каждой новой пары и каждой гипотезы)
+    arrays = [hypotheses_id, megs, [meg_id[0]]]
+    tup = list(itertools.product(*arrays))
+    args_str = str(tup).strip('[]')
+
+    # Записать данные
+    cursor.execute("INSERT INTO math_models (hypothesis, area_description_1, area_description_2) VALUES " + args_str)
+'''
+
+
+measure = db.measures()
 
 
 
