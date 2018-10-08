@@ -40,6 +40,7 @@ def ref(id):
     return render_template('ref.html', id = id, ref = the_ref, columns=columns)
 
 # Добавление справочника
+# TODO Справоничк нужно сохранять в специальной базе
 @mod.route("/add_ref", methods =['GET', 'POST'] )
 @is_logged_in
 def add_ref():
@@ -57,6 +58,7 @@ def add_ref():
 
         file = request.files['file']
 
+
         if file and allowed_file(file.filename):
             # Генерируется имя из идентификатора пользователя и врамени загрузки файла
             # Текущее время в сточку только цифрами
@@ -73,6 +75,7 @@ def add_ref():
             cursor.execute('INSERT INTO refs (name, description, user_id, data) VALUES (%s, %s, %s, %s);',
                            (name, description, session['user_id'], table_name))
             # Создаёется таблица для хранения данных
+            # TODO Справоничк нужно сохранять в специальной базе
             cursor.execute('''CREATE TABLE '''+ table_name +''' ("code" varchar, "value" varchar, "parent_value" varchar);''')
             conn.commit()
 
@@ -104,6 +107,7 @@ def add_ref():
     return render_template('add_ref.html', form=form)
 
 # Удаление справочника
+# TODO Удалять справочник нужно из специальной базы данных
 @mod.route('/delete_ref/<string:id>', methods=['POST'])
 @is_logged_in
 def delete_ref(id):

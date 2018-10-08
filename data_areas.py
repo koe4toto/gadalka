@@ -122,7 +122,9 @@ def upload_data_area_from_file(id):
             return redirect(request.url)
 
         file = request.files['file']
-        type_of = request.files['type']
+        #type_of = request.files['type']
+        
+        type_of = '1'
 
         if file and allowed_file(file.filename):
             # Генерируется имя из идентификатора пользователя и врамени загрузки файла
@@ -148,7 +150,8 @@ def upload_data_area_from_file(id):
                     id
                 ))
             conn.commit()
-            flash('ДАнные добавлены и ожидают обраюотки', 'success')
+            flash('Данные добавлены и ожидают обработки', 'success')
+            return redirect(url_for('data_areas.data_area', id=id))
 
         else:
             flash('Неверный формат файла. Справочник должен быть в формате .xlsx', 'danger')

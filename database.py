@@ -98,7 +98,7 @@ class data_area:
                 data, 
                 type,
                 user_id
-            ) VALUES (%s, %s, %s);
+            ) VALUES (%s, %s, %s, %s);
             ''',
             (
                 data_area_id,
