@@ -12,18 +12,13 @@ from forms import *
 
 mod = Blueprint('data_areas', __name__)
 
-# Подключение к базе данных
-conn = psycopg2.connect(
-    database=constants.DATABASE_NAME,
-    user=constants.DATABASE_USER,
-    password=constants.DATABASE_PASSWORD,
-    host=constants.DATABASE_HOST,
-    port=constants.DATABASE_PORT)
-cursor = conn.cursor()
-
 # Работа с базами данных
+conn = db.conn
+cursor = db.cursor
+
 db_da = db.data_area()
 db_measure = db.measures()
+
 
 # Предметные области
 @mod.route("/data_areas")
@@ -110,7 +105,6 @@ def delete_data_area(id):
     flash('Предметная область удалена', 'success')
 
     return redirect(url_for('data_areas.data_areas'))
-
 
 # Загрузка данных из файла
 @mod.route("/upload_data_area_from_file/<string:id>", methods =['GET', 'POST'] )
@@ -201,8 +195,6 @@ def upload_data_area_from_file(id):
                         elif rownum >= 1:
                             row = sheet.row_values(rownum)
                             va = sqlvar(row)
-                            print(ta)
-                            print(va)
 
                             cursor.execute(
                                 '''INSERT INTO ''' + table_name + ''' ('''+

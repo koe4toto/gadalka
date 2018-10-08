@@ -28,8 +28,7 @@ cursor = db.cursor
 def measures():
     # Список справочников
     cursor.execute(
-        '''SELECT * FROM measures WHERE type=%s ORDER BY id DESC''',
-        constants.AREA_DESCRIPTION_TYPE['Мера'])
+        '''SELECT * FROM measures WHERE status='6' ORDER BY id DESC''')
     measures_list = cursor.fetchall()
     return render_template('measures.html', list = measures_list)
 

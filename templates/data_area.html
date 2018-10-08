@@ -1,13 +1,14 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-<a href="/data_areas">Предметные области</a><br>
+<a class="text-secondary" href="/data_areas">Предметные области</a><br>
 &#8595;
 
 <div class="row">
   <div class="col-10">
       <h1>{{ data_area[1] }}</h1>
   </div>
+
 <div class="col-2">
   <form action="{{url_for('data_areas.delete_data_area', id=data_area[0])}}" method="post">
       <input type="hidden" name="_method" value="DELETE">
@@ -17,6 +18,26 @@
 </div>
 
 <p  class="lead">{{ data_area[2] }}</p>
+
+<a class="btn btn-outline-secondary " href="/edit_data_area/{{ data_area[0] }}">
+    <i class="fas fa-pencil-alt"></i> Редактировать
+</a>
+
+<hr>
+
+<h2>
+  {% if data_area[4] == '2' %}
+    <span class="badge badge-secondary">Ожидает обработки</span>
+    {% elif data_area[4] == '3' %}
+    <span class="badge badge-warning">Обрабатывается</span>
+    {% elif data_area[4] == '4' %}
+    <span class="badge badge-danger">Данных не достаточно для анализа</span>
+    {% elif data_area[4] == '5' %}
+    <span class="badge badge-warning">Поиск связей</span>
+    {% elif data_area[4] == '6' %}
+    <span class="badge badge-success">Обработано</span>
+  {% endif %}
+</h2>
 
 <a class="btn dropdown-toggle btn-secondary"   href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 Добавить параметр
@@ -30,35 +51,16 @@
     <a class="dropdown-item" href="/data_area/{{ data_area[0] }}/add_measure_type_6" title="Данные в формате день.месяц.год часы:мунуты:секунды">Время и дата</a>
 </div>
 
-<a class="btn btn-outline-secondary" href="/edit_data_area/{{ data_area[0] }}"><i class="fas fa-pencil-alt"></i> Редактировать</a>
-
-
-
-<hr>
-<h3>
-  {% if data_area[4] == '1' %}
-    <span class="badge badge-light">Нет данных</span>
-    <a class="btn btn-outline-secondary btn-sm" href="/upload_data_area_from_file/{{ data_area[0] }}">
+{% if measures == []%}
+<br><br>
+<p>Сперва нужно указать что нужно анализировать во входящих данных</p>
+{% else %}
+<a class="btn btn-outline-secondary" href="/upload_data_area_from_file/{{ data_area[0] }}">
         <i class="fas fa-cloud-upload-alt"></i> Загрузить данные из файла
     </a>
-  {% elif data_area[4] == '2' %}
-    <span class="badge badge-secondary">Ожидает обработки</span>
-    {% elif data_area[4] == '3' %}
-    <span class="badge badge-warning">Обрабатывается</span>
-    {% elif data_area[4] == '4' %}
-    <span class="badge badge-danger">Данных не достаточно для анализа</span>
-    <a class="btn btn-outline-secondary btn-sm" href="/upload_data_area_from_file/{{ data_area[0] }}">
-        <i class="fas fa-cloud-upload-alt"></i> Загрузить данные из файла
-    </a>
-    {% elif data_area[4] == '5' %}
-    <span class="badge badge-warning">Поиск связей</span>
-    {% elif data_area[4] == '6' %}
-    <span class="badge badge-success">Обработано</span>
-    <a class="btn btn-outline-secondary btn-sm" href="/upload_data_area_from_file/{{ data_area[0] }}">
-        <i class="fas fa-cloud-upload-alt"></i> Загрузить данные из файла
-    </a>
-  {% endif %}
-</h3>
+{% endif %}
+<br>
+<br>
 
 <table class="table">
   <tbody>

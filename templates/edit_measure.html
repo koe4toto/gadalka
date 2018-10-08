@@ -1,7 +1,7 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-    <a href="/data_area/{{ data_area[0] }}">{{ data_area[1] }}</a><br>
+    <a class="text-secondary" href="/data_area/{{ data_area[0] }}">{{ data_area[1] }}</a><br>
     &#8595;
     <h1>Редактирование параметра</h1>
     {% from "includes/_formtamplate.html" import form_render %}

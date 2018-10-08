@@ -9,18 +9,9 @@ import constants
 # Мои модули
 from foo import allowed_file, looking, sqllist, sqlvar
 from forms import *
-#from app import conn, cursor
+from database import conn, cursor
 
 mod = Blueprint('refs', __name__)
-
-# Подключение к базе данных
-conn = psycopg2.connect(
-    database=constants.DATABASE_NAME,
-    user=constants.DATABASE_USER,
-    password=constants.DATABASE_PASSWORD,
-    host=constants.DATABASE_HOST,
-    port=constants.DATABASE_PORT)
-cursor = conn.cursor()
 
 # Справочники
 @mod.route("/refs")
