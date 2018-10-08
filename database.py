@@ -23,7 +23,7 @@ data_conn = psycopg2.connect(
 cursor = conn.cursor()
 
 # Курсор для базы с данными
-data_cursor = conn.cursor()
+data_cursor = data_conn.cursor()
 
 # Предметные оболасти
 class data_area:
@@ -67,6 +67,55 @@ class data_area:
         )
 
         conn.commit()
+
+    # Создание очереди
+    def create_queue(self):
+        # Создание таблицы
+        data_cursor.execute(
+            '''
+            CREATE SEQUENCE auto_id_data_queue;
+
+            CREATE TABLE data_queue (
+                "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_data_queue'), 
+                "data_area_id" varchar(100), 
+                "data" varchar(600), 
+                "type" varchar(30),
+                "user_id" varchar(30),
+                "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            '''
+        )
+
+        data_conn.commit()
+
+
+    # Создание задачи
+    def create_task(self, data_area_id, data, type, user_id):
+        data_cursor.execute(
+            '''
+            INSERT INTO data_queue (
+                data_area_id, 
+                data, 
+                type,
+                user_id
+            ) VALUES (%s, %s, %s);
+            ''',
+            (
+                data_area_id,
+                data,
+                type,
+                user_id
+            ))
+        data_conn.commit()
+
+    # Список задач
+    def tasks(self):
+        data_cursor.execute(
+            '''
+            SELECT * FROM data_queue;
+            ''')
+        result = cursor.fetchall()
+        return result
 
     # Список предметных областей
     def select_da(self, user):
