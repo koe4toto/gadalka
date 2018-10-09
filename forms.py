@@ -38,6 +38,16 @@ class RefMeasureForm(Form):
     ref = SelectField('Справочник')
 
 # Форма добавления справочника
+class DataFile(Form):
+    file = FileField(u'Таблица с данными')
+    type_of = RadioField(
+        'Тип обработки',
+        [validators.required(message='Обязательное поле')],
+        choices=[('1', 'Замена данных'), ('2', 'Добавление новых')],
+        default = '1'
+    )
+
+# Форма загрузки данных из файла
 class RefForm(Form):
     name = StringField('Название', [validators.required(message='Обязательное поле')])
     description = TextAreaField('Комментарий')

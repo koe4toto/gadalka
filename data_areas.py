@@ -114,7 +114,9 @@ def upload_data_area_from_file(id):
     # Достаётся предметная область из базы по идентификатору
     data_area = db_da.data_area(id)[0]
 
-    if request.method == 'POST':
+    form = DataFile(request.form)
+
+    if request.method == 'POST' and form.validate():
 
         # Проверка наличия файла
         if 'file' not in request.files:
@@ -122,14 +124,12 @@ def upload_data_area_from_file(id):
             return redirect(request.url)
 
         file = request.files['file']
-        #type_of = request.files['type']
-        
-        type_of = '1'
+        type_of = form.type_of.data
 
         if file and allowed_file(file.filename):
             # Генерируется имя из идентификатора пользователя и врамени загрузки файла
             # Текущее время в сточку только цифрами
-            filename = str(session['user_id']) + file.filename + '.xlsx'
+            filename = str(session['user_id']) + '_' + id + '_' + file.filename
 
             # Загружается файл
             file.save(os.path.join(constants.UPLOAD_FOLDER, filename))
