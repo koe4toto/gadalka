@@ -1,25 +1,40 @@
 import threading
+import multiprocessing
+from database import data_conn, data_cursor
 
-count = 0
 t = None
 
-def check (i):
-    global t, count
-    if i < 5:
-        t = threading.Timer(2.0, task)
+def check ():
+    global t
+    data_cursor.execute('''SELECT * FROM data_queue LIMIT 1;''')
+    result = data_cursor.fetchall()
+    if len(result) < 1:
+        print(result)
+        t = threading.Timer(2.0, check)
         t.start()
     else:
-        count = 0
-        print('Заново!')
-        check(count)
+        id = str(result[0][0])
+        task(id)
 
 
-def task():
-    global t, count
-    count += 1
-    text = 'Привет, букет!!!'
-    print(text)
-    t.cancel()
-    check(count)
+def task(result):
+    global t
+    print('Вот оно: ', result)
+    data_cursor.execute(
+        '''
+        DELETE 
+        FROM 
+            data_queue 
+        WHERE id=%s;
+        ''', [result]
+    )
+    data_conn.commit()
 
-check(count)
+    if t == None:
+        check()
+    else:
+        t.cancel()
+        check()
+
+
+check()

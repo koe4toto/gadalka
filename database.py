@@ -117,6 +117,7 @@ class data_area:
         result = cursor.fetchall()
         return result
 
+
     # Список предметных областей
     def select_da(self, user):
         cursor.execute(
