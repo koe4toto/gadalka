@@ -6,7 +6,7 @@ import random
 import xlrd
 import json
 import database as db
-
+import datetime
 
 
 # Рассчета свойств модели и запись результатов в базу данных
@@ -286,8 +286,39 @@ def upload_data_area_from_file(id):
 '''
 
 
-da = db.data_area()
+def validate_date(date_text):
+    try:
+        datetime.datetime.strptime(date_text, '%Y-%m-%d')
+        print('Всё хорошо')
+    except ValueError:
+        print('Формат нe подходит')
 
+def validate_time(time_text):
+    try:
+        datetime.datetime.strptime(time_text, '%H:%M:%S')
+        print('Всё хорошо')
+    except ValueError:
+        print('Формат нe подходит')
+
+def validate_datetime(datetime_text):
+    try:
+        datetime.datetime.strptime(datetime_text, '%Y-%m-%d %H:%M:%S')
+        print('Всё хорошо')
+    except ValueError:
+        print('Формат нe подходит')
+
+def is_number(s):
+    try:
+        float(s)
+        return True
+    except ValueError:
+        return False
+
+
+validate_date('2003-12-03')
+validate_time('01:12:11')
+validate_datetime('1999-01-08 04:05:06')
+print(is_number('12'))
 
 
 
