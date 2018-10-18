@@ -11,8 +11,17 @@ from forms import *
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = constants.UPLOAD_FOLDER
 
+# Ограничение на загрузку файлов в 100 мегабайт
+app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024
+
 # Работа с базами данных
 db_user = db.users()
+
+@app.errorhandler(404)
+def page_not_found(error):
+    return 'This page does not exist', 404
+
+
 
 # Регистрация
 @app.route("/register", methods =['GET', 'POST'] )

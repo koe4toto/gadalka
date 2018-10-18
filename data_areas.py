@@ -106,11 +106,21 @@ def delete_data_area(id):
 
     return redirect(url_for('data_areas.data_areas'))
 
+id_to_da = ''
+
+@mod.errorhandler(413)
+def errror_413(error):
+    global id_to_da
+    flash('Загруаемый файл был слишком большой', 'danger')
+    return redirect(url_for('data_areas.upload_data_area_from_file', id = id_to_da))
+
 # Загрузка данных из файла
 @mod.route("/upload_data_area_from_file/<string:id>", methods =['GET', 'POST'] )
 @is_logged_in
 def upload_data_area_from_file(id):
+    global id_to_da
 
+    id_to_da = id
     # Достаётся предметная область из базы по идентификатору
     data_area = db_da.data_area(id)[0]
 
@@ -152,6 +162,7 @@ def upload_data_area_from_file(id):
             conn.commit()
             flash('Данные добавлены и ожидают обработки', 'success')
             return redirect(url_for('data_areas.data_area', id=id))
+
 
         else:
             flash('Неверный формат файла. Справочник должен быть в формате .xlsx', 'danger')

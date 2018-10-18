@@ -188,7 +188,7 @@ def upload_data_area_from_file(id):
             flash('Вы не указали файл для загрузки', 'danger')
             return redirect(request.url)
 
-        file = request.files['file']
+            file = request.files['file']
 
         if file and allowed_file(file.filename):
             # Генерируется имя из идентификатора пользователя и врамени загрузки файла
@@ -314,11 +314,18 @@ def is_number(s):
     except ValueError:
         return False
 
+def not_empty(s):
+    if s == None:
+        return False
+    elif s == '':
+        return False
+    else:
+        return True
 
-validate_date('2003-12-03')
-validate_time('01:12:11')
-validate_datetime('1999-01-08 04:05:06')
-print(is_number('12'))
+
+
+
+print(not_empty('sd'))
 
 
 
