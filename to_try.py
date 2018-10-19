@@ -322,10 +322,50 @@ def not_empty(s):
     else:
         return True
 
+line = (15, 2, '1_2_test0.xlsx', 1, 1, '2018-10-18 16:29:44.278127')
+
+def line_check(line):
+    print('Данные на вход из очереди: ', line)
+    data_area_id = line[0]
+    filename = line[2]
+
+    # Открывается сохраненный файл
+    rb = xlrd.open_workbook(constants.UPLOAD_FOLDER + filename)
+    sheet = rb.sheet_by_index(0)
+
+    try:
+        # Запсиь строчек справочника в базу данных
+        in_table = range(sheet.nrows)
+        row = sheet.row_values(in_table[0])
+        print(row)
+
+        # Формирование названия таблицы хранения данных
+        table_name = 'data_' + '1_' + str(data_area_id)
+
+
+        # Формирование списка колонок для создания новой таблицы
+        rows = str('"' + str(row[0]) + '" ' + 'varchar')
+        for i in row:
+            if row.index(i) > 0:
+                rows += ', "' + str(i) + '" ' + 'varchar'
+
+
+    except:
+        print('Что-то пошло не так. 8(')
+
+    # Загрузка данных из файла
+    try:
+        for rownum in in_table:
+            if rownum == 0:
+                ta = foo.sqllist(sheet.row_values(rownum))
+            elif rownum >= 1:
+                row = sheet.row_values(rownum)
+                va = foo.sqlvar(row)
+
+    except:
+        print('Что-то пошло не так. 8(')
 
 
 
-print(not_empty('sd'))
 
-
-
+line_check(line)
