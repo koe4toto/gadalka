@@ -290,22 +290,28 @@ def validate_date(date_text):
     try:
         datetime.datetime.strptime(date_text, '%Y-%m-%d')
         print('Всё хорошо')
+        return True
     except ValueError:
         print('Формат нe подходит')
+        return False
 
 def validate_time(time_text):
     try:
         datetime.datetime.strptime(time_text, '%H:%M:%S')
         print('Всё хорошо')
+        return True
     except ValueError:
         print('Формат нe подходит')
+        return False
 
 def validate_datetime(datetime_text):
     try:
         datetime.datetime.strptime(datetime_text, '%Y-%m-%d %H:%M:%S')
         print('Всё хорошо')
+        return True
     except ValueError:
         print('Формат нe подходит')
+        return False
 
 def is_number(s):
     try:
@@ -321,6 +327,10 @@ def not_empty(s):
         return False
     else:
         return True
+
+
+
+
 
 line = (15, 2, '1_2_test0.xlsx', 1, 1, '2018-10-18 16:29:44.278127')
 
@@ -348,6 +358,7 @@ def line_check(line):
         for i in row:
             if row.index(i) > 0:
                 rows += ', "' + str(i) + '" ' + 'varchar'
+        print(rows)
 
 
     except:
@@ -366,6 +377,29 @@ def line_check(line):
         print('Что-то пошло не так. 8(')
 
 
+def head_search():
+    # Опсиание ожидаемого набора данных из базы
+    in_base = [(1, 'line2'), (2, 'ref1')]
 
+    # Набор колонок из файла
+    in_file = ['ref1', 'line1', 'line2', 'line3']
 
-line_check(line)
+    # Строка с данными из файла
+    in_file_line = [11, 22, 33, 44]
+
+    # Порядковые номера столбцов в файле, которые ожидаются для обработки в базе
+    in_file_indexes = []
+
+    # Проверка полного набора колонок в файле
+    for i in in_base:
+        if i[1] in in_file:
+            in_file_indexes.append(in_file.index(i[1]))
+        else:
+            return False, i[1]
+
+    # Данные из строки, которые можно записать в базу данных
+    result = [i for i in in_file_line if in_file_line.index(i) in in_file_indexes]
+
+    return result
+
+print(head_search())
