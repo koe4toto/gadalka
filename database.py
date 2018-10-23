@@ -188,11 +188,12 @@ class data_area:
         cursor.execute(
             '''
             UPDATE data_area SET
-                database_table="'''+olap_name+'''"
+                database_table=%s
             WHERE id=%s;
             ''',
             (
-                data_base_id
+                olap_name,
+                data_base_id[0][0]
             ))
         conn.commit()
 
