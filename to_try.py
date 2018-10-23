@@ -8,6 +8,11 @@ import json
 import database as db
 import datetime
 
+cursor = db.cursor
+conn = db.conn
+data_cursor = db.data_cursor
+data_conn = db.data_conn
+
 
 # Рассчета свойств модели и запись результатов в базу данных
 def search_model(hypothesis, adid1, adid2):
@@ -286,120 +291,144 @@ def upload_data_area_from_file(id):
 '''
 
 
-def validate_date(date_text):
+def validate_date(date):
     try:
-        datetime.datetime.strptime(date_text, '%Y-%m-%d')
-        print('Всё хорошо')
-        return True
-    except ValueError:
-        print('Формат нe подходит')
-        return False
-
-def validate_time(time_text):
-    try:
-        datetime.datetime.strptime(time_text, '%H:%M:%S')
-        print('Всё хорошо')
-        return True
-    except ValueError:
-        print('Формат нe подходит')
-        return False
-
-def validate_datetime(datetime_text):
-    try:
-        datetime.datetime.strptime(datetime_text, '%Y-%m-%d %H:%M:%S')
-        print('Всё хорошо')
-        return True
-    except ValueError:
-        print('Формат нe подходит')
-        return False
-
-def is_number(s):
-    try:
-        float(s)
+        datetime.datetime.strptime(date, '%Y-%m-%d')
         return True
     except ValueError:
         return False
 
-def not_empty(s):
-    if s == None:
+def validate_time(time):
+    try:
+        datetime.datetime.strptime(time, '%H:%M:%S')
+        return True
+    except ValueError:
         return False
-    elif s == '':
+
+def validate_datetime(datetime):
+    try:
+        datetime.datetime.strptime(datetime, '%Y-%m-%d %H:%M:%S')
+        return True
+    except ValueError:
+        return False
+
+def is_number(number):
+    try:
+        float(number)
+        return True
+    except ValueError:
+        return False
+
+def not_empty(text):
+    if text == None or text == '':
         return False
     else:
         return True
 
 
+class data_loading():
+
+    def __init__(self):
+        self.line = None
+        self.id = line[0]
+        self.data_area_id = line[1]
+        self.filename = line[2]
+        self.type = line[3]
+        self.user = line[4]
+
+    # Функция возвращает либо ошибку с неверным значением, либо набор значений, которые можно записать в базу
+    def head_check(self,  in_base, in_file):
+
+        # Порядковые номера столбцов в файле, которые ожидаются для обработки в базе
+        in_file_indexes = []
+
+        # Проверка полного набора колонок в файле
+        for i in in_base:
+            if i[1] in in_file:
+                in_file_indexes.append(in_file.index(i[1]))
+            else:
+                return False, i[1], 'Этой колонки не хвататет в загружаемых данных'
+
+        return True
+
+    def line_check(self, in_file_indexes, in_file_line):
+
+        # Данные из строки, которые можно записать в базу данных
+        result = [i for i in in_file_line if in_file_line.index(i) in in_file_indexes]
+        print('fdf')
+
+        return result
 
 
+    def start(self):
+        # Открывается сохраненный файл
+        rb = xlrd.open_workbook(constants.UPLOAD_FOLDER + self.filename)
+        sheet = rb.sheet_by_index(0)
 
-line = (15, 2, '1_2_test0.xlsx', 1, 1, '2018-10-18 16:29:44.278127')
-
-def line_check(line):
-    print('Данные на вход из очереди: ', line)
-    data_area_id = line[0]
-    filename = line[2]
-
-    # Открывается сохраненный файл
-    rb = xlrd.open_workbook(constants.UPLOAD_FOLDER + filename)
-    sheet = rb.sheet_by_index(0)
-
-    try:
-        # Запсиь строчек справочника в базу данных
+        # Содержание файла
         in_table = range(sheet.nrows)
+
+        # Набор колонок из файла
         row = sheet.row_values(in_table[0])
-        print(row)
 
-        # Формирование названия таблицы хранения данных
-        table_name = 'data_' + '1_' + str(data_area_id)
+        # Набор колонок из базы
+        cursor.execute("SELECT id, column_name, type FROM measures WHERE data_area_id = %s", [str(self.data_area_id)])
+        measures = cursor.fetchall()
 
+        # Проверка структуры в файле
+        head_check = self.head_check(measures, row)
+        if head_check != True:
+            return head_check
 
         # Формирование списка колонок для создания новой таблицы
         rows = str('"' + str(row[0]) + '" ' + 'varchar')
         for i in row:
             if row.index(i) > 0:
                 rows += ', "' + str(i) + '" ' + 'varchar'
+
+
+
+        print('Все хорошо: ', head_check)
+        print(measures)
         print(rows)
+        print(row)
 
 
-    except:
-        print('Что-то пошло не так. 8(')
-
-    # Загрузка данных из файла
-    try:
-        for rownum in in_table:
-            if rownum == 0:
-                ta = foo.sqllist(sheet.row_values(rownum))
-            elif rownum >= 1:
-                row = sheet.row_values(rownum)
-                va = foo.sqlvar(row)
-
-    except:
-        print('Что-то пошло не так. 8(')
+        # Проверка файла на формат
 
 
-def head_search():
-    # Опсиание ожидаемого набора данных из базы
-    in_base = [(1, 'line2'), (2, 'ref1')]
+        # Загрузка данных из файла
+        try:
+            for rownum in in_table:
+                if rownum == 0:
+                    # Заголовки
+                    ta = foo.sqllist(sheet.row_values(rownum))
+                elif rownum >= 1:
+                    # Перебор строк
+                    row = sheet.row_values(rownum)
+                    va = foo.sqlvar(row)
 
-    # Набор колонок из файла
-    in_file = ['ref1', 'line1', 'line2', 'line3']
+        except:
+            print('Что-то пошло не так. 8(')
 
-    # Строка с данными из файла
-    in_file_line = [11, 22, 33, 44]
 
-    # Порядковые номера столбцов в файле, которые ожидаются для обработки в базе
-    in_file_indexes = []
+line = (15, 2, '1_2_test0.xlsx', 1, 1, '2018-10-18 16:29:44.278127')
 
-    # Проверка полного набора колонок в файле
-    for i in in_base:
-        if i[1] in in_file:
-            in_file_indexes.append(in_file.index(i[1]))
-        else:
-            return False, i[1]
 
-    # Данные из строки, которые можно записать в базу данных
-    result = [i for i in in_file_line if in_file_line.index(i) in in_file_indexes]
 
-    return result
+# Опсиание ожидаемого набора данных из базы
+in_base = [(1, 'line2'), (2, 'ref1')]
 
-print(head_search())
+# Набор колонок из файла
+in_file = ['ref1', 'line1', 'line2', 'line3']
+
+# Строка с данными из файла
+in_file_line = [11, 22, 33, 44]
+
+
+
+
+kaa = data_loading()
+kaa.line = line
+
+kaa.start()

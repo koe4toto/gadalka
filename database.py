@@ -152,7 +152,7 @@ class data_area:
         return result
 
     # Создание предметной области
-    def create_data_area(self, name, username, email, status):
+    def create_data_area(self, name, description, user_id, status):
 
         cursor.execute(
             '''
@@ -161,13 +161,38 @@ class data_area:
                 description, 
                 user_id, 
                 status
-            ) VALUES (%s, %s, %s, %s);
+            ) VALUES (%s, %s, %s, %s)
+            RETURNING id;
             ''',
             (
                 name,
-                username,
-                email,
+                description,
+                user_id,
                 status
+            ))
+        conn.commit()
+        data_base_id = cursor.fetchall()
+
+        olap_name = 'olap_' + str(data_base_id[0][0]) + '_' +str(user_id)
+
+        data_cursor.execute(
+            '''
+            CREATE SEQUENCE auto_id_'''+olap_name+''';
+
+            CREATE TABLE '''+olap_name+''' (
+                "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_'''+olap_name+'''')
+            );
+            ''')
+        data_conn.commit()
+
+        cursor.execute(
+            '''
+            UPDATE data_area SET
+                database_table="'''+olap_name+'''"
+            WHERE id=%s;
+            ''',
+            (
+                data_base_id
             ))
         conn.commit()
 
