@@ -1,11 +1,12 @@
 {% extends 'layout.html' %}
 
 {% block body %}
+
     <h1>Параметры</h1>
     <br>
     <div class="list-group ">
     {% for i in list %}
-      <a href="measure/{{ i[0] }}/0.9" class="list-group-item list-group-item-action flex-column align-items-start">
+      <a href="data_area/{{ i[3] }}/measure/{{ i[0] }}/0.9" class="list-group-item list-group-item-action flex-column align-items-start">
         <div class="d-flex w-100 justify-content-between">
           <h5 class="mb-1 text-primary">{{ i[2] }}</h5>
         </div>

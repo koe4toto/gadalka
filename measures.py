@@ -22,6 +22,9 @@ db_data_area = db.data_area()
 conn = db.conn
 cursor = db.cursor
 
+data_conn = db.data_conn
+data_cursor = db.data_cursor
+
 # Параметры
 @mod.route("/measures")
 @is_logged_in
@@ -33,14 +36,14 @@ def measures():
     return render_template('measures.html', list = measures_list)
 
 # Карточка параметра
-@mod.route("/measure/<string:id>/", methods =['GET', 'POST'])
+@mod.route("/data_area/<string:data_asrea_id>/measure/<string:id>/", methods =['GET', 'POST'])
 @is_logged_in
-def measure(id):
+def measure(data_asrea_id, id):
     # Получение данных о мере
     cursor.execute("SELECT * FROM measures WHERE id = %s", [id])
     the_measure = cursor.fetchall()
 
-    cursor.execute("SELECT * FROM data_area WHERE id = %s", [the_measure[0][4]])
+    cursor.execute("SELECT * FROM data_area WHERE id = %s", [data_asrea_id])
     data_a = cursor.fetchall()
     conn.commit()
     proba1 = '20&60&22&23'
@@ -63,51 +66,14 @@ def measure(id):
     form3.test1.data = probability[0]
     form3.test2.data = probability[1]
 
-    # Данные
-    try:
-        cursor.execute('SELECT column_name FROM information_schema.columns WHERE table_name=%s;', [data_a[0][9]])
-        tc = cursor.fetchall()
-
-        if str(tc) == '[]':
-            flash('Указаной таблицы нет в базе данных', 'danger')
-        else:
-            # Получение данных
-            try:
-                cursor.execute('''SELECT ''' + the_measure[0][1] + ''' FROM ''' + data_a[0][9])
-                measure_data = cursor.fetchall()
-
-                # Данные в список
-                mline = [float(i[0]) for i in measure_data]
-
-                # Получение экземпляра класса обработки данных
-                to_print = Series(mline)
-
-                # Рассчет математического ожидания
-                m, down, up = to_print.mbayes(0.9)
-
-                # Получение частотного распределения для отображения в графике
-                pre = to_print.freq_line_view(1000, down, up)
-                stats = to_print.stats_line()
-
-            except:
-                pre = []
-                stats = []
-                flash(mline, 'danger')
-    except:
-        the_measure = None
-        flash('Нет подключения', 'danger')
-
-
     return render_template('measure.html',
                            id = id,
                            the_measure = the_measure,
-                           sdata = pre,
-                           sd = stats,
                            form1=form1,
                            form2=form2,
                            form3=form3,
-                           probability = probal,
-                           test = [m, down, up]
+                           probability = proba1,
+                           data_area = data_a
                            )
 
 # Добавление параметра
@@ -119,7 +85,7 @@ def add_measure(data_area_id, type):
 
     if type == '3':
         # Список справочников пользователя
-        cursor.execute("SELECT id, name FROM refs WHERE user_id = %s", [str(session['user_id'])])
+        cursor.execute("SELECT id, name FROM refs WHERE user_id = '{0}'".format(str(session['user_id'])))
         result = cursor.fetchall()
         dif = [(str(i[0]), str(i[1])) for i in result]
         form = RefMeasureForm(request.form)
@@ -132,31 +98,68 @@ def add_measure(data_area_id, type):
         column_name = form.column_name.data
         description = form.description.data
 
-        if type == '3':
-            ref = form.kind_of_metering.data
-        else:
-            ref = None
-
         status = '1'
-        # Подключение к базе данных
-        cursor.execute(
+
+        if type == '3':
+            ref = form.ref.data
+
+            # Сохранение данных
+            cursor.execute(
+                '''
+                INSERT INTO measures (
+                    column_name, 
+                    description, 
+                    data_area_id, 
+                    type, 
+                    status,
+                    ref_id) 
+                VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}');
+                '''.format(
+                    column_name,
+                    description,
+                    data_area_id,
+                    type,
+                    status,
+                    ref
+                )
+            )
+            conn.commit()
+        else:
+            # Сохранение данных
+            cursor.execute(
+                '''
+                INSERT INTO measures (
+                    column_name, 
+                    description, 
+                    data_area_id, 
+                    type, 
+                    status) 
+                VALUES ('{0}', '{1}', '{2}', '{3}', '{4}');
+                '''.format(
+                    column_name,
+                    description,
+                    data_area_id,
+                    type,
+                    status
+                )
+            )
+            conn.commit()
+
+        # Сооздание колонки
+        data_cursor.execute(
             '''
-            INSERT INTO measures (
-                column_name, 
-                description, 
-                data_area_id, 
-                type, 
-                status) 
-            VALUES (%s, %s, %s, %s, %s);
-            ''', (
+            ALTER TABLE 
+            {0} 
+            ADD COLUMN 
+            {1} {2};
+            '''.format(
+                data_area[0][5],
                 column_name,
-                description,
-                data_area_id,
-                type,
-                status
+                constants.TYPE_OF_MEASURE[int(type)]
             )
         )
-        conn.commit()
+        data_conn.commit()
+
 
         flash('Параметр добавлен', 'success')
         return redirect(url_for('data_areas.data_area', id=data_area_id))
@@ -220,10 +223,29 @@ def edit_measure(id, measure_id):
 @is_logged_in
 def delete_data_measure(id, data_area_id):
 
+    # Получение данных о мере
+    cursor.execute("SELECT column_name FROM measures WHERE id = '{0}'".format(id))
+    the_measure = cursor.fetchall()
+
+    # Получение данных о мере
+    cursor.execute("SELECT database_table FROM data_area WHERE id = '{0}'".format(data_area_id))
+    data_area = cursor.fetchall()
+
     # Execute
-    cursor.execute("DELETE FROM measures WHERE id = %s", [id])
-    cursor.execute("DELETE FROM math_models WHERE area_description_2 = %s OR area_description_1 = %s", [id, id])
+    cursor.execute("DELETE FROM measures WHERE id = '{0}'".format(id))
+    cursor.execute("DELETE FROM math_models WHERE area_description_2 = '{0}' OR area_description_1 = '{0}'".format(id))
     conn.commit()
+
+    # Удаление колонки
+    data_cursor.execute(
+        '''
+        ALTER TABLE {0} DROP COLUMN {1};
+        '''.format(
+            data_area[0][0],
+            the_measure[0][0]
+        )
+    )
+    data_conn.commit()
 
     flash('Предметная область удалена', 'success')
 

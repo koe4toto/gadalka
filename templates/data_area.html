@@ -25,19 +25,21 @@
 
 <hr>
 
-<h2>
-  {% if data_area[4] == '2' %}
-    <span class="badge badge-secondary">Ожидает обработки</span>
-    {% elif data_area[4] == '3' %}
-    <span class="badge badge-warning">Обрабатывается</span>
-    {% elif data_area[4] == '4' %}
-    <span class="badge badge-danger">Данных не достаточно для анализа</span>
-    {% elif data_area[4] == '5' %}
-    <span class="badge badge-warning">Поиск связей</span>
-    {% elif data_area[4] == '6' %}
-    <span class="badge badge-success">Обработано</span>
-  {% endif %}
-</h2>
+{% if measures == []%}
+<div class="alert alert-success" role="alert">
+  <h4 class="alert-heading">Отлично!</h4>
+    <br>
+  <p>1. Для начала укажите с какими параметрами мы будем работать</p>
+  <hr>
+  <p class="mb-0">2. После можно загрузить данные из файла в формате XLCX</p>
+    <hr>
+  <p class="mb-0">3. Дождаться обработки и начать работу с результатами</p>
+</div>
+{% else %}
+<a class="btn btn-outline-secondary" href="/upload_data_area_from_file/{{ data_area[0] }}">
+        <i class="fas fa-cloud-upload-alt"></i> Загрузить данные из файла
+    </a>
+{% endif %}
 
 <a class="btn dropdown-toggle btn-secondary"   href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 Добавить параметр
@@ -50,15 +52,28 @@
     <a class="dropdown-item" href="/data_area/{{ data_area[0] }}/add_measure_type_5" title="Данные в формате день.месяц.год">Дата</a>
     <a class="dropdown-item" href="/data_area/{{ data_area[0] }}/add_measure_type_6" title="Данные в формате день.месяц.год часы:мунуты:секунды">Время и дата</a>
 </div>
-
-{% if measures == []%}
 <br><br>
-<p>Сперва нужно указать что нужно анализировать во входящих данных</p>
-{% else %}
-<a class="btn btn-outline-secondary" href="/upload_data_area_from_file/{{ data_area[0] }}">
-        <i class="fas fa-cloud-upload-alt"></i> Загрузить данные из файла
-    </a>
-{% endif %}
+  {% if data_area[4] == '2' %}
+    <div class="alert alert-secondary" role="alert">
+      Ожидает обработки
+    </div>
+    {% elif data_area[4] == '3' %}
+    <div class="alert alert-warning" role="alert">
+      Обрабатывается
+    </div>
+    {% elif data_area[4] == '4' %}
+    <div class="alert alert-danger" role="alert">
+      Данных не достаточно для анализа
+    </div>
+    {% elif data_area[4] == '5' %}
+    <div class="alert alert-info" role="alert">
+      Поиск связей
+    </div>
+    {% elif data_area[4] == '6' %}
+    <div class="alert alert-success" role="alert">
+      Обработано
+    </div>
+  {% endif %}
 <br>
 <br>
 
@@ -67,7 +82,7 @@
   {% for i in measures %}
     <tr>
         <td>
-            <b><a href="/measure/{{ i[0] }}/">{{ i[2] }}</a></b><br>{{ i[1] }}
+            <b><a href="measure/{{ i[0] }}/">{{ i[2] }}</a></b><br>{{ i[1] }}
         </td>
         <td>
             {{ i[3] }}

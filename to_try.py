@@ -432,3 +432,4 @@ kaa = data_loading()
 kaa.line = line
 
 kaa.start()
+print(constants.TYPE_OF_MEASURE[1])

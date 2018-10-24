@@ -1,6 +1,8 @@
 {% extends 'layout.html' %}
 
 {% block body %}
+    <a class="text-secondary" href="/data_area/{{ data_area[0][0] }}">{{ data_area[0][1] }}</a><br>
+    &#8595;
     <h1>{{ the_measure[0][2] }}</h1>
     {% if sd %}
     <div class="row">
@@ -127,6 +129,7 @@
         </div>
     </div>
     {% else %}
+        Данных пока нет ((((
         <img src="https://static9.depositphotos.com/1594920/1086/i/450/depositphotos_10868487-stock-photo-female-owl-and-a-owlet.jpg">
     {% endif %}
 {% endblock %}

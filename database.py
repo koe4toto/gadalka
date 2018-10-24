@@ -302,15 +302,14 @@ class measures:
             FROM 
                 measures 
             LEFT JOIN data_area ON measures.data_area_id = data_area.id
-            WHERE data_area_id.user_id=%s
+            WHERE data_area_id.user_id='{0}'
             ORDER BY data_area.register_date DESC;
-            ''', user
+            '''.format(user)
         )
         result = cursor.fetchall()
         return result
 
-
-    # Список измерений
+    # Список измерений предметной области
     def select_measures_to_data_area(self, data_area_id):
         cursor.execute(
             '''
