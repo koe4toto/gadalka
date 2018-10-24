@@ -88,7 +88,6 @@ class data_area:
 
         data_conn.commit()
 
-
     # Создание задачи
     def create_task(self, data_area_id, data, type, user_id):
         data_cursor.execute(
@@ -117,7 +116,6 @@ class data_area:
         result = cursor.fetchall()
         return result
 
-
     # Список предметных областей
     def select_da(self, user):
         cursor.execute(
@@ -130,9 +128,9 @@ class data_area:
                 data_area.status 
             FROM 
                 data_area 
-            WHERE data_area.user_id=%s
+            WHERE data_area.user_id='{0}'
             ORDER BY data_area.register_date DESC;
-            ''', user
+            '''.format(user)
         )
         result = cursor.fetchall()
         return result
@@ -145,8 +143,8 @@ class data_area:
                 *
             FROM 
                 data_area 
-            WHERE id=%s;
-            ''', id
+            WHERE id={0};
+            '''.format(id)
         )
         result = cursor.fetchall()
         return result
@@ -177,12 +175,12 @@ class data_area:
 
         data_cursor.execute(
             '''
-            CREATE SEQUENCE auto_id_'''+olap_name+''';
+            CREATE SEQUENCE auto_id_{0};
 
-            CREATE TABLE '''+olap_name+''' (
-                "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_'''+olap_name+'''')
+            CREATE TABLE {0} (
+                "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_{0}')
             );
-            ''')
+            '''.format(olap_name))
         data_conn.commit()
 
         cursor.execute(
@@ -217,15 +215,23 @@ class data_area:
 
     # Удаление предметной области
     def delate_data_area(self, id):
-        cursor.execute(
-            '''
-            DELETE 
-            FROM 
-                data_area 
-            WHERE id=%s;
-            ''', id
-        )
+        # Получение свдений о предметной области
+        cursor.execute("SELECT database_table FROM data_area WHERE id = '{0}'".format(id))
+        data_a = cursor.fetchall()
+
+        # Удаление данных из таблиц
+        cursor.execute("DELETE FROM measures WHERE data_area_id = '{0}'".format(id))
+        cursor.execute("DELETE FROM data_area WHERE id = '{0}'".format(id))
         conn.commit()
+
+        # Удаление таблицы с данными
+        data_cursor.execute(
+            '''
+                DROP TABLE {0}; 
+                DROP SEQUENCE auto_id_{1};
+            '''.format(data_a[0][0], data_a[0][0])
+        )
+        data_conn.commit()
 
 
 # Параметры
@@ -318,9 +324,9 @@ class measures:
                 measures 
             LEFT JOIN ref_measures_type ON measures.type = ref_measures_type.id
             LEFT JOIN ref_measures_status ON measures.status = ref_measures_status.id
-            WHERE measures.data_area_id=%s
+            WHERE measures.data_area_id='{0}'
             ORDER BY measures.type DESC;
-            ''', data_area_id
+            '''.format(data_area_id)
         )
         result = cursor.fetchall()
         return result

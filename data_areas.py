@@ -89,18 +89,8 @@ def edit_data_area(id):
 @is_logged_in
 def delete_data_area(id):
 
-    # Получение свдений о предметной области
-    cursor.execute("SELECT database_table FROM data_area WHERE id = %s", [id])
-    data_a = cursor.fetchall()
+    db_da.delate_data_area(id)
 
-    # Удаление данных из таблиц
-    cursor.execute("DELETE FROM measures WHERE data_area_id = %s", [id])
-    cursor.execute("DELETE FROM data_area WHERE id = %s", [id])
-    conn.commit()
-
-    if data_a[0][0] is not None:
-        cursor.execute("DROP TABLE " + data_a[0][0])
-        conn.commit()
 
     flash('Предметная область удалена', 'success')
 
