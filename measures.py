@@ -100,69 +100,94 @@ def add_measure(data_area_id, type):
 
         status = '1'
 
-        if type == '3':
-            ref = form.ref.data
-
-            # Сохранение данных
-            cursor.execute(
-                '''
-                INSERT INTO measures (
-                    column_name, 
-                    description, 
-                    data_area_id, 
-                    type, 
-                    status,
-                    ref_id) 
-                VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}');
-                '''.format(
-                    column_name,
-                    description,
-                    data_area_id,
-                    type,
-                    status,
-                    ref
-                )
-            )
-            conn.commit()
-        else:
-            # Сохранение данных
-            cursor.execute(
-                '''
-                INSERT INTO measures (
-                    column_name, 
-                    description, 
-                    data_area_id, 
-                    type, 
-                    status) 
-                VALUES ('{0}', '{1}', '{2}', '{3}', '{4}');
-                '''.format(
-                    column_name,
-                    description,
-                    data_area_id,
-                    type,
-                    status
-                )
-            )
-            conn.commit()
-
-        # Сооздание колонки
-        data_cursor.execute(
+        # Проверка уникальности имени колонки
+        cursor.execute(
             '''
-            ALTER TABLE 
-            {0} 
-            ADD COLUMN 
-            {1} {2};
+            SELECT 
+                * 
+            FROM  
+                measures
+            WHERE
+                column_name = '{0}';
             '''.format(
-                data_area[0][5],
-                column_name,
-                constants.TYPE_OF_MEASURE[int(type)]
+                column_name
             )
         )
-        data_conn.commit()
+        check = cursor.fetchall()
+
+        if len(check) >= 1:
+            flash('Колонка с таким именем уже существует. Придумайте, пожалуйста новое', 'danger')
+            return redirect(request.url)
+        else:
+
+            if type == '3':
+                ref = form.ref.data
+
+                # Сохранение данных
+                try:
+                    cursor.execute(
+                        '''
+                        INSERT INTO measures (
+                            column_name, 
+                            description, 
+                            data_area_id, 
+                            type, 
+                            status,
+                            ref_id) 
+                        VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}');
+                        '''.format(
+                            column_name,
+                            description,
+                            data_area_id,
+                            type,
+                            status,
+                            ref
+                        )
+                    )
+                    conn.commit()
+                except:
+                    flash('Колонка с таким именем уже существует', 'success')
+                    return redirect(url_for('data_areas.data_area', id=data_area_id))
+
+            else:
+                # Сохранение данных
+                cursor.execute(
+                    '''
+                    INSERT INTO measures (
+                        column_name, 
+                        description, 
+                        data_area_id, 
+                        type, 
+                        status) 
+                    VALUES ('{0}', '{1}', '{2}', '{3}', '{4}');
+                    '''.format(
+                        column_name,
+                        description,
+                        data_area_id,
+                        type,
+                        status
+                    )
+                )
+                conn.commit()
+
+            # Сооздание колонки
+            data_cursor.execute(
+                '''
+                ALTER TABLE 
+                {0} 
+                ADD COLUMN 
+                {1} {2};
+                '''.format(
+                    data_area[0][5],
+                    column_name,
+                    constants.TYPE_OF_MEASURE[int(type)]
+                )
+            )
+            data_conn.commit()
 
 
-        flash('Параметр добавлен', 'success')
-        return redirect(url_for('data_areas.data_area', id=data_area_id))
+            flash('Параметр добавлен', 'success')
+            return redirect(url_for('data_areas.data_area', id=data_area_id))
     return render_template('add_measure.html', form=form, data_area=data_area[0], title = db_measures.types[int(type)])
 
 # Редактирование параметра
@@ -215,7 +240,6 @@ def edit_measure(id, measure_id):
             return redirect(url_for('data_areas.data_area', id=id))
 
     return render_template('edit_measure.html', form=form, data_area=data_area[0])
-
 
 
 # Удаление измерения
