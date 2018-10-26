@@ -380,36 +380,30 @@ class data_loading():
         if head_check != True:
             return head_check
 
-        # Формирование списка колонок для создания новой таблицы
-        rows = str('"' + str(row[0]) + '" ' + 'varchar')
-        for i in row:
-            if row.index(i) > 0:
-                rows += ', "' + str(i) + '" ' + 'varchar'
-
 
 
         print('Все хорошо: ', head_check)
         print(measures)
-        print(rows)
         print(row)
-
-
-        # Проверка файла на формат
 
 
         # Загрузка данных из файла
         try:
             for rownum in in_table:
-                if rownum == 0:
-                    # Заголовки
-                    ta = foo.sqllist(sheet.row_values(rownum))
-                elif rownum >= 1:
+                if rownum >= 1:
                     # Перебор строк
                     row = sheet.row_values(rownum)
                     va = foo.sqlvar(row)
 
+                    # Получение нужного набора данных из строки
+
+                    # Проверка данных строки на соответсвие формату
+
+                    # Запись результата проверки данных
         except:
             print('Что-то пошло не так. 8(')
+
+        # обновление статуса предметной области и измерений
 
 
 line = (15, 2, '1_2_test0.xlsx', 1, 1, '2018-10-18 16:29:44.278127')

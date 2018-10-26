@@ -204,7 +204,7 @@ def edit_measure(id, measure_id):
     # Форма заполняется данными из базы
     if result[4] == '3':
         # Список справочников пользователя
-        cursor.execute("SELECT id, name FROM refs WHERE user_id = %s", [str(session['user_id'])])
+        cursor.execute("SELECT id, name FROM refs WHERE user_id = '{0}'".format(str(session['user_id'])))
         ref_list = cursor.fetchall()
         dif = [(str(i[0]), str(i[1])) for i in ref_list]
         form = RefMeasureForm(request.form)
@@ -212,6 +212,7 @@ def edit_measure(id, measure_id):
         form.ref.defaul = result[6]
     else:
         form = MeasureForm(request.form)
+        
 
     form.description.default = result[2]
     form.column_name.default = result[1]
