@@ -1,8 +1,6 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, session, request
-import psycopg2
 from decorators import is_logged_in
 import constants
-import itertools
 import foo
 import json
 import numpy as np
@@ -293,7 +291,6 @@ def edit_measure(id, measure_id):
 
 
     return render_template('edit_measure.html', form=form, data_area=data_area[0])
-
 
 # Удаление измерения
 @mod.route('/delete_data_measure/<string:id>?data_area_id=<string:data_area_id>', methods=['POST'])
