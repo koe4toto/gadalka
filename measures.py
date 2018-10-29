@@ -242,27 +242,50 @@ def edit_measure(id, measure_id):
         )
         check = cursor.fetchall()
 
-
-
-
         if column_name != result[1] and len(check) >= 1:
             flash('Колонка с таким именем уже существует. Придумайте, пожалуйста новое', 'danger')
             return redirect(request.url)
         else:
-
             if type == '3':
                 refiii = str(request.form['ref'])
                 # Обновление базе данных
                 cursor.execute('UPDATE measures SET description=%s, column_name=%s, ref_id=%s WHERE id=%s;',
                                (description, column_name, refiii, measure_id))
                 conn.commit()
-                flash('Данные обновлены!!!', 'success')
+
+                if column_name != result[1]:
+                    # Переименование колонки
+                    data_cursor.execute(
+                        '''
+                        ALTER TABLE {0} RENAME COLUMN {1} TO {2};
+                        '''.format(
+                            data_area[0][5],
+                            result[1],
+                            column_name
+                        )
+                    )
+                    data_conn.commit()
+
+                flash('Данные обновлены', 'success')
                 return redirect(url_for('data_areas.data_area', id=id))
             else:
                 # Обновление базе данных
                 cursor.execute('UPDATE measures SET description=%s, column_name=%s WHERE id=%s;',
                                (description, column_name, measure_id))
                 conn.commit()
+
+                # Переименование колонки
+                if column_name != result[1]:
+                    data_cursor.execute(
+                        '''
+                        ALTER TABLE {0} RENAME COLUMN {1} TO {2};
+                        '''.format(
+                            data_area[0][5],
+                            result[1],
+                            column_name
+                        )
+                    )
+                    data_conn.commit()
 
                 flash('Данные обновлены', 'success')
                 return redirect(url_for('data_areas.data_area', id=id))
