@@ -201,18 +201,21 @@ def edit_measure(id, measure_id):
     cursor.execute("SELECT * FROM measures WHERE id = %s", [measure_id])
     result = cursor.fetchone()
 
+    # Тип измерения
+    type = str(result[4])
+
     # Форма заполняется данными из базы
-    if result[4] == '3':
+    if type == '3':
         # Список справочников пользователя
         cursor.execute("SELECT id, name FROM refs WHERE user_id = '{0}'".format(str(session['user_id'])))
         ref_list = cursor.fetchall()
         dif = [(str(i[0]), str(i[1])) for i in ref_list]
         form = RefMeasureForm(request.form)
         form.ref.choices = dif
-        form.ref.defaul = result[6]
+        form.ref.default = result[6]
     else:
         form = MeasureForm(request.form)
-        
+
 
     form.description.default = result[2]
     form.column_name.default = result[1]
@@ -221,24 +224,50 @@ def edit_measure(id, measure_id):
 
     if request.method == 'POST':
         # Получение данных из формы
-        form.description.data = request.form['description']
-        form.column_name.data = request.form['column_name']
+        description = request.form['description']
+        column_name = request.form['column_name']
 
-        if result[4] == '3':
-            ref = request.form['ref']
+        # Проверка уникальности имени колонки
+        cursor.execute(
+            '''
+            SELECT 
+                * 
+            FROM  
+                measures
+            WHERE
+                column_name = '{0}';
+            '''.format(
+                column_name
+            )
+        )
+        check = cursor.fetchall()
+
+
+
+
+        if column_name != result[1] and len(check) >= 1:
+            flash('Колонка с таким именем уже существует. Придумайте, пожалуйста новое', 'danger')
+            return redirect(request.url)
         else:
-            ref = None
 
-        # Если данные из формы валидные
-        if form.validate():
+            if type == '3':
+                refiii = str(request.form['ref'])
+                # Обновление базе данных
+                cursor.execute('UPDATE measures SET description=%s, column_name=%s, ref_id=%s WHERE id=%s;',
+                               (description, column_name, refiii, measure_id))
+                conn.commit()
+                flash('Данные обновлены!!!', 'success')
+                return redirect(url_for('data_areas.data_area', id=id))
+            else:
+                # Обновление базе данных
+                cursor.execute('UPDATE measures SET description=%s, column_name=%s WHERE id=%s;',
+                               (description, column_name, measure_id))
+                conn.commit()
 
-            # Обновление базе данных
-            cursor.execute('UPDATE measures SET description=%s, column_name=%s, ref_id=%s WHERE id=%s;',
-                           (form.description.data, form.column_name.data, ref, measure_id))
-            conn.commit()
+                flash('Данные обновлены', 'success')
+                return redirect(url_for('data_areas.data_area', id=id))
 
-            flash('Данные обновлены', 'success')
-            return redirect(url_for('data_areas.data_area', id=id))
+
 
     return render_template('edit_measure.html', form=form, data_area=data_area[0])
 
@@ -344,7 +373,6 @@ def pair(id1, id2, model_id):
 
 
     return render_template('pair.html', list=list, for_graf=popa, model=model)
-
 
 # Многомерная модель
 @mod.route("/multiple_models")
