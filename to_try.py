@@ -351,6 +351,7 @@ class data_loading():
 
         return True
 
+    # Функция возвращает данные строки, которую можно записть в базу
     def line_check(self, in_file_indexes, in_file_line):
 
         # Данные из строки, которые можно записать в базу данных
@@ -359,7 +360,7 @@ class data_loading():
 
         return result
 
-
+    # Запуск обработки
     def start(self):
         # Открывается сохраненный файл
         rb = xlrd.open_workbook(constants.UPLOAD_FOLDER + self.filename)
@@ -380,12 +381,10 @@ class data_loading():
         if head_check != True:
             return head_check
 
-
-
         print('Все хорошо: ', head_check)
-        print(measures)
         print(row)
 
+        # Создать файл для записи ошибок
 
         # Загрузка данных из файла
         try:
@@ -393,22 +392,21 @@ class data_loading():
                 if rownum >= 1:
                     # Перебор строк
                     row = sheet.row_values(rownum)
-                    va = foo.sqlvar(row)
+                    print(row)
 
                     # Получение нужного набора данных из строки
 
                     # Проверка данных строки на соответсвие формату
 
-                    # Запись результата проверки данных
+                    # Запись результата проверки данных либо в базу, либо в файл
         except:
             print('Что-то пошло не так. 8(')
 
-        # обновление статуса предметной области и измерений
+        # обновление статуса предметной области и измерений, сохранение и закрытие файла с ошибками
 
 
+# Данные о предметной области
 line = (15, 2, '1_2_test0.xlsx', 1, 1, '2018-10-18 16:29:44.278127')
-
-
 
 # Опсиание ожидаемого набора данных из базы
 in_base = [(1, 'line2'), (2, 'ref1')]
@@ -420,10 +418,9 @@ in_file = ['ref1', 'line1', 'line2', 'line3']
 in_file_line = [11, 22, 33, 44]
 
 
-
-
 kaa = data_loading()
 kaa.line = line
 
+print(in_base)
 kaa.start()
 print(constants.TYPE_OF_MEASURE[1])
