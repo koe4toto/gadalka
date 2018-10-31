@@ -325,6 +325,12 @@ def not_empty(text):
     else:
         return True
 
+def validate_ref(text):
+    if text == None or text == '':
+        return False
+    else:
+        return True
+
 
 class data_loading():
 
@@ -349,16 +355,8 @@ class data_loading():
             else:
                 return False, i[1], 'Этой колонки не хвататет в загружаемых данных'
 
-        return True
+        return True, in_file_indexes
 
-    # Функция возвращает данные строки, которую можно записть в базу
-    def line_check(self, in_file_indexes, in_file_line):
-
-        # Данные из строки, которые можно записать в базу данных
-        result = [i for i in in_file_line if in_file_line.index(i) in in_file_indexes]
-        print('fdf')
-
-        return result
 
     # Запуск обработки
     def start(self):
@@ -373,15 +371,16 @@ class data_loading():
         row = sheet.row_values(in_table[0])
 
         # Набор колонок из базы
-        cursor.execute("SELECT id, column_name, type FROM measures WHERE data_area_id = %s", [str(self.data_area_id)])
+        cursor.execute("SELECT id, column_name, type FROM measures WHERE data_area_id = '{0}'".format(self.data_area_id))
         measures = cursor.fetchall()
 
         # Проверка структуры в файле
         head_check = self.head_check(measures, row)
-        if head_check != True:
+        if head_check[0] != True:
             return head_check
 
         print('Все хорошо: ', head_check)
+        print('Измерения: ', measures)
         print(row)
 
         # Создать файл для записи ошибок
@@ -389,38 +388,43 @@ class data_loading():
         # Загрузка данных из файла
         try:
             for rownum in in_table:
+                # Перебор строк
                 if rownum >= 1:
-                    # Перебор строк
+                    # Строка в файле
                     row = sheet.row_values(rownum)
-                    print(row)
 
                     # Получение нужного набора данных из строки
+                    bdline = [row[i] for i in head_check[1]]
+                    print(row, bdline)
 
                     # Проверка данных строки на соответсвие формату
+                    tom = {
+                        1: None,
+                        2: is_number,
+                        3: validate_ref,
+                        4: validate_time,
+                        5: validate_date,
+                        6: validate_datetime
+                    }
 
-                    # Запись результата проверки данных либо в базу, либо в файл
+
+                    if tom[2] == is_number:
+                        # Запись результата проверки в файл ощибок
+                        print('Не гуд')
+                    else:
+                        # Запись результата проверки данных в базу
+                        print('Гуд')
         except:
             print('Что-то пошло не так. 8(')
 
         # обновление статуса предметной области и измерений, сохранение и закрытие файла с ошибками
 
 
-# Данные о предметной области
-line = (15, 2, '1_2_test0.xlsx', 1, 1, '2018-10-18 16:29:44.278127')
+# Позиция в очереди
+line = (17, 23, '1_23_test0.xlsx', 1, 1, '2018-10-18 16:29:44.278127')
 
-# Опсиание ожидаемого набора данных из базы
-in_base = [(1, 'line2'), (2, 'ref1')]
-
-# Набор колонок из файла
-in_file = ['ref1', 'line1', 'line2', 'line3']
-
-# Строка с данными из файла
-in_file_line = [11, 22, 33, 44]
 
 
 kaa = data_loading()
 kaa.line = line
-
-print(in_base)
 kaa.start()
-print(constants.TYPE_OF_MEASURE[1])
