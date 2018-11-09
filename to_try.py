@@ -331,6 +331,24 @@ def validate_ref(text):
     else:
         return True
 
+def validate_line(data):
+    tom = {
+        1: not_empty,
+        2: is_number,
+        3: validate_ref,
+        4: validate_time,
+        5: validate_date,
+        6: validate_datetime
+    }
+    for i in data:
+        if not_empty(i[0]):
+            if tom[i[1]](i[0]) != True:
+                return False, i[0]
+        else:
+            continue
+
+    result = [i[0] for i in data]
+    return True, result
 
 class data_loading():
 
@@ -393,22 +411,12 @@ class data_loading():
                 print(row, bdline)
 
                 # Проверка данных строки на соответсвие формату
-                tom = {
-                    1: not_empty,
-                    2: is_number,
-                    3: validate_ref,
-                    4: validate_time,
-                    5: validate_date,
-                    6: validate_datetime
-                }
-                for i in bdline:
-                    if i[0] == '' or i[0] == None:
-                        print('Пусто')
-                    else:
-                        if tom[i[1]](str(i[0])) == True:
-                            print('Заебок', i[0], i[1])
-                        else:
-                            print('Говно', i[0], i[1])
+                status, result = validate_line(bdline)
+                if status:
+                    print(result)
+                else:
+                    print('Ошибочное значение: "', result, '". В строке номер: ', rownum + 1)
+
 
 
         # обновление статуса предметной области и измерений, сохранение и закрытие файла с ошибками
@@ -416,8 +424,6 @@ class data_loading():
 
 # Позиция в очереди
 line = (17, 24, '1_23_test0.xlsx', 1, 1, '2018-10-18 16:29:44.278127')
-
-
 
 kaa = data_loading()
 kaa.line = line
