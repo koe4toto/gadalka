@@ -294,42 +294,45 @@ def upload_data_area_from_file(id):
 def validate_date(date):
     try:
         datetime.datetime.strptime(date, '%Y-%m-%d')
-        return True
+        return True, date, 'Принято'
     except ValueError:
-        return False
+        return False, date, 'Не верный формат даты'
 
 def validate_time(time):
     try:
         datetime.datetime.strptime(time, '%H:%M:%S')
-        return True
+        return True, time, 'Принято'
     except ValueError:
-        return False
+        return False, time, 'Не верный формат времени'
 
 def validate_datetime(datetime):
     try:
         datetime.datetime.strptime(datetime, '%Y-%m-%d %H:%M:%S')
-        return True
+        return True, datetime, 'Принято'
     except ValueError:
-        return False
+        return False, datetime, 'Не верный форма времени'
 
 def is_number(number):
     try:
         float(number)
-        return True
+        return True, number, 'Принято'
     except ValueError:
-        return False
+        return False, number, 'Не верный формат данных'
 
 def not_empty(text):
-    if text == None or text == '':
-        return False
+    if text == None and text == '':
+        return False, text, 'Ошибка'
     else:
-        return True
+        return True, text, 'Пустое значение не принимается'
 
-def validate_ref(text):
-    if text == None or text == '':
-        return False
+def validate_ref(data):
+    cursor.execute(
+        "SELECT * FROM {0} WHERE code = '{1}' LIMIT 1".format(data[2], data[0]))
+    ref_name = cursor.fetchall()
+    if len(ref_name) == 1:
+        return True, data[0], 'Принято'
     else:
-        return True
+        return False, data[0], 'Такого кода нет в справочнике'
 
 def validate_line(data):
     tom = {
@@ -342,13 +345,19 @@ def validate_line(data):
     }
     for i in data:
         if not_empty(i[0]):
-            if tom[i[1]](i[0]) != True:
-                return False, i[0]
+            if i[1] == 3:
+                status, check_result, description = validate_ref(i)
+                if status != True:
+                    return False, check_result, description
+            else:
+                status, check_result, description = tom[i[1]](i[0])
+                if status != True:
+                    return False, check_result, description
         else:
             continue
 
     result = [i[0] for i in data]
-    return True, result
+    return True, result, 'Принято'
 
 class data_loading():
 
@@ -389,13 +398,22 @@ class data_loading():
         row = sheet.row_values(in_table[0])
 
         # Набор колонок из базы
-        cursor.execute("SELECT id, column_name, type FROM measures WHERE data_area_id = '{0}'".format(self.data_area_id))
+        cursor.execute("SELECT id, column_name, type, ref_id FROM measures WHERE data_area_id = '{0}'".format(self.data_area_id))
         measures = cursor.fetchall()
 
         # Проверка структуры в файле
         head_check = self.head_check(measures, row)
         if head_check[0] != True:
             return head_check
+
+        # Набор справочников требуемых для проверки
+        ref_names = {}
+        for i in measures:
+            if i[3] != None:
+                cursor.execute(
+                    "SELECT data FROM refs WHERE id = '{0}'".format(i[3]))
+                ref_name = cursor.fetchall()[0][0]
+                ref_names.update({i[0]: ref_name})
 
         # Создать файл для записи ошибок
 
@@ -407,19 +425,28 @@ class data_loading():
                 row = sheet.row_values(rownum)
 
                 # Получение нужного набора данных из строки
-                bdline = [(row[i], measures[head_check[1].index(i)][2]) for i in head_check[1]]
-                print(row, bdline)
+                bdline = []
+                for i in head_check[1]:
+                    item = []
+                    item.append(row[i])
+                    item.append(measures[head_check[1].index(i)][2])
+                    ref_table = measures[head_check[1].index(i)][3]
+                    if ref_table != None and ref_table != '':
+                        item.append(ref_names[measures[head_check[1].index(i)][0]])
+                    else:
+                        item.append(None)
+                    bdline.append(item)
 
                 # Проверка данных строки на соответсвие формату
-                status, result = validate_line(bdline)
+                status, result, description = validate_line(bdline)
                 if status:
                     print(result)
                 else:
-                    print('Ошибочное значение: "', result, '". В строке номер: ', rownum + 1)
+                    print('Ошибка в строке номер: ', rownum + 1, description, result)
 
 
 
-        # обновление статуса предметной области и измерений, сохранение и закрытие файла с ошибками
+        # Обновление статуса предметной области и измерений, сохранение и закрытие файла с ошибками
 
 
 # Позиция в очереди
