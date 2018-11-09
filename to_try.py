@@ -379,49 +379,43 @@ class data_loading():
         if head_check[0] != True:
             return head_check
 
-        print('Все хорошо: ', head_check)
-        print('Измерения: ', measures)
-        print(row)
-
         # Создать файл для записи ошибок
 
         # Загрузка данных из файла
-        try:
-            for rownum in in_table:
-                # Перебор строк
-                if rownum >= 1:
-                    # Строка в файле
-                    row = sheet.row_values(rownum)
+        for rownum in in_table:
+            # Перебор строк
+            if rownum >= 1:
+                # Строка в файле
+                row = sheet.row_values(rownum)
 
-                    # Получение нужного набора данных из строки
-                    bdline = [row[i] for i in head_check[1]]
-                    print(row, bdline)
+                # Получение нужного набора данных из строки
+                bdline = [(row[i], measures[head_check[1].index(i)][2]) for i in head_check[1]]
+                print(row, bdline)
 
-                    # Проверка данных строки на соответсвие формату
-                    tom = {
-                        1: None,
-                        2: is_number,
-                        3: validate_ref,
-                        4: validate_time,
-                        5: validate_date,
-                        6: validate_datetime
-                    }
-
-
-                    if tom[2] == is_number:
-                        # Запись результата проверки в файл ощибок
-                        print('Не гуд')
+                # Проверка данных строки на соответсвие формату
+                tom = {
+                    1: not_empty,
+                    2: is_number,
+                    3: validate_ref,
+                    4: validate_time,
+                    5: validate_date,
+                    6: validate_datetime
+                }
+                for i in bdline:
+                    if i[0] == '' or i[0] == None:
+                        print('Пусто')
                     else:
-                        # Запись результата проверки данных в базу
-                        print('Гуд')
-        except:
-            print('Что-то пошло не так. 8(')
+                        if tom[i[1]](str(i[0])) == True:
+                            print('Заебок', i[0], i[1])
+                        else:
+                            print('Говно', i[0], i[1])
+
 
         # обновление статуса предметной области и измерений, сохранение и закрытие файла с ошибками
 
 
 # Позиция в очереди
-line = (17, 23, '1_23_test0.xlsx', 1, 1, '2018-10-18 16:29:44.278127')
+line = (17, 24, '1_23_test0.xlsx', 1, 1, '2018-10-18 16:29:44.278127')
 
 
 
