@@ -214,14 +214,14 @@ class data_loading():
 
         # Сохранение и закрытие файла с ошибками
         print(self.filename)
-        path_adn_file = constants.ERROR_FOLDER + '1_23_test0.xls'
+        path_adn_file = constants.ERROR_FOLDER + self.filename
         wb.save(path_adn_file)
 
         # Обновление статуса предметной области и измерений,
 
 
 # Позиция в очереди
-line = (17, 24, '1_23_test0.xlsx', 1, 1, '2018-10-18 16:29:44.278127')
+line = (17, 24, '1_23_test0.xlsx.xls', 1, 1, '2018-10-18 16:29:44.278127')
 
 kaa = data_loading()
 kaa.line = line
