@@ -7,6 +7,8 @@ import xlrd
 import json
 import database as db
 import datetime
+import xlwt
+import os
 
 cursor = db.cursor
 conn = db.conn
@@ -359,6 +361,23 @@ def validate_line(data):
     result = [i[0] for i in data]
     return True, result, 'Принято'
 
+def xlfile(m):
+    style0 = xlwt.easyxf('font: name Times New Roman, color-index red, bold on', num_format_str='#,##0.00')
+    style1 = xlwt.easyxf(num_format_str='D-MMM-YY')
+
+    wb = xlwt.Workbook()
+    ws = wb.add_sheet('A Test Sheet')
+
+    ws.write(0, 0, 1234.56, style0)
+    ws.write(1, 0, m, style1)
+    ws.write(2, 0, 1)
+    ws.write(2, 1, 1)
+    ws.write(2, 2, 123424)
+
+    path_adn_file = constants.ERROR_FOLDER + 'example.xls'
+
+    wb.save(path_adn_file)
+
 class data_loading():
 
     def __init__(self):
@@ -444,13 +463,18 @@ class data_loading():
                 else:
                     print('Ошибка в строке номер: ', rownum + 1, description, result)
 
-
+        # Удаление загруженного файла
+        #os.remove(constants.UPLOAD_FOLDER + self.filename)
 
         # Обновление статуса предметной области и измерений, сохранение и закрытие файла с ошибками
 
 
+
 # Позиция в очереди
 line = (17, 24, '1_23_test0.xlsx', 1, 1, '2018-10-18 16:29:44.278127')
+
+
+
 
 kaa = data_loading()
 kaa.line = line

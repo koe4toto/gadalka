@@ -1,6 +1,7 @@
 import os
 
 UPLOAD_FOLDER = os.path.abspath('.') + '/uploaded_files/'
+ERROR_FOLDER = os.path.abspath('.') + '/error_files/'
 ALLOWED_EXTENSIONS = set(['xls', 'xlsx'])
 USERS_DATABASE_NAME = "users_data"
 DATABASE_NAME = "test111"
