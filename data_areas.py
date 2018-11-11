@@ -129,7 +129,7 @@ def upload_data_area_from_file(id):
         if file and allowed_file(file.filename):
             # Генерируется имя из идентификатора пользователя и врамени загрузки файла
             # Текущее время в сточку только цифрами
-            filename = str(session['user_id']) + '_' + id + '_' + file.filename
+            filename = str(session['user_id']) + '_' + id + '_' + file.filename + '.xls'
 
             # Загружается файл
             file.save(os.path.join(constants.UPLOAD_FOLDER, filename))

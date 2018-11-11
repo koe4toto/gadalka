@@ -10,12 +10,8 @@ conn = db.conn
 data_cursor = db.data_cursor
 data_conn = db.data_conn
 
-# Создание моделей для пар с другими параметрами
-# meg_id - идентификатор новой меры
-# Получить идентификаторы всех остальных измерений
 
-
-
+# Проверка даты
 def validate_date(date):
     try:
         datetime.datetime.strptime(date, '%Y-%m-%d')
@@ -23,7 +19,7 @@ def validate_date(date):
     except ValueError:
         return False, date, 'Не верный формат даты'
 
-
+# Проверка времни
 def validate_time(time):
     try:
         datetime.datetime.strptime(time, '%H:%M:%S')
@@ -31,7 +27,7 @@ def validate_time(time):
     except ValueError:
         return False, time, 'Не верный формат времени'
 
-
+# Проверка даты и времени
 def validate_datetime(datetime):
     try:
         datetime.datetime.strptime(datetime, '%Y-%m-%d %H:%M:%S')
@@ -39,7 +35,7 @@ def validate_datetime(datetime):
     except ValueError:
         return False, datetime, 'Не верный форма времени'
 
-
+# Проверка числа
 def is_number(number):
     try:
         float(number)
@@ -47,14 +43,14 @@ def is_number(number):
     except ValueError:
         return False, number, 'Не верный формат данных'
 
-
+# Проверка не пустое ли значение
 def not_empty(text):
     if text == None and text == '':
         return False, text, 'Ошибка'
     else:
         return True, text, 'Пустое значение не принимается'
 
-
+# Проверка соответствия значению справочника
 def validate_ref(data):
     cursor.execute(
         "SELECT * FROM {0} WHERE code = '{1}' LIMIT 1".format(data[2], data[0]))
@@ -64,7 +60,7 @@ def validate_ref(data):
     else:
         return False, data[0], 'Такого кода нет в справочнике'
 
-
+# Проверка строки
 def validate_line(data):
     tom = {
         1: not_empty,
@@ -90,25 +86,7 @@ def validate_line(data):
     result = [i[0] for i in data]
     return True, result, 'Принято'
 
-
-def xlfile(m):
-    style0 = xlwt.easyxf('font: name Times New Roman, color-index red, bold on', num_format_str='#,##0.00')
-    style1 = xlwt.easyxf(num_format_str='D-MMM-YY')
-
-    wb = xlwt.Workbook()
-    ws = wb.add_sheet('Main')
-
-    ws.write(0, 0, 1234.56, style0)
-    ws.write(1, 0, m, style1)
-    ws.write(2, 0, 1)
-    ws.write(2, 1, 1)
-    ws.write(2, 2, 123424)
-
-    path_adn_file = constants.ERROR_FOLDER + 'example.xls'
-
-    wb.save(path_adn_file)
-
-
+# Проверка обработка файла
 class data_loading():
 
     def __init__(self):
@@ -168,9 +146,21 @@ class data_loading():
         # Создать файл для записи ошибок
         style0 = xlwt.easyxf('font: name Times New Roman, color-index red, bold on', num_format_str='#,##0.00')
         style1 = xlwt.easyxf()
-
         wb = xlwt.Workbook()
         ws = wb.add_sheet('Main')
+
+        # Название таблицы, в которую записывать данные
+        db_da = db.data_area()
+        table_name = db_da.data_area(self.data_area_id)[0][5]
+
+        # Удаление данных из таблицы, если идет операция обновления данных
+        if self.type == 1:
+            data_cursor.execute(
+                '''
+                DELETE FROM {0};
+                '''.format(table_name)
+            )
+            data_conn.commit()
 
         count = 1
         # Загрузка данных из файла
@@ -201,7 +191,18 @@ class data_loading():
                 status, result, description = validate_line(bdline)
 
                 if status:
-                    print(result)
+                    names_to_record = ', '.join(str(e[1]) for e in measures)
+                    data_to_record = ', '.join("'"+str(e)+"'" for e in result)
+                    data_cursor.execute(
+                        '''
+                        INSERT INTO {0} (
+                            {1}
+                        ) VALUES ({2});
+                        '''.format(table_name, names_to_record, data_to_record)
+                        )
+                    data_conn.commit()
+                    print(self.line)
+
                 else:
                     ws.write(count, 0, rownum + 1, style1)
                     ws.write(count, 1, description, style1)
@@ -213,7 +214,6 @@ class data_loading():
         # os.remove(constants.UPLOAD_FOLDER + self.filename)
 
         # Сохранение и закрытие файла с ошибками
-        print(self.filename)
         path_adn_file = constants.ERROR_FOLDER + self.filename
         wb.save(path_adn_file)
 
