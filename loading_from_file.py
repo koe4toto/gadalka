@@ -10,7 +10,6 @@ conn = db.conn
 data_cursor = db.data_cursor
 data_conn = db.data_conn
 
-
 # Проверка даты
 def validate_date(date):
     try:
@@ -97,156 +96,134 @@ def update_data_area_status(status, id):
         )
     conn.commit()
 
-# Проверка обработка файла
-class data_loading:
 
-    def __init__(self):
-        self.id = None
-        self.data_area_id = None
-        self.filename = None
-        self.type = None
-        self.user = None
+# Функция возвращает либо ошибку с неверным значением, либо набор значений, которые можно записать в базу
+def head_check(in_base, in_file):
 
-    # Функция возвращает либо ошибку с неверным значением, либо набор значений, которые можно записать в базу
-    def head_check(self, in_base, in_file):
+    # Порядковые номера столбцов в файле, которые ожидаются для обработки в базе
+    in_file_indexes = []
 
-        # Порядковые номера столбцов в файле, которые ожидаются для обработки в базе
-        in_file_indexes = []
-
-        # Проверка полного набора колонок в файле
-        for i in in_base:
-            if i[1] in in_file:
-                in_file_indexes.append(in_file.index(i[1]))
-            else:
-                return False, i[1], 'Этой колонки не хвататет в загружаемых данных'
-
-        return True, in_file_indexes
-
-    # Запуск обработки
-    def start(self):
-        # Обновление статуса предметной области и измерений
-        status = '3'
-        update_data_area_status(status, self.data_area_id)
-
-        # Открывается сохраненный файл
-        rb = xlrd.open_workbook(constants.UPLOAD_FOLDER + self.filename)
-        sheet = rb.sheet_by_index(0)
-
-        # Содержание файла
-        in_table = range(sheet.nrows)
-
-        # Набор колонок из файла
-        row = sheet.row_values(in_table[0])
-
-        # Набор колонок из базы
-        cursor.execute(
-            "SELECT id, column_name, type, ref_id FROM measures WHERE data_area_id = '{0}'".format(self.data_area_id))
-        measures = cursor.fetchall()
-
-        # Проверка структуры в файле
-        head_check = self.head_check(measures, row)
-        if head_check[0] != True:
-            return head_check
+    # Проверка полного набора колонок в файле
+    for i in in_base:
+        if i[1] in in_file:
+            in_file_indexes.append(in_file.index(i[1]))
         else:
-            status = '4'
-            update_data_area_status(status, self.data_area_id)
-            return status
+            return False, i[1], 'Этой колонки не хвататет в загружаемых данных'
 
-        # Набор справочников требуемых для проверки
-        ref_names = {}
-        for i in measures:
-            if i[3] != None:
-                cursor.execute(
-                    "SELECT data FROM refs WHERE id = '{0}'".format(i[3]))
-                ref_name = cursor.fetchall()[0][0]
-                ref_names.update({i[0]: ref_name})
+    return True, in_file_indexes
 
-        # Создать файл для записи ошибок
-        style0 = xlwt.easyxf('font: name Times New Roman, color-index red, bold on', num_format_str='#,##0.00')
-        style1 = xlwt.easyxf()
-        wb = xlwt.Workbook()
-        ws = wb.add_sheet('Main')
+# Запуск обработки
+def start(id, data_area_id, filename, type):
+    # Обновление статуса предметной области и измерений
+    status = '3'
+    update_data_area_status(status, data_area_id)
 
-        # Название таблицы, в которую записывать данные
-        db_da = db.data_area()
-        table_name = db_da.data_area(self.data_area_id)[0][5]
+    # Открывается сохраненный файл
+    rb = xlrd.open_workbook(constants.UPLOAD_FOLDER + filename)
+    sheet = rb.sheet_by_index(0)
 
-        # Удаление данных из таблицы, если идет операция обновления данных
-        if self.type == 1:
-            data_cursor.execute(
-                '''
-                DELETE FROM {0};
-                '''.format(table_name)
-            )
-            data_conn.commit()
+    # Содержание файла
+    in_table = range(sheet.nrows)
 
-        count = 1
-        # Загрузка данных из файла
-        for rownum in in_table:
-            # Строка в файле
-            row = sheet.row_values(rownum)
+    # Набор колонок из файла
+    row = sheet.row_values(in_table[0])
 
-            # Получение нужного набора данных из строки
-            bdline = []
-            for i in head_check[1]:
-                item = []
-                item.append(row[i])
-                item.append(measures[head_check[1].index(i)][2])
-                ref_table = measures[head_check[1].index(i)][3]
-                if ref_table != None and ref_table != '':
-                    item.append(ref_names[measures[head_check[1].index(i)][0]])
-                else:
-                    item.append(None)
-                bdline.append(item)
+    # Набор колонок из базы
+    cursor.execute(
+        "SELECT id, column_name, type, ref_id FROM measures WHERE data_area_id = '{0}'".format(data_area_id))
+    measures = cursor.fetchall()
 
-            # Перебор строк
-            if rownum == 0:
-                ws.write(rownum, 0, 'Номер строки', style0)
-                ws.write(rownum, 1, 'Ошибка', style0)
-                ws.write(rownum, 2, 'Знаечние', style0)
-            elif rownum >= 1:
-                # Проверка данных строки на соответсвие формату
-                status, result, description = validate_line(bdline)
+    # Проверка структуры в файле
+    headcheck = head_check(measures, row)
+    if headcheck[0] != True:
+        status = '4'
+        update_data_area_status(status, data_area_id)
+        return status
 
-                if status:
-                    names_to_record = ', '.join(str(e[1]) for e in measures)
-                    data_to_record = ', '.join("'"+str(e)+"'" for e in result)
-                    data_cursor.execute(
-                        '''
-                        INSERT INTO {0} (
-                            {1}
-                        ) VALUES ({2});
-                        '''.format(table_name, names_to_record, data_to_record)
-                        )
-                    data_conn.commit()
+    # Набор справочников требуемых для проверки
+    ref_names = {}
+    for i in measures:
+        if i[3] != None:
+            cursor.execute(
+                "SELECT data FROM refs WHERE id = '{0}'".format(i[3]))
+            ref_name = cursor.fetchall()[0][0]
+            ref_names.update({i[0]: ref_name})
 
-                else:
-                    ws.write(count, 0, rownum + 1, style1)
-                    ws.write(count, 1, description, style1)
-                    ws.write(count, 2, result, style1)
-                    count += 1
+    # Создание файла для записи ошибок
+    style0 = xlwt.easyxf('font: name Times New Roman, color-index red, bold on', num_format_str='#,##0.00')
+    style1 = xlwt.easyxf()
+    wb = xlwt.Workbook()
+    ws = wb.add_sheet('Main')
 
-        # Удаление загруженного файла
-        os.remove(constants.UPLOAD_FOLDER + self.filename)
+    # Название таблицы, в которую записывать данные
+    db_da = db.data_area()
+    table_name = db_da.data_area(data_area_id)[0][5]
 
-        # Сохранение и закрытие файла с ошибками
-        path_adn_file = constants.ERROR_FOLDER + self.filename
-        wb.save(path_adn_file)
-
-        # Обновление статуса предметной области и измерений
-        status = '5'
-        update_data_area_status(status, self.data_area_id)
-
-        # Удаление отработаной задачи
+    # Удаление данных из таблицы, если идет операция обновления данных
+    if type == '1':
         data_cursor.execute(
             '''
-            DELETE 
-            FROM 
-                data_queue 
-            WHERE id=%s;
-            ''', [self.id]
+            DELETE FROM {0};
+            '''.format(table_name)
         )
         data_conn.commit()
 
-        return status
+    count = 1
+    # Загрузка данных из файла
+    for rownum in in_table:
+        # Строка в файле
+        row = sheet.row_values(rownum)
+
+        # Получение нужного набора данных из строки
+        bdline = []
+        for i in headcheck[1]:
+            item = []
+            item.append(row[i])
+            item.append(measures[headcheck[1].index(i)][2])
+            ref_table = measures[headcheck[1].index(i)][3]
+            if ref_table != None and ref_table != '':
+                item.append(ref_names[measures[headcheck[1].index(i)][0]])
+            else:
+                item.append(None)
+            bdline.append(item)
+
+        # Перебор строк
+        if rownum == 0:
+            ws.write(rownum, 0, 'Номер строки', style0)
+            ws.write(rownum, 1, 'Ошибка', style0)
+            ws.write(rownum, 2, 'Знаечние', style0)
+        elif rownum >= 1:
+            # Проверка данных строки на соответсвие формату
+            status, result, description = validate_line(bdline)
+
+            if status:
+                names_to_record = ', '.join(str(e[1]) for e in measures)
+                data_to_record = ', '.join("'"+str(e)+"'" for e in result)
+                data_cursor.execute(
+                    '''
+                    INSERT INTO {0} (
+                        {1}
+                    ) VALUES ({2});
+                    '''.format(table_name, names_to_record, data_to_record)
+                    )
+                data_conn.commit()
+
+            else:
+                ws.write(count, 0, rownum + 1, style1)
+                ws.write(count, 1, description, style1)
+                ws.write(count, 2, result, style1)
+                count += 1
+
+    # Удаление загруженного файла
+    os.remove(constants.UPLOAD_FOLDER + filename)
+
+    # Сохранение и закрытие файла с ошибками
+    path_adn_file = constants.ERROR_FOLDER + filename
+    wb.save(path_adn_file)
+
+    # Обновление статуса предметной области и измерений
+    status = '5'
+    update_data_area_status(status, data_area_id)
+
+    return status
 

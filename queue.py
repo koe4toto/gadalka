@@ -16,23 +16,31 @@ def check ():
         t.start()
     else:
         # Если задача есть, то идентификатор задачи отправляется в обработчик
-        id = str(result[0][0])
         task(result)
 
 # Отработка задачи
 def task(result):
     global t
 
-    id = str(result[0][0])
-    # Исполнение задачи
-    case = loading_from_file.data_loading()
-    case.id = result[0][0]
-    case.data_area_id = result[0][1]
-    case.filename = result[0][2]
-    case.type = result[0][3]
-    case.user = result[0][4]
-    case.start()
+    id = result[0][0]
+    data_area_id = result[0][1]
+    filename = result[0][2]
+    type = result[0][3]
 
+    fin = loading_from_file.start(id, data_area_id, filename, type)
+
+    # Удаление отработаной задачи
+    data_cursor.execute(
+        '''
+        DELETE 
+        FROM 
+            data_queue 
+        WHERE id=%s;
+        ''', [result[0][0]]
+    )
+    data_conn.commit()
+    print(fin)
+    
     # Запуск проверки наличия новой задачи
     if t == None:
         check()

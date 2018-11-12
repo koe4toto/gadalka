@@ -9,6 +9,7 @@ import database as db
 import datetime
 import xlwt
 import os
+import loading_from_file
 
 cursor = db.cursor
 conn = db.conn
@@ -94,19 +95,27 @@ def primal_calc():
 
 
 #print(foo.numline(70))
+data_cursor.execute('''SELECT * FROM data_queue LIMIT 1;''')
+result = data_cursor.fetchall()
+print(result)
 
-data_area_id = 1
-data = 'sdfsf'
-type_id = 1
-user_id = 34
+id = result[0][0]
+data_area_id = result[0][1]
+filename = result[0][2]
+type = result[0][3]
+user = result[0][4]
+fin = loading_from_file.start(id,data_area_id, filename, type)
 
-data_cursor.execute('''INSERT INTO data_queue (data_area_id, data, type, user_id) VALUES (1, 'sdfsf', 1, 34) RETURNING id;''')
-task_id = data_cursor.fetchall()
+# Удаление отработаной задачи
+data_cursor.execute(
+    '''
+    DELETE 
+    FROM 
+        data_queue 
+    WHERE id=%s;
+    ''', [result[0][0]]
+)
 data_conn.commit()
-
-data_cursor.execute('''SELECT * FROM data_queue;''')
-que = data_cursor.fetchall()
-
-print('Идентификатор задачи', task_id, que)
+print(fin)
 
 
