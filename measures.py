@@ -6,6 +6,7 @@ import json
 import numpy as np
 import statistic_math as sm
 import database as db
+import itertools
 
 # Мои модули
 from forms import *
@@ -133,7 +134,7 @@ def add_measure(data_area_id, type):
                             type, 
                             status,
                             ref_id) 
-                        VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}');
+                        VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}') RETURNING id;
                         '''.format(
                             column_name,
                             description,
@@ -144,6 +145,7 @@ def add_measure(data_area_id, type):
                         )
                     )
                     conn.commit()
+                    meg_id = cursor.fetchall()
                 except:
                     flash('Колонка с таким именем уже существует', 'success')
                     return redirect(url_for('data_areas.data_area', id=data_area_id))
@@ -158,7 +160,7 @@ def add_measure(data_area_id, type):
                         data_area_id, 
                         type, 
                         status) 
-                    VALUES ('{0}', '{1}', '{2}', '{3}', '{4}');
+                    VALUES ('{0}', '{1}', '{2}', '{3}', '{4}') RETURNING id;
                     '''.format(
                         column_name,
                         description,
@@ -168,6 +170,7 @@ def add_measure(data_area_id, type):
                     )
                 )
                 conn.commit()
+                meg_id = cursor.fetchall()
 
             # Сооздание колонки
             data_cursor.execute(
@@ -184,6 +187,23 @@ def add_measure(data_area_id, type):
             )
             data_conn.commit()
 
+            cursor.execute("SELECT id FROM measures WHERE type = %s AND id != %s AND data_area_id = %s;",
+                           ['1', meg_id, id])
+            megs_a = cursor.fetchall()
+            megs = [i[0] for i in megs_a]
+
+            # Получить список идентификаторов гипотез
+            cursor.execute("SELECT id FROM hypotheses;")
+            hypotheses_id_a = cursor.fetchall()
+            hypotheses_id = [i[0] for i in hypotheses_id_a]
+
+            # Создать записи для каждой новой пары и каждой гипотезы)
+            arrays = [hypotheses_id, megs, [meg_id[0]]]
+            tup = list(itertools.product(*arrays))
+            args_str = str(tup).strip('[]')
+
+            # Записать данные
+            cursor.execute("INSERT INTO math_models (hypothesis, area_description_1, area_description_2) VALUES " + args_str)
 
             flash('Параметр добавлен', 'success')
             return redirect(url_for('data_areas.data_area', id=data_area_id))
