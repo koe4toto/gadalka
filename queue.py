@@ -40,7 +40,7 @@ def task(result):
     )
     data_conn.commit()
     print(fin)
-    
+
     # Запуск проверки наличия новой задачи
     if t == None:
         check()

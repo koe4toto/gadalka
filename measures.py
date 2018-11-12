@@ -106,9 +106,10 @@ def add_measure(data_area_id, type):
             FROM  
                 measures
             WHERE
-                column_name = '{0}';
+                column_name = '{0}' AND data_area_id = '{1}';
             '''.format(
-                column_name
+                column_name,
+                data_area_id
             )
         )
         check = cursor.fetchall()
@@ -233,9 +234,10 @@ def edit_measure(id, measure_id):
             FROM  
                 measures
             WHERE
-                column_name = '{0}';
+                column_name = '{0}' AND data_area_id = '{1}';
             '''.format(
-                column_name
+                column_name,
+                id
             )
         )
         check = cursor.fetchall()
