@@ -33,17 +33,6 @@ def task(result):
     case.user = result[0][4]
     case.start()
 
-    # Удаление отработаной задачи
-    data_cursor.execute(
-        '''
-        DELETE 
-        FROM 
-            data_queue 
-        WHERE id=%s;
-        ''', [id]
-    )
-    data_conn.commit()
-
     # Запуск проверки наличия новой задачи
     if t == None:
         check()

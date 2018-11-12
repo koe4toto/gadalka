@@ -86,6 +86,17 @@ def validate_line(data):
     result = [i[0] for i in data]
     return True, result, 'Принято'
 
+# Редактирование предметной области
+def update_data_area_status(status, id):
+    cursor.execute(
+        '''
+        UPDATE data_area SET 
+            status='{0}'
+        WHERE id='{1}';
+        '''.format(status, id)
+        )
+    conn.commit()
+
 # Проверка обработка файла
 class data_loading:
 
@@ -113,6 +124,10 @@ class data_loading:
 
     # Запуск обработки
     def start(self):
+        # Обновление статуса предметной области и измерений
+        status = '3'
+        update_data_area_status(status, self.data_area_id)
+
         # Открывается сохраненный файл
         rb = xlrd.open_workbook(constants.UPLOAD_FOLDER + self.filename)
         sheet = rb.sheet_by_index(0)
@@ -132,6 +147,10 @@ class data_loading:
         head_check = self.head_check(measures, row)
         if head_check[0] != True:
             return head_check
+        else:
+            status = '4'
+            update_data_area_status(status, self.data_area_id)
+            return status
 
         # Набор справочников требуемых для проверки
         ref_names = {}
@@ -200,14 +219,12 @@ class data_loading:
                         '''.format(table_name, names_to_record, data_to_record)
                         )
                     data_conn.commit()
-                    print(self.line)
 
                 else:
                     ws.write(count, 0, rownum + 1, style1)
                     ws.write(count, 1, description, style1)
                     ws.write(count, 2, result, style1)
                     count += 1
-                    print('Ошибка в строке номер: ', rownum + 1, description, result)
 
         # Удаление загруженного файла
         os.remove(constants.UPLOAD_FOLDER + self.filename)
@@ -217,4 +234,19 @@ class data_loading:
         wb.save(path_adn_file)
 
         # Обновление статуса предметной области и измерений
+        status = '5'
+        update_data_area_status(status, self.data_area_id)
+
+        # Удаление отработаной задачи
+        data_cursor.execute(
+            '''
+            DELETE 
+            FROM 
+                data_queue 
+            WHERE id=%s;
+            ''', [self.id]
+        )
+        data_conn.commit()
+
+        return status
 
