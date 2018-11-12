@@ -97,7 +97,7 @@ class data_area:
                 data, 
                 type,
                 user_id
-            ) VALUES (%s, %s, %s, %s);
+            ) VALUES (%s, %s, %s, %s) RETURNING id;
             ''',
             (
                 data_area_id,
@@ -106,6 +106,8 @@ class data_area:
                 user_id
             ))
         data_conn.commit()
+        task_id = cursor.fetchall()
+        print('Идентификатор задачи', task_id)
 
     # Список задач
     def tasks(self):

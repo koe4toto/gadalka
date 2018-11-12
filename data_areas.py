@@ -136,6 +136,7 @@ def upload_data_area_from_file(id):
 
             # Создание задачи в очереди на обработку
             db_da.create_task(id, filename, type_of, session['user_id'])
+            print(id, filename, type_of, session['user_id'])
 
             # Изменение статуса предметной области
             status = '2'

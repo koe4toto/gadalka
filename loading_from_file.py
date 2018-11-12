@@ -87,15 +87,14 @@ def validate_line(data):
     return True, result, 'Принято'
 
 # Проверка обработка файла
-class data_loading():
+class data_loading:
 
     def __init__(self):
-        self.line = None
-        self.id = line[0]
-        self.data_area_id = line[1]
-        self.filename = line[2]
-        self.type = line[3]
-        self.user = line[4]
+        self.id = None
+        self.data_area_id = None
+        self.filename = None
+        self.type = None
+        self.user = None
 
     # Функция возвращает либо ошибку с неверным значением, либо набор значений, которые можно записать в базу
     def head_check(self, in_base, in_file):
@@ -211,19 +210,11 @@ class data_loading():
                     print('Ошибка в строке номер: ', rownum + 1, description, result)
 
         # Удаление загруженного файла
-        # os.remove(constants.UPLOAD_FOLDER + self.filename)
+        os.remove(constants.UPLOAD_FOLDER + self.filename)
 
         # Сохранение и закрытие файла с ошибками
         path_adn_file = constants.ERROR_FOLDER + self.filename
         wb.save(path_adn_file)
 
-        # Обновление статуса предметной области и измерений,
-
-
-# Позиция в очереди
-line = (17, 24, '1_23_test0.xlsx.xls', 1, 1, '2018-10-18 16:29:44.278127')
-
-kaa = data_loading()
-kaa.line = line
-kaa.start()
+        # Обновление статуса предметной области и измерений
 

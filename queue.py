@@ -1,5 +1,6 @@
 import threading
 from database import data_conn, data_cursor
+import loading_from_file
 
 # Переменная для потока
 t = None
@@ -24,6 +25,13 @@ def task(result):
 
     id = str(result[0][0])
     # Исполнение задачи
+    case = loading_from_file.data_loading()
+    case.id = result[0][0]
+    case.data_area_id = result[0][1]
+    case.filename = result[0][2]
+    case.type = result[0][3]
+    case.user = result[0][4]
+    case.start()
 
     # Удаление отработаной задачи
     data_cursor.execute(
