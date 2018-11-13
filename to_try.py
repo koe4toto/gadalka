@@ -158,6 +158,9 @@ def gen_data():
 
 #print(foo.numline(70))
 
+m = '2223'
 
+n = 'werwe'
 
+k = m+n
 

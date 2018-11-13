@@ -418,8 +418,8 @@ def delate_table(name):
 def delate_data(name):
     cursor.execute(
         '''
-        DELETE FROM %s;
-        ''', name
+        DELETE FROM {0};
+        '''.format(name)
     )
     conn.commit()
 
