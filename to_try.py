@@ -15,17 +15,51 @@ conn = db.conn
 data_cursor = db.data_cursor
 data_conn = db.data_conn
 
+# В начале я знаю идентификаторы измерений, которые нужно взять для анализа
+def take_lines (line1, line2, len=100):
+    # Измерения
+    try:
+        cursor.execute(
+            '''
+            SELECT 
+                measures.column_name, 
+                data_area.database_table 
+            FROM 
+                measures 
+            LEFT JOIN data_area ON measures.data_area_id = data_area.id
+            WHERE measures.id = '{0}' OR measures.id = '{1}';
+            '''.format(line1, line2))
+        measures = cursor.fetchall()
+    except:
+        return None
+
+    # Название таблицы, в котрой хранятся данные
+    database_table = measures[0][1]
+
+    # Данные
+    data_cursor.execute(
+        '''
+        SELECT {0}, {1} 
+        from (select row_number() 
+        over (order by {0}) num, count(*) over () as count, {0}, {1}   
+        from {2} p)A where case when count > {3} then num %(count/{3}) = 0 else 1 = 1 end;
+        '''.format(measures[0][0], measures[1][0], database_table, len)
+    )
+    measure_data = data_cursor.fetchall()
+    return measure_data
 
 # Рассчета свойств модели и запись результатов в базу данных
 def search_model(hypothesis, adid1, adid2):
     print('Старт!')
 
-
     # Получение списков данных
-    x = foo.numline(adid1, len=100)
-    y = foo.numline(adid2, len=100)
+    xy = take_lines(adid1, adid2)
+    if xy != None:
+        XY = np.array(xy)
+        x = [float(i[0]) for i in XY]
+        y = [float(i[1]) for i in XY]
     print(x)
-
+    print(y)
     # Экземпляр класса обработки данных по парам
     pairs = sm.Pairs(x, y)
 
@@ -72,21 +106,14 @@ def search_model(hypothesis, adid1, adid2):
 
 # Обработка моделей с пустыми значениями
 def primal_calc():
-    # Выбор модели для рассчета
-    cursor.execute("SELECT * FROM math_models m1 WHERE NOT (m1.r_value IS NOT NULL) LIMIT 1;")
-    model = cursor.fetchall()
-    print(model)
+    model = [1]
 
-    while model != '[]':
-        search_model(model[0][1], model[0][7], model[0][8])
-
-        # Выбор модели для рассчета
+    while len(model) > 0:
         cursor.execute("SELECT * FROM math_models m1 WHERE NOT (m1.r_value IS NOT NULL) LIMIT 1;")
         model = cursor.fetchall()
-        print(model)
+        search_model(model[0][1], model[0][7], model[0][8])
 
-
-#primal_calc()
+primal_calc()
 
 
 def gen_line(x, slope, imtersept):
@@ -136,7 +163,6 @@ def gen_exponentialreg2(x, slope, intercept):
     Y = [i + random.randint(-10, 15) for i in y]
     return Y
 
-
 def gen_data():
     x = np.array([random.random() * 100 for i in range(90)])
     line_1 = gen_hyperbolicreg1(x, 3, 2)
@@ -152,15 +178,4 @@ def gen_data():
         conn.commit()
     return end
 
-#print(gen_data())
-#primal_calc()
-
-
-#print(foo.numline(70))
-
-m = '2223'
-
-n = 'werwe'
-
-k = m+n
 

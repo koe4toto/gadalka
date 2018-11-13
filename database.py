@@ -270,7 +270,7 @@ class measures:
                 "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_measures'), 
                 "column_name" varchar(300), 
                 "description" varchar(300), 
-                "data_area_id" varchar(300), 
+                "data_area_id" int, 
                 "type" int, 
                 "status" int, 
                 "ref_id" int

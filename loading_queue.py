@@ -27,7 +27,7 @@ def task(result):
     filename = result[0][2]
     type = result[0][3]
 
-    fin = loading_from_file.start(id, data_area_id, filename, type)
+    loading_from_file.start(id, data_area_id, filename, type)
 
     # Удаление отработаной задачи
     data_cursor.execute(
@@ -39,7 +39,6 @@ def task(result):
         ''', [result[0][0]]
     )
     data_conn.commit()
-    print(fin)
 
     # Запуск проверки наличия новой задачи
     if t == None:
