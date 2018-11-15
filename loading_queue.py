@@ -1,5 +1,6 @@
 import threading
 from database import data_conn, data_cursor
+from model_calculation import primal_calc
 import loading_from_file
 
 # Переменная для потока
@@ -27,7 +28,10 @@ def task(result):
     filename = result[0][2]
     type = result[0][3]
 
-    loading_from_file.start(id, data_area_id, filename, type)
+    loading = loading_from_file.start(id, data_area_id, filename, type)
+
+    if loading == '5':
+        primal_calc()
 
     # Удаление отработаной задачи
     data_cursor.execute(
@@ -46,6 +50,5 @@ def task(result):
     else:
         t.cancel()
         check()
-
 
 check()

@@ -194,9 +194,9 @@ def start(id, data_area_id, filename, type):
             ws.write(rownum, 2, 'Знаечние', style0)
         elif rownum >= 1:
             # Проверка данных строки на соответсвие формату
-            status, result, description = validate_line(bdline)
+            vlidate_status, result, description = validate_line(bdline)
 
-            if status:
+            if vlidate_status:
                 names_to_record = ', '.join(str(e[1]) for e in measures)
                 data_to_record = ', '.join("'"+str(e)+"'" for e in result)
                 data_cursor.execute(
