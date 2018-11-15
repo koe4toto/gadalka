@@ -58,8 +58,6 @@ def search_model(hypothesis, adid1, adid2):
         XY = np.array(xy)
         x = [float(i[0]) for i in XY]
         y = [float(i[1]) for i in XY]
-    print(x)
-    print(y)
     # Экземпляр класса обработки данных по парам
     pairs = sm.Pairs(x, y)
 
@@ -103,7 +101,6 @@ def search_model(hypothesis, adid1, adid2):
 
     print('Готово!')
 
-
 # Обработка моделей с пустыми значениями
 def primal_calc():
     model = [1]
@@ -111,7 +108,8 @@ def primal_calc():
     while len(model) > 0:
         cursor.execute("SELECT * FROM math_models m1 WHERE NOT (m1.r_value IS NOT NULL) LIMIT 1;")
         model = cursor.fetchall()
-        search_model(model[0][1], model[0][7], model[0][8])
+        if len(model) > 0:
+            search_model(model[0][1], model[0][7], model[0][8])
 
 primal_calc()
 
@@ -177,5 +175,3 @@ def gen_data():
                        (i[0], i[1], i[2]))
         conn.commit()
     return end
-
-
