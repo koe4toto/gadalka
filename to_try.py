@@ -89,4 +89,4 @@ data_cursor.execute(
     '''.format(m1, m2, database_table)
 )
 measure_data = data_cursor.fetchall()
-print(measure_data)
+

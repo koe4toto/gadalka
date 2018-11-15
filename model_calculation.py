@@ -98,13 +98,15 @@ def search_model(hypothesis, x, y, adid1, adid2):
 # Обработка моделей с пустыми значениями
 def primal_calc():
     model = [1]
-    while len(model) > 0:
+    while len(model) != 0:
+        print(len(model))
         cursor.execute('''SELECT * FROM math_models m1 WHERE NOT (m1.r_value IS NOT NULL) LIMIT 1;''')
         model = cursor.fetchall()
-        hypothesis = model[0][1]
-        line_id_1 = model[0][7]
-        line_id_2 = model[0][8]
+
         if len(model) > 0:
+            hypothesis = model[0][1]
+            line_id_1 = model[0][7]
+            line_id_2 = model[0][8]
             # Получение списков данных
             xy, database_table, database_id = take_lines(line_id_1, line_id_2)
             if xy != None:
