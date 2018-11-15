@@ -97,9 +97,8 @@ def search_model(hypothesis, x, y, adid1, adid2):
 
 # Обработка моделей с пустыми значениями
 def primal_calc():
-    model = [1]
+    model = [None]
     while len(model) != 0:
-        print(len(model))
         cursor.execute('''SELECT * FROM math_models m1 WHERE NOT (m1.r_value IS NOT NULL) LIMIT 1;''')
         model = cursor.fetchall()
 
@@ -107,24 +106,34 @@ def primal_calc():
             hypothesis = model[0][1]
             line_id_1 = model[0][7]
             line_id_2 = model[0][8]
-            # Получение списков данных
+
+            # Получение данных
             xy, database_table, database_id = take_lines(line_id_1, line_id_2)
-            if xy != None:
+            if xy == None:
+                status = '4'
+            else:
                 XY = np.array(xy)
                 x = [float(i[0]) for i in XY]
                 y = [float(i[1]) for i in XY]
 
-            search_model(hypothesis, x, y, line_id_1, line_id_2)
+                # Рассчет параметров модели и запись их в базу
+                search_model(hypothesis, x, y, line_id_1, line_id_2)
+                status = '6'
 
-    # Изменить статус предметной области, измерений
-    cursor.execute(
-        '''
-        UPDATE data_area 
-        SET 
-            status='6' 
-        WHERE id = '{0}';
-        '''.format(database_id)
-    )
-    conn.commit()
+            # Изменить статус предметной области, измерений
+            cursor.execute(
+                '''
+                UPDATE data_area 
+                SET 
+                    status='{3}' 
+                WHERE id = '{0}';
+                
+                UPDATE measures 
+                SET 
+                    status='{3}'
+                WHERE id = '{1}' OR id = '{2}';
+                '''.format(database_id, line_id_1, line_id_2, status)
+            )
+            conn.commit()
 
 #primal_calc()
