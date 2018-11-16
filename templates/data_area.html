@@ -35,12 +35,15 @@
     <hr>
   <p class="mb-0">3. Дождаться обработки и начать работу с результатами</p>
 </div>
-{% endif %}
-
+{% else %}
 {% if data_area[4] == '1' or  data_area[4] == '4' or data_area[4] == '6'%}
 <a class="btn btn-outline-secondary" href="/upload_data_area_from_file/{{ data_area[0] }}">
         <i class="fas fa-cloud-upload-alt"></i> Загрузить данные из файла
     </a>
+{% endif %}
+{% endif %}
+
+{% if data_area[4] == '1' or  data_area[4] == '4' or data_area[4] == '6'%}
 <a class="btn dropdown-toggle btn-secondary"   href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 Добавить параметр
 </a>
