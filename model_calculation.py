@@ -120,6 +120,17 @@ def primal_calc():
                 search_model(hypothesis, x, y, line_id_1, line_id_2)
                 status = '6'
 
+                # Изменить статус предметной области, измерений
+                cursor.execute(
+                    '''
+                    UPDATE measures 
+                    SET 
+                        status='{3}'
+                    WHERE id = '{1}' OR id = '{2}';
+                    '''.format(database_id, line_id_1, line_id_2, status)
+                )
+                conn.commit()
+
             # Изменить статус предметной области, измерений
             cursor.execute(
                 '''
@@ -127,11 +138,6 @@ def primal_calc():
                 SET 
                     status='{3}' 
                 WHERE id = '{0}';
-                
-                UPDATE measures 
-                SET 
-                    status='{3}'
-                WHERE id = '{1}' OR id = '{2}';
                 '''.format(database_id, line_id_1, line_id_2, status)
             )
             conn.commit()
