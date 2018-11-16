@@ -35,12 +35,12 @@
     <hr>
   <p class="mb-0">3. Дождаться обработки и начать работу с результатами</p>
 </div>
-{% else %}
+{% endif %}
+
+{% if data_area[4] == '1' or  data_area[4] == '4' or data_area[4] == '6'%}
 <a class="btn btn-outline-secondary" href="/upload_data_area_from_file/{{ data_area[0] }}">
         <i class="fas fa-cloud-upload-alt"></i> Загрузить данные из файла
     </a>
-{% endif %}
-
 <a class="btn dropdown-toggle btn-secondary"   href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 Добавить параметр
 </a>
@@ -52,6 +52,8 @@
     <a class="dropdown-item" href="/data_area/{{ data_area[0] }}/add_measure_type_5" title="Данные в формате день.месяц.год">Дата</a>
     <a class="dropdown-item" href="/data_area/{{ data_area[0] }}/add_measure_type_6" title="Данные в формате день.месяц.год часы:мунуты:секунды">Время и дата</a>
 </div>
+
+{% endif %}
 <br><br>
   {% if data_area[4] == '2' %}
     <div class="alert alert-secondary" role="alert">
@@ -87,6 +89,7 @@
         <td>
             {{ i[3] }}
         </td>
+        {% if data_area[4] == '1' or  data_area[4] == '4' or data_area[4] == '6'%}
         <td>
             <a class="btn btn-outline-secondary right" href="/data_area/{{data_area[0]}}/edit_measure_{{ i[0] }}">
                 <i class="fas fa-pencil-alt"></i> Редактировать
@@ -98,6 +101,7 @@
               <input type="submit" value=" Удалить" class="btn btn-link float-right text-danger">
             </form>
         </td>
+        {% endif %}
     </tr>
   {% endfor %}
   </tbody>
