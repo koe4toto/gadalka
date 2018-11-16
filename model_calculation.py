@@ -96,10 +96,10 @@ def search_model(hypothesis, x, y, adid1, adid2):
     print('Готово!')
 
 # Обработка моделей с пустыми значениями
-def primal_calc():
+def primal_calc(data_area_id):
     model = [None]
     while len(model) != 0:
-        cursor.execute('''SELECT * FROM math_models m1 WHERE NOT (m1.r_value IS NOT NULL) LIMIT 1;''')
+        cursor.execute('''SELECT * FROM math_models m1 WHERE NOT (m1.r_value IS NOT NULL) LIMIT 1;'''.format(data_area_id))
         model = cursor.fetchall()
 
         if len(model) > 0:

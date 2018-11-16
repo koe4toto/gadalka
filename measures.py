@@ -191,7 +191,6 @@ def add_measure(data_area_id, type):
                            ['1', str(meg_id[0][0]), data_area_id])
             megs_a = cursor.fetchall()
             megs = [i[0] for i in megs_a]
-            print(megs)
 
             if len(megs) > 0:
                 # Получить список идентификаторов гипотез
@@ -200,13 +199,12 @@ def add_measure(data_area_id, type):
                 hypotheses_id = [i[0] for i in hypotheses_id_a]
 
                 # Создать записи для каждой новой пары и каждой гипотезы)
-                arrays = [hypotheses_id, megs, [meg_id[0][0]]]
-                print(arrays)
+                arrays = [hypotheses_id, megs, [meg_id[0][0]], data_area_id]
                 tup = list(itertools.product(*arrays))
                 args_str = str(tup).strip('[]')
 
                 # Записать данные
-                cursor.execute("INSERT INTO math_models (hypothesis, area_description_1, area_description_2) VALUES " + args_str)
+                cursor.execute("INSERT INTO math_models (hypothesis, area_description_1, area_description_2, data_area_id) VALUES " + args_str)
                 conn.commit()
 
             flash('Параметр добавлен', 'success')
