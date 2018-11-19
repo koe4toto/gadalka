@@ -157,8 +157,10 @@ class Pairs:
         self.y = np.array(y)
 
         # Смещение распределения для исключения отрицательных и нулевых значений
-        self.x_div = self.x + np.fabs(self.x.min()) + 1
-        self.y_div = self.y + np.fabs(self.y.min()) + 1
+        self.xstat_div = np.fabs(self.x.min()) + 1
+        self.ystat_div = np.fabs(self.y.min()) + 1
+        self.x_div = self.x + self.xstat_div
+        self.y_div = self.y + self.ystat_div
 
 
 

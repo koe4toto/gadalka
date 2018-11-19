@@ -31,7 +31,7 @@ def task(result):
     loading = loading_from_file.start(id, data_area_id, filename, type)
 
     if loading == '5':
-        primal_calc()
+        primal_calc(data_area_id)
 
     # Удаление отработаной задачи
     data_cursor.execute(

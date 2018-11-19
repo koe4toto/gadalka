@@ -79,14 +79,4 @@ def gen_data():
     return end
 
 
-m1 = 'ref1'
-m2 = 'line1'
-database_table = 'olap_28_1'
-data_cursor.execute(
-    '''
-    SELECT {0}, {1}   
-    from {2} where {0} is not null or {0} is not null;
-    '''.format(m1, m2, database_table)
-)
-measure_data = data_cursor.fetchall()
 

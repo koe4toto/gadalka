@@ -8,7 +8,7 @@ data_cursor = db.data_cursor
 data_conn = db.data_conn
 
 # Данные для анализа
-def take_lines (line1, line2, len=100):
+def take_lines (line1, line2):
     # Измерения
     try:
         cursor.execute(
@@ -24,7 +24,7 @@ def take_lines (line1, line2, len=100):
             '''.format(line1, line2))
         measures = cursor.fetchall()
     except:
-        return None, False
+        return None, False, None
 
     # Название таблицы, в котрой хранятся данные
     database_table = measures[0][1]
@@ -69,77 +69,84 @@ def search_model(hypothesis, x, y, adid1, adid2):
 
     # Рассчета показателей по указанной в базе модели
     slope, intercept, r_value, p_value, std_err = hypotheses[hypothesis]()
-    print(slope, intercept, r_value, p_value, std_err)
+    print(slope, intercept, r_value, p_value, std_err, pairs.xstat_div, pairs.ystat_div)
 
     # Сохранение результатов в базу данных. Записываются данные по модели.
-    cursor.execute('UPDATE math_models SET '
-                   'slope=%s, '
-                   'intercept=%s, '
-                   'r_value=%s, '
-                   'p_value=%s, '
-                   'std_err=%s '
-                   'WHERE '
-                   'area_description_1 = %s '
-                   'AND area_description_2 = %s '
-                   'AND hypothesis = %s;',
-                   (slope,
-                    intercept,
-                    r_value,
-                    p_value,
-                    std_err,
-                    adid1,
-                    adid2,
-                    hypothesis
-                    ))
+    cursor.execute(
+        '''
+        UPDATE 
+            math_models 
+        SET 
+            slope='{0}', 
+            intercept='{1}', 
+            r_value='{2}', 
+            p_value='{3}', 
+            std_err='{4}', 
+            xstat_div='{5}',
+            ystat_div='{6}'
+        WHERE area_description_1 = '{7}' AND area_description_2 = '{8}' AND hypothesis = '{9}';'''.format(
+            slope,
+            intercept,
+            r_value,
+            p_value,
+            std_err,
+            pairs.xstat_div,
+            pairs.ystat_div,
+            adid1,
+            adid2,
+            hypothesis
+
+        )
+    )
     conn.commit()
 
     print('Готово!')
 
 # Обработка моделей с пустыми значениями
 def primal_calc(data_area_id):
-    model = [None]
-    while len(model) != 0:
-        cursor.execute('''SELECT * FROM math_models m1 WHERE NOT (m1.r_value IS NOT NULL) LIMIT 1;'''.format(data_area_id))
-        model = cursor.fetchall()
 
-        if len(model) > 0:
-            hypothesis = model[0][1]
-            line_id_1 = model[0][7]
-            line_id_2 = model[0][8]
+    cursor.execute('''SELECT * FROM math_models m1 WHERE data_area_id = '{0}';'''.format(data_area_id))
+    model = cursor.fetchall()
+    for i in model:
 
-            # Получение данных
-            xy, database_table, database_id = take_lines(line_id_1, line_id_2)
-            if xy == None:
-                status = '4'
-            else:
-                XY = np.array(xy)
-                x = [float(i[0]) for i in XY]
-                y = [float(i[1]) for i in XY]
+        hypothesis = i[1]
+        line_id_1 = i[7]
+        line_id_2 = i[8]
 
-                # Рассчет параметров модели и запись их в базу
-                search_model(hypothesis, x, y, line_id_1, line_id_2)
-                status = '6'
+        # Получение данных
+        xy, database_table, database_id = take_lines(line_id_1, line_id_2)
+        print(model)
+        if xy == None:
+            status = '4'
+        else:
+            XY = np.array(xy)
+            x = [float(i[0]) for i in XY]
+            y = [float(i[1]) for i in XY]
 
-                # Изменить статус предметной области, измерений
-                cursor.execute(
-                    '''
-                    UPDATE measures 
-                    SET 
-                        status='{3}'
-                    WHERE id = '{1}' OR id = '{2}';
-                    '''.format(database_id, line_id_1, line_id_2, status)
-                )
-                conn.commit()
+            # Рассчет параметров модели и запись их в базу
+            search_model(hypothesis, x, y, line_id_1, line_id_2)
+            status = '6'
 
             # Изменить статус предметной области, измерений
             cursor.execute(
                 '''
-                UPDATE data_area 
+                UPDATE measures 
                 SET 
-                    status='{3}' 
-                WHERE id = '{0}';
+                    status='{3}'
+                WHERE id = '{1}' OR id = '{2}';
                 '''.format(database_id, line_id_1, line_id_2, status)
             )
             conn.commit()
 
-#primal_calc()
+        # Изменить статус предметной области, измерений
+        cursor.execute(
+            '''
+            UPDATE data_area 
+            SET 
+                status='{3}' 
+            WHERE id = '{0}';
+            '''.format(database_id, line_id_1, line_id_2, status)
+        )
+        conn.commit()
+
+# primal_calc()

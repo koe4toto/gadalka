@@ -199,9 +199,12 @@ def add_measure(data_area_id, type):
                 hypotheses_id = [i[0] for i in hypotheses_id_a]
 
                 # Создать записи для каждой новой пары и каждой гипотезы)
-                arrays = [hypotheses_id, megs, [meg_id[0][0]], data_area_id]
+                arrays = [hypotheses_id, megs, [meg_id[0][0]], [int(data_area_id)]]
                 tup = list(itertools.product(*arrays))
                 args_str = str(tup).strip('[]')
+                print(arrays)
+                print(data_area_id)
+                print(args_str)
 
                 # Записать данные
                 cursor.execute("INSERT INTO math_models (hypothesis, area_description_1, area_description_2, data_area_id) VALUES " + args_str)

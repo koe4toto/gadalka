@@ -224,6 +224,7 @@ class data_area:
         # Удаление данных из таблиц
         cursor.execute("DELETE FROM measures WHERE data_area_id = '{0}'".format(id))
         cursor.execute("DELETE FROM data_area WHERE id = '{0}'".format(id))
+        cursor.execute("DELETE FROM math_models WHERE data_area_id = '{0}'".format(id))
         conn.commit()
 
         # Удаление таблицы с данными
@@ -442,9 +443,13 @@ CREATE TABLE math_models
 "r_value" varchar(300), 
 "p_value" varchar(300), 
 "std_err" varchar(300),
+"xstat_div" varchar(300),
+"ystat_div" varchar(300),
+"data_area_id" integer,
 "area_description_1" integer, 
 "area_description_2" integer);
 ''')
+conn.commit()
 """
 
 
