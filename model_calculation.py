@@ -109,16 +109,13 @@ def primal_calc(data_area_id):
 
     cursor.execute('''SELECT * FROM math_models WHERE data_area_id = '{0}';'''.format(data_area_id))
     model = cursor.fetchall()
-    print(model)
     for i in model:
 
         hypothesis = i[1]
         line_id_1 = i[10]
         line_id_2 = i[11]
-        print(line_id_1, line_id_2)
         # Получение данных
         xy, database_table, database_id = take_lines(line_id_1, line_id_2)
-        print(xy, database_table, database_id)
         if xy == None:
             status = '4'
         else:

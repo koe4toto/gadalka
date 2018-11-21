@@ -187,6 +187,9 @@ def start(id, data_area_id, filename, type):
                 item.append(None)
             bdline.append(item)
 
+        errrors = 0
+        done = 0
+
         # Перебор строк
         if rownum == 0:
             ws.write(rownum, 0, 'Номер строки', style0)
@@ -207,11 +210,12 @@ def start(id, data_area_id, filename, type):
                     '''.format(table_name, names_to_record, data_to_record)
                     )
                 data_conn.commit()
-
+                done += 1
             else:
                 ws.write(count, 0, rownum + 1, style1)
                 ws.write(count, 1, description, style1)
                 ws.write(count, 2, result, style1)
+                errrors += 1
                 count += 1
 
     # Удаление загруженного файла
