@@ -9,7 +9,7 @@ import constants
 # Мои модули
 from foo import allowed_file, looking, sqllist, sqlvar
 from forms import *
-from database import conn, cursor
+from database import conn, cursor, data_cursor, data_conn
 
 mod = Blueprint('refs', __name__)
 
@@ -18,9 +18,7 @@ mod = Blueprint('refs', __name__)
 @is_logged_in
 def refs():
     # Список справочников
-    cursor.execute(
-        'SELECT * FROM refs WHERE user_id=%s ORDER BY register_date DESC',
-        [str(session['user_id'])])
+    cursor.execute('''SELECT * FROM refs ORDER BY register_date DESC;''')
     ref_list = cursor.fetchall()
     return render_template('refs.html', list = ref_list)
 
@@ -33,9 +31,8 @@ def ref(id):
 
     ref_data = the_ref[0][4]
 
-    cursor.execute("SELECT * FROM " + str(ref_data) + " ;")
-    columns = cursor.fetchall()
-    print(columns)
+    data_cursor.execute('''SELECT * FROM {0} ;'''.format(str(ref_data)))
+    columns = data_cursor.fetchall()
 
     return render_template('ref.html', id = id, ref = the_ref, columns=columns)
 
@@ -72,12 +69,15 @@ def add_ref():
             table_name = str('ref' + str(session['user_id']) + now)
 
             # Создаётся запись в таблице с базой данных
-            cursor.execute('INSERT INTO refs (name, description, user_id, data) VALUES (%s, %s, %s, %s);',
-                           (name, description, session['user_id'], table_name))
-            # Создаёется таблица для хранения данных
-            # TODO Справоничк нужно сохранять в специальной базе
-            cursor.execute('''CREATE TABLE '''+ table_name +''' ("code" varchar, "value" varchar, "parent_value" varchar);''')
+            cursor.execute(
+                '''
+                INSERT INTO refs (name, description, user_id, data) VALUES ('{0}', '{1}', '{2}', '{3}');
+                '''.format(name, description, user, table_name)
+            )
             conn.commit()
+            # Создаёется таблица для хранения данных
+            data_cursor.execute('''CREATE TABLE {0} ("code" varchar, "value" varchar, "parent_value" varchar);'''.format(table_name))
+            data_conn.commit()
 
             # Открывается сохраненный файл
             rb = xlrd.open_workbook(os.path.abspath('.') + '/uploaded_files/' + filename)
@@ -89,9 +89,12 @@ def add_ref():
                 for rownum in in_table:
                     if rownum >= 1:
                         row = sheet.row_values(rownum)
-                        cursor.execute('''INSERT INTO ''' + table_name + ''' (code, value, parent_value) VALUES (%s, %s, %s);''',
-                                       (row[0], row[1], row[2]))
-                        conn.commit()
+                        data_cursor.execute(
+                            '''
+                            INSERT INTO {0} (code, value, parent_value) VALUES ('{1}', '{2}', '{3}');
+                            '''.format(table_name, row[0], row[1], row[2])
+                        )
+                        data_conn.commit()
             except:
                 flash('Неверный формат данных в файле', 'danger')
                 return redirect(url_for('add_ref'))
@@ -107,17 +110,17 @@ def add_ref():
     return render_template('add_ref.html', form=form)
 
 # Удаление справочника
-# TODO Удалять справочник нужно из специальной базы данных
 @mod.route('/delete_ref/<string:id>', methods=['POST'])
 @is_logged_in
 def delete_ref(id):
     # Execute
-    cursor.execute("SELECT * FROM refs WHERE id = %s", [id])
+    cursor.execute('''SELECT * FROM refs WHERE id = '{0}';'''.format(id))
     the_ref = cursor.fetchall()
     ref_data = the_ref[0][4]
-    cursor.execute("DELETE FROM refs WHERE id = %s", [id])
-    cursor.execute("DROP TABLE " + ref_data)
+    cursor.execute('''DELETE FROM refs WHERE id = '{0}';'''.format(id))
     conn.commit()
+    data_cursor.execute('''DROP TABLE {0}'''.format(ref_data))
+    data_conn.commit()
 
     flash('Справочник удалён', 'success')
 
@@ -145,8 +148,11 @@ def edit_ref(id):
         if form.validate():
 
             # Обновление базе данных
-            cursor.execute('UPDATE refs SET name=%s, description=%s WHERE id=%s;',
-                           (form.name.data, form.description.data, id))
+            cursor.execute(
+                '''
+                UPDATE refs SET name='{0}', description='{1}' WHERE id='{2}';
+                '''.format(form.name.data, form.description.data, id)
+            )
             conn.commit()
 
             flash('Данные обновлены', 'success')
@@ -159,7 +165,7 @@ def edit_ref(id):
 @is_logged_in
 def update_ref(id):
     # Достаётся предметная область из базы по идентификатору
-    cursor.execute("SELECT * FROM refs WHERE id = %s", [id])
+    cursor.execute('''SELECT * FROM refs WHERE id = '{0}';'''.format(id))
     result = cursor.fetchall()
 
     if request.method == 'POST':
@@ -176,15 +182,15 @@ def update_ref(id):
             # Текущее время в сточку только цифрами
             filename = result[0][4] + '.xlsx'
             # Загружается файл
-            file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            file.save(os.path.join(constants.UPLOAD_FOLDER, filename))
 
             # Имя обновляемой таблицы
             table_name = result[0][4]
 
             # Отчистка таблицы
-            cursor.execute(
-                '''DELETE FROM ''' + table_name)
-            conn.commit()
+            data_cursor.execute(
+                '''DELETE FROM '{0}';'''.format(table_name))
+            data_conn.commit()
 
             # Открывается сохраненный файл
             rb = xlrd.open_workbook(constants.UPLOAD_FOLDER + filename)
@@ -196,10 +202,12 @@ def update_ref(id):
                 for rownum in in_table:
                     if rownum >= 1:
                         row = sheet.row_values(rownum)
-                        cursor.execute(
-                            '''INSERT INTO ''' + table_name + ''' (code, value, parent_value) VALUES (%s, %s, %s);''',
-                            (row[0], row[1], row[2]))
-                        conn.commit()
+                        data_cursor.execute(
+                            '''
+                            INSERT INTO {0} (code, value, parent_value) VALUES ('{1}', '{2}', '{3}');
+                            '''.format(table_name, row[0], row[1], row[2])
+                            )
+                        data_conn.commit()
             except:
                 flash('Неверный формат данных в файле', 'danger')
                 return redirect(url_for('update_ref'))

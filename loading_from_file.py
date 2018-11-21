@@ -51,8 +51,8 @@ def not_empty(text):
 
 # Проверка соответствия значению справочника
 def validate_ref(data):
-    cursor.execute(
-        "SELECT * FROM {0} WHERE code = '{1}' LIMIT 1".format(data[2], data[0]))
+    data_cursor.execute(
+        '''SELECT * FROM {0} WHERE code = '{1}' LIMIT 1;'''.format(data[2], data[0]))
     ref_name = cursor.fetchall()
     if len(ref_name) == 1:
         return True, data[0], 'Принято'
