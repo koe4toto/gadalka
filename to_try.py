@@ -78,5 +78,3 @@ def gen_data():
         conn.commit()
     return end
 
-
-

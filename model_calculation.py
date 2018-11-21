@@ -9,6 +9,7 @@ data_conn = db.data_conn
 
 # Данные для анализа
 def take_lines (line1, line2):
+
     # Измерения
     try:
         cursor.execute(
@@ -46,6 +47,7 @@ def take_lines (line1, line2):
         '''.format(measures[0][0], measures[1][0], database_table)
     )
     measure_data = data_cursor.fetchall()
+    print(measure_data)
     return measure_data, database_table, database_id
 
 # Рассчета свойств модели и запись результатов в базу данных
@@ -105,17 +107,18 @@ def search_model(hypothesis, x, y, adid1, adid2):
 # Обработка моделей с пустыми значениями
 def primal_calc(data_area_id):
 
-    cursor.execute('''SELECT * FROM math_models m1 WHERE data_area_id = '{0}';'''.format(data_area_id))
+    cursor.execute('''SELECT * FROM math_models WHERE data_area_id = '{0}';'''.format(data_area_id))
     model = cursor.fetchall()
+    print(model)
     for i in model:
 
         hypothesis = i[1]
-        line_id_1 = i[7]
-        line_id_2 = i[8]
-
+        line_id_1 = i[10]
+        line_id_2 = i[11]
+        print(line_id_1, line_id_2)
         # Получение данных
         xy, database_table, database_id = take_lines(line_id_1, line_id_2)
-        print(model)
+        print(xy, database_table, database_id)
         if xy == None:
             status = '4'
         else:
@@ -143,10 +146,10 @@ def primal_calc(data_area_id):
             '''
             UPDATE data_area 
             SET 
-                status='{3}' 
+                status='{1}' 
             WHERE id = '{0}';
-            '''.format(database_id, line_id_1, line_id_2, status)
+            '''.format(database_id, status)
         )
         conn.commit()
 
-# primal_calc()
+primal_calc(42)
