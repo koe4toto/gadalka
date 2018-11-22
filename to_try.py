@@ -15,6 +15,9 @@ conn = db.conn
 data_cursor = db.data_cursor
 data_conn = db.data_conn
 
+queue_cursor = db.queue_cursor
+queue_conn = db.queue_conn
+
 
 def gen_line(x, slope, imtersept):
     y = slope * x + imtersept
@@ -79,4 +82,22 @@ def gen_data():
     return end
 
 
+queue_cursor.execute(
+    '''
+    CREATE SEQUENCE auto_id_data_queue;
+
+    CREATE TABLE data_queue (
+        "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_data_queue'), 
+        "data_area_id" integer,
+        "data_log_id" integer, 
+        "data" varchar(600), 
+        "type" varchar(30),
+        "status" integer,
+        "user_id" varchar(30),
+        "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    '''
+)
+
+queue_conn.commit()
 

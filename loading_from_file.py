@@ -62,8 +62,8 @@ def validate_ref(data):
 # Проверка строки
 def validate_line(data):
     tom = {
-        1: not_empty,
-        2: is_number,
+        1: is_number,
+        2: not_empty,
         3: validate_ref,
         4: validate_time,
         5: validate_date,
@@ -169,6 +169,8 @@ def start(id, data_area_id, log_id, filename, type):
         data_conn.commit()
 
     count = 1
+    errrors = 0
+    done = 0
     # Загрузка данных из файла
     for rownum in in_table:
         # Строка в файле
@@ -186,9 +188,6 @@ def start(id, data_area_id, log_id, filename, type):
             else:
                 item.append(None)
             bdline.append(item)
-
-        errrors = 0
-        done = 0
 
         # Перебор строк
         if rownum == 0:
@@ -228,6 +227,17 @@ def start(id, data_area_id, log_id, filename, type):
     # Обновление статуса предметной области и измерений
     status = '5'
     update_data_area_status(status, log_id)
+
+    # Сохранение статистики по результатам обработки данных
+    cursor.execute(
+        '''
+        UPDATE data_log SET 
+            errors='{0}',
+            downloads='{1}'
+        WHERE id='{2}';
+        '''.format(errrors, done, log_id)
+    )
+    conn.commit()
 
     return status
 

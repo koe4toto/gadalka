@@ -26,18 +26,31 @@ class DBConnect(object):
             host=constants.DATABASE_HOST,
             port=constants.DATABASE_PORT
         )
+        self.queue_conn = psycopg2.connect(
+            database=constants.QUEUE_DATABASE_NAME,
+            user=constants.DATABASE_USER,
+            password=constants.DATABASE_PASSWORD,
+            host=constants.DATABASE_HOST,
+            port=constants.DATABASE_PORT
+        )
 
 # Подключение к транзакционной базе
 conn = DBConnect.inst().conn
 
-# Подключение к хранилищу данных
-data_conn = DBConnect.inst().data_conn
-
 # Курсор для транзакционной базы
 cursor = conn.cursor()
 
+# Подключение к хранилищу данных
+data_conn = DBConnect.inst().data_conn
+
 # Курсор для базы с данными
 data_cursor = data_conn.cursor()
+
+# Подключение к хранилищу очереди
+queue_conn = DBConnect.inst().queue_conn
+
+# Курсор для базы с данными очереди
+queue_cursor = queue_conn.cursor()
 
 # Предметные оболасти
 class data_area:
@@ -85,7 +98,7 @@ class data_area:
     # Создание очереди
     def create_queue(self):
         # Создание таблицы
-        data_cursor.execute(
+        queue_cursor.execute(
             '''
             CREATE SEQUENCE auto_id_data_queue;
 
@@ -95,43 +108,47 @@ class data_area:
                 "data_log_id" integer, 
                 "data" varchar(600), 
                 "type" varchar(30),
+                "status" integer,
                 "user_id" varchar(30),
                 "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
             '''
         )
 
-        data_conn.commit()
+        queue_conn.commit()
 
     # Создание задачи
     def create_task(self, data_area_id, data, type, user_id, log_id):
-        data_cursor.execute(
+        status = 1
+        queue_cursor.execute(
             '''
             INSERT INTO data_queue (
                 data_area_id, 
                 data_log_id,
                 data, 
                 type,
+                status,
                 user_id
-            ) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}') RETURNING id;
+            ) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}') RETURNING id;
             '''.format(
                 data_area_id,
                 log_id,
                 data,
                 type,
+                status,
                 user_id)
         )
-        data_conn.commit()
+        queue_conn.commit()
         task_id = cursor.fetchall()
         print('Идентификатор задачи', task_id)
 
     # Список задач
     def tasks(self):
-        data_cursor.execute(
+        queue_cursor.execute(
             '''
             SELECT * FROM data_queue;
             ''')
-        result = cursor.fetchall()
+        result = queue_cursor.fetchall()
         return result
 
     # Список предметных областей

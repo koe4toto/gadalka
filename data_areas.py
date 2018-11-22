@@ -90,8 +90,6 @@ def edit_data_area(id):
 def delete_data_area(id):
 
     db_da.delate_data_area(id)
-
-
     flash('Предметная область удалена', 'success')
 
     return redirect(url_for('data_areas.data_areas'))

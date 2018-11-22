@@ -4,6 +4,7 @@ UPLOAD_FOLDER = os.path.abspath('.') + '/uploaded_files/'
 ERROR_FOLDER = os.path.abspath('.') + '/error_files/'
 ALLOWED_EXTENSIONS = set(['xls', 'xlsx'])
 USERS_DATABASE_NAME = "users_data"
+QUEUE_DATABASE_NAME = "queue"
 DATABASE_NAME = "test111"
 DATABASE_USER = "postgres"
 DATABASE_PASSWORD = "gbcmrf"
