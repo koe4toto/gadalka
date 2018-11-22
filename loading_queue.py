@@ -25,13 +25,15 @@ def task(result):
 
     id = result[0][0]
     data_area_id = result[0][1]
-    filename = result[0][2]
-    type = result[0][3]
+    log_id = result[0][2]
+    filename = result[0][3]
+    type = result[0][4]
 
-    loading = loading_from_file.start(id, data_area_id, filename, type)
+
+    loading = loading_from_file.start(id, data_area_id, log_id, filename, type)
 
     if loading == '5':
-        primal_calc(data_area_id)
+        primal_calc(data_area_id, log_id)
 
     # Удаление отработаной задачи
     data_cursor.execute(

@@ -77,7 +77,8 @@ class data_area:
 
             CREATE TABLE data_queue (
                 "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_data_queue'), 
-                "data_area_id" varchar(100), 
+                "data_area_id" integer,
+                "data_log_id" integer, 
                 "data" varchar(600), 
                 "type" varchar(30),
                 "user_id" varchar(30),
@@ -89,22 +90,23 @@ class data_area:
         data_conn.commit()
 
     # Создание задачи
-    def create_task(self, data_area_id, data, type, user_id):
+    def create_task(self, data_area_id, data, type, user_id, log_id):
         data_cursor.execute(
             '''
             INSERT INTO data_queue (
                 data_area_id, 
+                data_log_id,
                 data, 
                 type,
                 user_id
-            ) VALUES (%s, %s, %s, %s) RETURNING id;
-            ''',
-            (
+            ) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}') RETURNING id;
+            '''.format(
                 data_area_id,
+                log_id,
                 data,
                 type,
-                user_id
-            ))
+                user_id)
+        )
         data_conn.commit()
         task_id = cursor.fetchall()
         print('Идентификатор задачи', task_id)
@@ -225,6 +227,7 @@ class data_area:
         cursor.execute("DELETE FROM measures WHERE data_area_id = '{0}'".format(id))
         cursor.execute("DELETE FROM data_area WHERE id = '{0}'".format(id))
         cursor.execute("DELETE FROM math_models WHERE data_area_id = '{0}'".format(id))
+        cursor.execute("DELETE FROM data_log WHERE data_area_id = '{0}'".format(id))
         conn.commit()
 
         # Удаление таблицы с данными
@@ -436,7 +439,7 @@ cursor.execute('''CREATE TABLE hypotheses ("id" integer PRIMARY KEY NOT NULL, "n
 cursor.execute('''CREATE SEQUENCE auto_id_math_models;''')
 cursor.execute('''
 CREATE TABLE math_models 
-("id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_refs'), 
+("id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_math_models'), 
 "hypothesis" integer, 
 "slope" varchar(300), 
 "intercept" varchar(300), 
@@ -448,6 +451,22 @@ CREATE TABLE math_models
 "data_area_id" integer,
 "area_description_1" integer, 
 "area_description_2" integer);
+''')
+conn.commit()
+
+# История загрузки данных
+cursor.execute('''CREATE SEQUENCE auto_id_data_log;''')
+cursor.execute('''
+CREATE TABLE data_log 
+(
+    "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_data_log'), 
+    "data_area_id" integer, 
+    "errors" varchar(300), 
+    "downloads" varchar(300), 
+    "result" varchar(300), 
+    "status" varchar(300),
+    "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 ''')
 conn.commit()
 """

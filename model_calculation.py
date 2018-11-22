@@ -105,7 +105,7 @@ def search_model(hypothesis, x, y, adid1, adid2):
     print('Готово!')
 
 # Обработка моделей с пустыми значениями
-def primal_calc(data_area_id):
+def primal_calc(data_area_id, log_id):
 
     cursor.execute('''SELECT * FROM math_models WHERE data_area_id = '{0}';'''.format(data_area_id))
     model = cursor.fetchall()
@@ -141,12 +141,12 @@ def primal_calc(data_area_id):
         # Изменить статус предметной области, измерений
         cursor.execute(
             '''
-            UPDATE data_area 
+            UPDATE data_log 
             SET 
                 status='{1}' 
             WHERE id = '{0}';
-            '''.format(database_id, status)
+            '''.format(log_id, status)
         )
         conn.commit()
 
-primal_calc(42)
+# primal_calc(42)

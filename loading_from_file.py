@@ -86,13 +86,13 @@ def validate_line(data):
     return True, result, 'Принято'
 
 # Редактирование предметной области
-def update_data_area_status(status, id):
+def update_data_area_status(status, log_id):
     cursor.execute(
         '''
-        UPDATE data_area SET 
+        UPDATE data_log SET 
             status='{0}'
         WHERE id='{1}';
-        '''.format(status, id)
+        '''.format(status, log_id)
         )
     conn.commit()
 
@@ -113,10 +113,10 @@ def head_check(in_base, in_file):
     return True, in_file_indexes
 
 # Запуск обработки
-def start(id, data_area_id, filename, type):
+def start(id, data_area_id, log_id, filename, type):
     # Обновление статуса предметной области и измерений
     status = '3'
-    update_data_area_status(status, data_area_id)
+    update_data_area_status(status, log_id)
 
     # Открывается сохраненный файл
     rb = xlrd.open_workbook(constants.UPLOAD_FOLDER + filename)
@@ -137,7 +137,7 @@ def start(id, data_area_id, filename, type):
     headcheck = head_check(measures, row)
     if headcheck[0] != True:
         status = '4'
-        update_data_area_status(status, data_area_id)
+        update_data_area_status(status, log_id)
         return status
 
     # Набор справочников требуемых для проверки
@@ -227,7 +227,7 @@ def start(id, data_area_id, filename, type):
 
     # Обновление статуса предметной области и измерений
     status = '5'
-    update_data_area_status(status, data_area_id)
+    update_data_area_status(status, log_id)
 
     return status
 

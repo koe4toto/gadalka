@@ -134,23 +134,21 @@ def upload_data_area_from_file(id):
             # Загружается файл
             file.save(os.path.join(constants.UPLOAD_FOLDER, filename))
 
-            # Создание задачи в очереди на обработку
-            db_da.create_task(id, filename, type_of, session['user_id'])
-            print(id, filename, type_of, session['user_id'])
-
             # Изменение статуса предметной области
             status = '2'
             cursor.execute(
                 '''
-                UPDATE data_area SET 
-                    status=%s
-                WHERE id=%s;
-                ''',
-                (
-                    status,
-                    id
-                ))
+                INSERT INTO data_log (
+                    data_area_id,
+                    status
+                ) VALUES ('{0}', '{1}') RETURNING id;
+                '''.format(id, status)
+            )
             conn.commit()
+            log_id = cursor.fetchall()
+
+            # Создание задачи в очереди на обработку
+            db_da.create_task(id, filename, type_of, session['user_id'], log_id[0][0])
             flash('Данные добавлены и ожидают обработки', 'success')
             return redirect(url_for('data_areas.data_area', id=id))
 
