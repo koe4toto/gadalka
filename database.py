@@ -1,23 +1,36 @@
 import psycopg2
 import constants
 
+class DBConnect(object):
+    __instance = None
+
+    @staticmethod
+    def inst():
+        if DBConnect.__instance == None:
+            DBConnect.__instance = DBConnect()
+        return DBConnect.__instance
+
+    def __init__(self):
+        self.conn = psycopg2.connect(
+            database=constants.DATABASE_NAME,
+            user=constants.DATABASE_USER,
+            password=constants.DATABASE_PASSWORD,
+            host=constants.DATABASE_HOST,
+            port=constants.DATABASE_PORT
+        )
+        self.data_conn = psycopg2.connect(
+            database=constants.USERS_DATABASE_NAME,
+            user=constants.DATABASE_USER,
+            password=constants.DATABASE_PASSWORD,
+            host=constants.DATABASE_HOST,
+            port=constants.DATABASE_PORT
+        )
+
 # Подключение к транзакционной базе
-conn = psycopg2.connect(
-    database=constants.DATABASE_NAME,
-    user=constants.DATABASE_USER,
-    password=constants.DATABASE_PASSWORD,
-    host=constants.DATABASE_HOST,
-    port=constants.DATABASE_PORT
-)
+conn = DBConnect.inst().conn
 
 # Подключение к хранилищу данных
-data_conn = psycopg2.connect(
-    database=constants.USERS_DATABASE_NAME,
-    user=constants.DATABASE_USER,
-    password=constants.DATABASE_PASSWORD,
-    host=constants.DATABASE_HOST,
-    port=constants.DATABASE_PORT
-)
+data_conn = DBConnect.inst().data_conn
 
 # Курсор для транзакционной базы
 cursor = conn.cursor()
