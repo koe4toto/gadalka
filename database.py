@@ -1,6 +1,7 @@
 import psycopg2
 import constants
 
+# Подключение к базам данных
 class DBConnect(object):
     __instance = None
 
@@ -252,7 +253,6 @@ class data_area:
         )
         data_conn.commit()
 
-
 # Параметры
 class measures:
 
@@ -349,7 +349,6 @@ class measures:
         result = cursor.fetchall()
         return result
 
-
 # Пользователи
 class users:
 
@@ -403,7 +402,6 @@ class users:
         result = cursor.fetchall()
         return result
 
-
 # Заполнение справочника
 def update_ref(ref, name):
     for i in ref:
@@ -442,58 +440,77 @@ def delate_data(name):
 
 """
 # Справочники
-cursor.execute('''CREATE SEQUENCE auto_id_refs;''')
-cursor.execute('''CREATE TABLE refs ("id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_refs'), "name" varchar(100), "description" varchar(600), "user_id" varchar(30), "data" varchar, "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP);''')
+cursor.execute(
+    '''
+    CREATE SEQUENCE auto_id_refs;
+    
+    CREATE TABLE refs 
+    (
+        "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_refs'), 
+        "name" varchar(100), 
+        "description" varchar(600), 
+        "user_id" varchar(30), 
+        "data" varchar, 
+        "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    '''
+)
 
 # Справочник гипотез моделей (заполняется разработчиком)
-cursor.execute('''CREATE TABLE hypotheses ("id" integer PRIMARY KEY NOT NULL, "name" varchar(300), "description" varchar(300));''')
+cursor.execute(
+    '''
+    CREATE TABLE hypotheses 
+    (
+        "id" integer PRIMARY KEY NOT NULL, 
+        "name" varchar(300), 
+        "description" varchar(300)
+    );
+    '''
+)
 
 # Модели
-cursor.execute('''CREATE SEQUENCE auto_id_math_models;''')
-cursor.execute('''
-CREATE TABLE math_models 
-("id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_math_models'), 
-"hypothesis" integer, 
-"slope" varchar(300), 
-"intercept" varchar(300), 
-"r_value" varchar(300), 
-"p_value" varchar(300), 
-"std_err" varchar(300),
-"xstat_div" varchar(300),
-"ystat_div" varchar(300),
-"data_area_id" integer,
-"area_description_1" integer, 
-"area_description_2" integer);
-''')
+cursor.execute(
+    '''
+    CREATE SEQUENCE auto_id_math_models;
+    
+    CREATE TABLE math_models 
+    (
+        "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_math_models'), 
+        "hypothesis" integer, 
+        "slope" varchar(300), 
+        "intercept" varchar(300), 
+        "r_value" varchar(300), 
+        "p_value" varchar(300), 
+        "std_err" varchar(300),
+        "xstat_div" varchar(300),
+        "ystat_div" varchar(300),
+        "data_area_id" integer,
+        "area_description_1" integer, 
+        "area_description_2" integer
+    );
+    '''
+)
 conn.commit()
 
 # История загрузки данных
-cursor.execute('''CREATE SEQUENCE auto_id_data_log;''')
-cursor.execute('''
-CREATE TABLE data_log 
-(
-    "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_data_log'), 
-    "data_area_id" integer, 
-    "errors" varchar(300), 
-    "downloads" varchar(300), 
-    "result" varchar(300), 
-    "status" varchar(300),
-    "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
-''')
+cursor.execute(
+    '''
+    CREATE SEQUENCE auto_id_data_log;
+    
+    CREATE TABLE data_log 
+    (
+        "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_data_log'), 
+        "data_area_id" integer, 
+        "errors" varchar(300), 
+        "downloads" varchar(300), 
+        "result" varchar(300), 
+        "status" varchar(300),
+        "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    '''
+)
 conn.commit()
 """
-
-
-# Удаление табицы, если требуется
-#cursor.execute('DROP SEQUENCE auto_id_data_area')
-#cursor.execute('select * from test_data')
-#pik = cursor.fetchall()
-#print(pik)
-
-#conn.commit()
-#cursor.close()
-#conn.close()
 
 
 
