@@ -169,7 +169,7 @@ def start(id, data_area_id, log_id, filename, type):
         data_conn.commit()
 
     count = 1
-    errrors = count - 1
+    errrors = 0
     done = 0
     # Загрузка данных из файла
     for rownum in in_table:
@@ -214,6 +214,7 @@ def start(id, data_area_id, log_id, filename, type):
                 ws.write(count, 0, rownum + 1, style1)
                 ws.write(count, 1, description, style1)
                 ws.write(count, 2, result, style1)
+                errrors += 1
                 count += 1
 
     # Удаление загруженного файла

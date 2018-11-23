@@ -38,7 +38,26 @@ def data_area(id):
     # Получение описания параметров
     measures = db_measure.select_measures_to_data_area(id)
 
-    return render_template('data_area.html', data_area=data_area[0], measures=measures)
+    # Получение последнй операции загрузки данных
+    cursor.execute(
+        '''
+        SELECT *
+        FROM 
+            data_log 
+        WHERE data_area_id = '{0}'
+        ORDER BY id DESC LIMIT 1;
+        '''.format(id)
+    )
+    log = cursor.fetchall()
+
+    if len(log) == 0:
+        log_status = '1'
+        last_log = None
+    else:
+        log_status = log[0][5]
+        last_log = log[0]
+
+    return render_template('data_area.html', data_area=data_area[0], measures=measures, last_log = last_log, log_status = log_status)
 
 # Добавление предметной области
 @mod.route("/add_data_area", methods =['GET', 'POST'] )
