@@ -255,10 +255,14 @@ class data_area:
         data_a = cursor.fetchall()
 
         # Удаление данных из таблиц
-        cursor.execute("DELETE FROM measures WHERE data_area_id = '{0}'".format(id))
-        cursor.execute("DELETE FROM data_area WHERE id = '{0}'".format(id))
-        cursor.execute("DELETE FROM math_models WHERE data_area_id = '{0}'".format(id))
-        cursor.execute("DELETE FROM data_log WHERE data_area_id = '{0}'".format(id))
+        cursor.execute(
+            '''
+            DELETE FROM measures WHERE data_area_id = '{0}';
+            DELETE FROM data_area WHERE id = '{0}';
+            DELETE FROM math_models WHERE data_area_id = '{0}';
+            DELETE FROM data_log WHERE data_area_id = '{0}';
+            '''.format(id)
+        )
         conn.commit()
 
         # Удаление таблицы с данными
