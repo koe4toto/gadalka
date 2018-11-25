@@ -9,7 +9,7 @@
   <div class="col-10">
       <h1>История загрузки данных</h1>
   </div>
-<br><br>
+<br><br><br>
 
 <table class="table">
     <thead>
@@ -25,15 +25,15 @@
     <tr>
         <td>
               {% if i[5] == '2' %}
-                  Ожидает обработки
+                    <span class="badge badge-light">Ожидает обработки</span>
                 {% elif i[5] == '3' %}
-                  Обрабатывается
+                    <span class="badge badge-warning">Обрабатывается</span>
                 {% elif i[5] == '4' %}
-                  Данных не достаточно для анализа
+                    <span class="badge badge-danger">Данных не достаточно для анализа</span>
                 {% elif i[5] == '5' %}
-                  Поиск связей
+                    <span class="badge badge-info">Поиск связей</span>
                 {% elif i[5] == '6' %}
-                  Обработано
+                    <span class="badge badge-success">Обработано</span>
             {% endif %}
 
         </td>

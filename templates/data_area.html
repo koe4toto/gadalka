@@ -40,6 +40,7 @@
 <a class="btn btn-outline-secondary" href="/upload_data_area_from_file/{{ data_area[0] }}">
         <i class="fas fa-cloud-upload-alt"></i> Загрузить данные из файла
     </a>
+<a href="/data_area_log/{{ data_area[0]}}" class="btn btn-link float-right">Посмотреть историю загрузок</a>
 {% endif %}
 {% endif %}
 
@@ -55,7 +56,6 @@
     <a class="dropdown-item" href="/data_area/{{ data_area[0] }}/add_measure_type_5" title="Данные в формате день.месяц.год">Дата</a>
     <a class="dropdown-item" href="/data_area/{{ data_area[0] }}/add_measure_type_6" title="Данные в формате день.месяц.год часы:мунуты:секунды">Время и дата</a>
 </div>
-
 {% endif %}
 <br><br>
   {% if log_status == '2' %}
@@ -81,7 +81,6 @@
   {% endif %}
 <br>
 <br>
-<a href="/data_area_log/{{ data_area[0]}}">Посмотреть историю загрузок</a>
 
 <table class="table">
   <tbody>

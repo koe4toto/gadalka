@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1719e8ec-808e-4103-a063-fff281569a44" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/templates/data_area_log.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data_areas.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_areas.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/data_area.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/data_area.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/data_areas.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/data_areas.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/data_area_log.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/data_area_log.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -37,7 +34,7 @@
       <usages-collector id="statistics.vcs.git.usages" />
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="HTML" value="284" />
+          <entry key="HTML" value="356" />
           <entry key="PLAIN_TEXT" value="1" />
           <entry key="Python" value="2915" />
         </counts>
@@ -45,7 +42,7 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="1" />
-          <entry key="html" value="284" />
+          <entry key="html" value="356" />
           <entry key="py" value="2915" />
         </counts>
       </usages-collector>
@@ -162,20 +159,20 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/templates/data_area_log.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="357">
-              <caret line="21" column="10" selection-start-line="21" selection-start-column="10" selection-end-line="21" selection-end-column="10" />
+            <state relative-caret-position="204">
+              <caret line="33" column="49" selection-start-line="33" selection-start-column="49" selection-end-line="33" selection-end-column="49" />
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/templates/data_area.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="356">
-              <caret line="80" column="2" selection-start-line="80" selection-start-column="2" selection-end-line="80" selection-end-column="13" />
+            <state relative-caret-position="272">
+              <caret line="57" column="6" selection-start-line="57" selection-start-column="6" selection-end-line="57" selection-end-column="6" />
             </state>
           </provider>
         </entry>
@@ -231,8 +228,8 @@
         <option value="$PROJECT_DIR$/loading_from_file.py" />
         <option value="$PROJECT_DIR$/templates/data_areas.html" />
         <option value="$PROJECT_DIR$/data_areas.py" />
-        <option value="$PROJECT_DIR$/templates/data_area.html" />
         <option value="$PROJECT_DIR$/templates/data_area_log.html" />
+        <option value="$PROJECT_DIR$/templates/data_area.html" />
       </list>
     </option>
   </component>
@@ -550,13 +547,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/data_area.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="356">
-          <caret line="80" column="2" selection-start-line="80" selection-start-column="2" selection-end-line="80" selection-end-column="13" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/templates/data_areas.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="289">
@@ -580,8 +570,15 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/templates/data_area_log.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="357">
-          <caret line="21" column="10" selection-start-line="21" selection-start-column="10" selection-end-line="21" selection-end-column="10" />
+        <state relative-caret-position="204">
+          <caret line="33" column="49" selection-start-line="33" selection-start-column="49" selection-end-line="33" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/data_area.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="272">
+          <caret line="57" column="6" selection-start-line="57" selection-start-column="6" selection-end-line="57" selection-end-column="6" />
         </state>
       </provider>
     </entry>
