@@ -175,3 +175,23 @@ def upload_data_area_from_file(id):
 
     return render_template('upload_data_area_from_file.html', form=form, data_area=data_area)
 
+# Загрузки в предметную область
+@mod.route("/data_area_log/<string:id>/")
+def data_area_log(id):
+
+    # Поолучение данных о предметной области
+    data_area = db_da.data_area(id)
+
+    # Получение последнй операции загрузки данных
+    cursor.execute(
+        '''
+        SELECT *
+        FROM 
+            data_log 
+        WHERE data_area_id = '{0}'
+        ORDER BY id DESC;
+        '''.format(id)
+    )
+    log = cursor.fetchall()
+
+    return render_template('data_area_log.html', data_area=data_area[0], log=log)

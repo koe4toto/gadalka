@@ -9,22 +9,6 @@
         <div class="d-flex w-100 justify-content-between">
           <h5 class="mb-1 text-primary">{{ i[1] }}</h5>
         </div>
-          <p class="mb-1">
-              {% if i[4] == '1' %}
-                <span class="badge badge-light">Нет данных</span>
-              {% elif i[4] == '2' %}
-                <span class="badge badge-secondary">Ожидает обработки</span>
-              {% elif i[4] == '3' %}
-                <span class="badge badge-warning">Обрабатывается</span>
-              {% elif i[4] == '4' %}
-                <span class="badge badge-danger">Данных не достаточно для анализа</span>
-              {% elif i[4] == '5' %}
-                <span class="badge badge-warning">Поиск связей</span>
-              {% elif i[4] == '6' %}
-                <span class="badge badge-success">Обработано</span>
-              {% endif %}
-              {{ i[3] }}
-          </p>
       </a>
     {% endfor %}
     </div>

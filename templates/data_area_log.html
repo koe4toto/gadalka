@@ -1,0 +1,53 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<a class="text-secondary" href="/data_areas">Предметные области</a><br>
+&#8595;<br>
+<a class="text-secondary" href="/data_area/{{ data_area[0] }}">{{ data_area[1] }}</a><br>
+&#8595;
+<div class="row">
+  <div class="col-10">
+      <h1>История загрузки данных</h1>
+  </div>
+<br><br>
+
+<table class="table">
+    <thead>
+    <tr>
+      <th scope="col">Статус</th>
+      <th scope="col">Ошибок</th>
+      <th scope="col">Загуржено</th>
+      <th scope="col">Время загрузки</th>
+    </tr>
+  </thead>
+  <tbody>
+  {% for i in log %}
+    <tr>
+        <td>
+              {% if i[5] == '2' %}
+                  Ожидает обработки
+                {% elif i[5] == '3' %}
+                  Обрабатывается
+                {% elif i[5] == '4' %}
+                  Данных не достаточно для анализа
+                {% elif i[5] == '5' %}
+                  Поиск связей
+                {% elif i[5] == '6' %}
+                  Обработано
+            {% endif %}
+
+        </td>
+        <td>
+            {{ i[2] }}
+        </td>
+        <td>
+            {{ i[3] }}
+        </td>
+        <td>
+            {{ i[6] }}
+        </td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% endblock %}
