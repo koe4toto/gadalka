@@ -9,6 +9,7 @@ import database as db
 import datetime
 import xlwt
 import os
+import psycopg2
 
 cursor = db.cursor
 conn = db.conn
@@ -81,23 +82,19 @@ def gen_data():
         conn.commit()
     return end
 
+try:
+    data_cursor.execute(
+        '''
+        INSERT INTO olap_46_1 (
+                    line1,
+                    uuuuuuu234
+                ) VALUES ('12', 'qew');
+        '''
+    )
+    data_conn.commit()
+except psycopg2.Error as e:
+    print(e.diag.severity, e.diag.message_primary)
 
-queue_cursor.execute(
-    '''
-    CREATE SEQUENCE auto_id_data_queue;
 
-    CREATE TABLE data_queue (
-        "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_data_queue'), 
-        "data_area_id" integer,
-        "data_log_id" integer, 
-        "data" varchar(600), 
-        "type" varchar(30),
-        "status" integer,
-        "user_id" varchar(30),
-        "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-    '''
-)
 
-queue_conn.commit()
 

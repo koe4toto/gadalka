@@ -146,9 +146,29 @@ def add_measure(data_area_id, type):
                     )
                     conn.commit()
                     meg_id = cursor.fetchall()
+
                 except:
                     flash('Колонка с таким именем уже существует', 'success')
                     return redirect(url_for('data_areas.data_area', id=data_area_id))
+
+                cursor.execute('''SELECT data FROM refs WHERE id = '{0}';'''.format(ref))
+                ref_name = cursor.fetchall()[0][0]
+
+                # Сооздание колонки
+                data_cursor.execute(
+                    '''
+                    ALTER TABLE 
+                    {0} 
+                    ADD COLUMN 
+                    {1} {2} {3}(code);
+                    '''.format(
+                        data_area[0][5],
+                        column_name,
+                        constants.TYPE_OF_MEASURE[int(type)],
+                        ref_name
+                    )
+                )
+                data_conn.commit()
 
             else:
                 # Сохранение данных
@@ -172,20 +192,20 @@ def add_measure(data_area_id, type):
                 conn.commit()
                 meg_id = cursor.fetchall()
 
-            # Сооздание колонки
-            data_cursor.execute(
-                '''
-                ALTER TABLE 
-                {0} 
-                ADD COLUMN 
-                {1} {2};
-                '''.format(
-                    data_area[0][5],
-                    column_name,
-                    constants.TYPE_OF_MEASURE[int(type)]
+                # Сооздание колонки
+                data_cursor.execute(
+                    '''
+                    ALTER TABLE 
+                    {0} 
+                    ADD COLUMN 
+                    {1} {2};
+                    '''.format(
+                        data_area[0][5],
+                        column_name,
+                        constants.TYPE_OF_MEASURE[int(type)]
+                    )
                 )
-            )
-            data_conn.commit()
+                data_conn.commit()
 
             cursor.execute("SELECT id FROM measures WHERE type = %s AND id != %s AND data_area_id = %s;",
                            ['1', str(meg_id[0][0]), data_area_id])

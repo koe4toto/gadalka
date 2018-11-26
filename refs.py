@@ -26,8 +26,11 @@ def refs():
 @mod.route("/ref/<string:id>/")
 def ref(id):
     # Подключение к базе данных
-    cursor.execute("SELECT * FROM refs WHERE id = %s", [id])
-    the_ref = cursor.fetchall()
+    try:
+        cursor.execute("SELECT * FROM refs WHERE id = %s", [id])
+        the_ref = cursor.fetchall()
+    except:
+        redirect(url_for('refs.refs'))
 
     ref_data = the_ref[0][4]
 
@@ -68,17 +71,21 @@ def add_ref():
             # Генерируется имя для таблицы с данными
             table_name = str('ref' + str(session['user_id']) + now)
 
-            # Создаётся запись в таблице с базой данных
-            cursor.execute(
-                '''
-                INSERT INTO refs (name, description, user_id, data) VALUES ('{0}', '{1}', '{2}', '{3}');
-                '''.format(name, description, user, table_name)
-            )
-            conn.commit()
-            # Создаёется таблица для хранения данных
-            data_cursor.execute('''CREATE TABLE {0} ("code" varchar, "value" varchar, "parent_value" varchar);'''.format(table_name))
-            data_conn.commit()
+            try:
+                # Создаётся запись в таблице с базой данных
+                cursor.execute(
+                    '''
+                    INSERT INTO refs (name, description, user_id, data) VALUES ('{0}', '{1}', '{2}', '{3}');
+                    '''.format(name, description, user, table_name)
+                )
+                conn.commit()
 
+                # Создаёется таблица для хранения данных
+                data_cursor.execute('''CREATE TABLE {0} ("code" varchar primary key, "value" varchar, "parent_value" varchar);'''.format(table_name))
+                data_conn.commit()
+            except psycopg2.Error as e:
+                flash(e.diag.message_primary, 'danger')
+                return redirect(request.url)
             # Открывается сохраненный файл
             rb = xlrd.open_workbook(os.path.abspath('.') + '/uploaded_files/' + filename)
             sheet = rb.sheet_by_index(0)

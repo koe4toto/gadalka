@@ -96,7 +96,6 @@ def update_data_area_status(status, log_id):
         )
     conn.commit()
 
-
 # Функция возвращает либо ошибку с неверным значением, либо набор значений, которые можно записать в базу
 def head_check(in_base, in_file):
 
