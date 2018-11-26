@@ -1,27 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="1719e8ec-808e-4103-a063-fff281569a44" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/error_files/1_28_test0.xlsx.xls" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/error_files/1_29_test0.xlsx.xls" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/error_files/1_31_test0.xlsx.xls" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/error_files/1_32_test0.xlsx.xls" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/error_files/1_35_test0.xlsx.xls" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/error_files/1_36_test0.xlsx.xls" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/error_files/1_37_test0.xlsx.xls" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/error_files/1_38_test0.xlsx.xls" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/error_files/1_39_test0.xlsx.xls" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/error_files/1_40_test0.xlsx.xls" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/error_files/1_41_test0.xlsx.xls" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/error_files/1_42_test0.xlsx.xls" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/error_files/1_44_test0.xlsx.xls" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/error_files/1_45_test0.xlsx.xls" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/error_files/1_46_test0.xlsx.xls" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/error_files/1_50_test0.xlsx.xls" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/error_files/1_51_test0.xlsx.xls" beforeDir="false" afterPath="$PROJECT_DIR$/error_files/1_51_test0.xlsx.xls" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/loading_from_file.py" beforeDir="false" afterPath="$PROJECT_DIR$/loading_from_file.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/to_try.py" beforeDir="false" afterPath="$PROJECT_DIR$/to_try.py" afterDir="false" />
-    </list>
+    <list default="true" id="1719e8ec-808e-4103-a063-fff281569a44" name="Default Changelist" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -81,11 +61,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/measures.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="127">
-              <caret line="220" column="49" lean-forward="true" selection-start-line="220" selection-start-column="49" selection-end-line="220" selection-end-column="49" />
+            <state relative-caret-position="195">
+              <caret line="386" column="39" selection-start-line="386" selection-start-column="23" selection-end-line="386" selection-end-column="39" />
               <folding>
                 <element signature="e#0#88#0" expanded="true" />
                 <element signature="e#987#2211#0" />
@@ -94,19 +74,13 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/loading_from_file.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-820">
-              <caret line="183" column="59" lean-forward="true" selection-start-line="183" selection-start-column="59" selection-end-line="183" selection-end-column="59" />
+            <state relative-caret-position="521">
+              <caret line="168" selection-start-line="168" selection-end-line="168" />
               <folding>
                 <element signature="e#0#16#0" expanded="true" />
-                <element signature="e#224#393#0" />
-                <element signature="e#442#614#0" />
-                <element signature="e#679#871#0" />
-                <element signature="e#917#1061#0" />
-                <element signature="e#1121#1259#0" />
-                <element signature="e#1334#1613#0" />
                 <element signature="e#2434#2602#0" />
               </folding>
             </state>
@@ -224,6 +198,7 @@
       <find>redirect</find>
       <find>LEFT</find>
       <find>model</find>
+      <find>not_empty</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -389,7 +364,7 @@
     <editor active="true" />
     <layout>
       <window_info id="Favorites" side_tool="true" />
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
+      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info anchor="bottom" id="Version Control" />
       <window_info anchor="bottom" id="Python Console" />
@@ -397,7 +372,7 @@
       <window_info anchor="bottom" id="Event Log" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.39434275" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.17138103" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -582,17 +557,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/measures.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="127">
-          <caret line="220" column="49" lean-forward="true" selection-start-line="220" selection-start-column="49" selection-end-line="220" selection-end-column="49" />
-          <folding>
-            <element signature="e#0#88#0" expanded="true" />
-            <element signature="e#987#2211#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/statistic_math.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="78">
@@ -615,17 +579,22 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/loading_from_file.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-820">
-          <caret line="183" column="59" lean-forward="true" selection-start-line="183" selection-start-column="59" selection-end-line="183" selection-end-column="59" />
+        <state relative-caret-position="521">
+          <caret line="168" selection-start-line="168" selection-end-line="168" />
           <folding>
             <element signature="e#0#16#0" expanded="true" />
-            <element signature="e#224#393#0" />
-            <element signature="e#442#614#0" />
-            <element signature="e#679#871#0" />
-            <element signature="e#917#1061#0" />
-            <element signature="e#1121#1259#0" />
-            <element signature="e#1334#1613#0" />
             <element signature="e#2434#2602#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/measures.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="195">
+          <caret line="386" column="39" selection-start-line="386" selection-start-column="23" selection-end-line="386" selection-end-column="39" />
+          <folding>
+            <element signature="e#0#88#0" expanded="true" />
+            <element signature="e#987#2211#0" />
           </folding>
         </state>
       </provider>

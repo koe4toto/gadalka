@@ -384,8 +384,8 @@ def pair_models():
             m1.id 
             from math_models m1
             inner join hypotheses h on m1.hypothesis = h.id
-            inner join area_description a1 on m1.area_description_1 = a1.id
-            inner join area_description a2 on m1.area_description_2 = a2.id
+            inner join measures a1 on m1.area_description_1 = a1.id
+            inner join measures a2 on m1.area_description_2 = a2.id
             order by m1.r_value DESC;''')
     list = cursor.fetchall()
     return render_template('pair_models.html', list=list)
