@@ -4,86 +4,13 @@ import database as db
 import datetime
 import xlwt
 import os
+import psycopg2
 
 cursor = db.cursor
 conn = db.conn
 data_cursor = db.data_cursor
 data_conn = db.data_conn
 
-# Проверка даты
-def validate_date(date):
-    try:
-        datetime.datetime.strptime(date, '%Y-%m-%d')
-        return True, date, 'Принято'
-    except ValueError:
-        return False, date, 'Не верный формат даты'
-
-# Проверка времни
-def validate_time(time):
-    try:
-        datetime.datetime.strptime(time, '%H:%M:%S')
-        return True, time, 'Принято'
-    except ValueError:
-        return False, time, 'Не верный формат времени'
-
-# Проверка даты и времени
-def validate_datetime(datetime):
-    try:
-        datetime.datetime.strptime(datetime, '%Y-%m-%d %H:%M:%S')
-        return True, datetime, 'Принято'
-    except ValueError:
-        return False, datetime, 'Не верный форма времени'
-
-# Проверка числа
-def is_number(number):
-    try:
-        float(number)
-        return True, number, 'Принято'
-    except ValueError:
-        return False, number, 'Не верный формат данных'
-
-# Проверка не пустое ли значение
-def not_empty(text):
-    if text == None and text == '':
-        return False, text, 'Ошибка'
-    else:
-        return True, text, 'Пустое значение не принимается'
-
-# Проверка соответствия значению справочника
-def validate_ref(data):
-    data_cursor.execute(
-        '''SELECT * FROM {0} WHERE code = '{1}' LIMIT 1;'''.format(data[2], data[0]))
-    ref_name = cursor.fetchall()
-    if len(ref_name) == 1:
-        return True, data[0], 'Принято'
-    else:
-        return False, data[0], 'Такого кода нет в справочнике'
-
-# Проверка строки
-def validate_line(data):
-    tom = {
-        1: is_number,
-        2: not_empty,
-        3: validate_ref,
-        4: validate_time,
-        5: validate_date,
-        6: validate_datetime
-    }
-    for i in data:
-        if not_empty(i[0]):
-            if i[1] == 3:
-                status, check_result, description = validate_ref(i)
-                if status != True:
-                    return False, check_result, description
-            else:
-                status, check_result, description = tom[i[1]](i[0])
-                if status != True:
-                    return False, check_result, description
-        else:
-            continue
-
-    result = [i[0] for i in data]
-    return True, result, 'Принято'
 
 # Редактирование предметной области
 def update_data_area_status(status, log_id):
@@ -192,14 +119,13 @@ def start(id, data_area_id, log_id, filename, type):
         if rownum == 0:
             ws.write(rownum, 0, 'Номер строки', style0)
             ws.write(rownum, 1, 'Ошибка', style0)
-            ws.write(rownum, 2, 'Знаечние', style0)
         elif rownum >= 1:
             # Проверка данных строки на соответсвие формату
-            vlidate_status, result, description = validate_line(bdline)
-
-            if vlidate_status:
-                names_to_record = ', '.join(str(e[1]) for e in measures)
-                data_to_record = ', '.join("'"+str(e)+"'" for e in result)
+            # vlidate_status, result, description = validate_line(bdline)
+            result = [i[0] for i in bdline]
+            names_to_record = ', '.join(str(e[1]) for e in measures)
+            data_to_record = ', '.join("'" + str(e) + "'" for e in result)
+            try:
                 data_cursor.execute(
                     '''
                     INSERT INTO {0} (
@@ -209,10 +135,10 @@ def start(id, data_area_id, log_id, filename, type):
                     )
                 data_conn.commit()
                 done += 1
-            else:
+            except psycopg2.Error as er:
+                data_conn.rollback()
                 ws.write(count, 0, rownum + 1, style1)
-                ws.write(count, 1, description, style1)
-                ws.write(count, 2, result, style1)
+                ws.write(count, 1, str(er.diag.message_primary), style1)
                 errrors += 1
                 count += 1
 

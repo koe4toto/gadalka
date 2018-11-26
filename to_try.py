@@ -85,12 +85,25 @@ def gen_data():
 data_area_id = '56'
 meg_id = '54'
 
-cursor.execute("SELECT id FROM measures WHERE type = %s AND id != %s AND data_area_id = %s;",
-                           ['1', meg_id, data_area_id])
-megs_a = cursor.fetchall()
-megs = [i[0] for i in megs_a]
+table_name = "olap_51_1"
+names_to_record = "ref1, line1"
+data_to_record = ["'1', 'hgjgh'", "'1', ''", "'2', '777'", ]
 
-print(megs, len(megs))
+for i in data_to_record:
+    try:
+
+        data_cursor.execute(
+            '''
+            INSERT INTO {0} (
+                {1}
+            ) VALUES ({2});
+            '''.format(table_name, names_to_record, i)
+        )
+        data_conn.commit()
+    except psycopg2.Error as er:
+        print('Нет: ', er.diag.message_primary, i)
+        data_conn.rollback()
+
 
 
 
