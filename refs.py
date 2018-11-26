@@ -107,7 +107,7 @@ def add_ref():
                 return redirect(url_for('add_ref'))
 
             # Удаление загруженного файла
-            os.remove(constants.UPLOAD_FOLDER + filename)
+            os.remove(os.path.join(constants.UPLOAD_FOLDER, filename))
 
             flash('Справочник добавлен', 'success')
             return redirect(url_for('refs.refs'))
