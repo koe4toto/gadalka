@@ -212,7 +212,7 @@ def add_measure(data_area_id, type):
             megs_a = cursor.fetchall()
             megs = [i[0] for i in megs_a]
 
-            if len(megs) > 0:
+            if type == '1' and len(megs) != 0:
                 # Получить список идентификаторов гипотез
                 cursor.execute("SELECT id FROM hypotheses;")
                 hypotheses_id_a = cursor.fetchall()
@@ -222,9 +222,6 @@ def add_measure(data_area_id, type):
                 arrays = [hypotheses_id, megs, [meg_id[0][0]], [int(data_area_id)]]
                 tup = list(itertools.product(*arrays))
                 args_str = str(tup).strip('[]')
-                print(arrays)
-                print(data_area_id)
-                print(args_str)
 
                 # Записать данные
                 cursor.execute("INSERT INTO math_models (hypothesis, area_description_1, area_description_2, data_area_id) VALUES " + args_str)

@@ -82,19 +82,15 @@ def gen_data():
         conn.commit()
     return end
 
-try:
-    data_cursor.execute(
-        '''
-        INSERT INTO olap_46_1 (
-                    line1,
-                    uuuuuuu234
-                ) VALUES ('12', 'qew');
-        '''
-    )
-    data_conn.commit()
-except psycopg2.Error as e:
-    print(e.diag.severity, e.diag.message_primary)
+data_area_id = '56'
+meg_id = '54'
 
+cursor.execute("SELECT id FROM measures WHERE type = %s AND id != %s AND data_area_id = %s;",
+                           ['1', meg_id, data_area_id])
+megs_a = cursor.fetchall()
+megs = [i[0] for i in megs_a]
+
+print(megs, len(megs))
 
 
 
