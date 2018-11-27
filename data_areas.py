@@ -107,8 +107,16 @@ def edit_data_area(id):
 @mod.route('/delete_data_area/<string:id>', methods=['POST'])
 @is_logged_in
 def delete_data_area(id):
-
+    filename = 'olap_'+ id + '.xls'
     db_da.delate_data_area(id)
+
+    # Удаление загруженного файла
+    try:
+        os.remove(constants.ERROR_FOLDER + filename)
+        os.remove(constants.UPLOAD_FOLDER + filename)
+    except:
+        pass
+    
     flash('Предметная область удалена', 'success')
 
     return redirect(url_for('data_areas.data_areas'))
@@ -146,7 +154,7 @@ def upload_data_area_from_file(id):
         if file and allowed_file(file.filename):
             # Генерируется имя из идентификатора пользователя и врамени загрузки файла
             # Текущее время в сточку только цифрами
-            filename = str(session['user_id']) + '_' + id + '_' + file.filename + '.xls'
+            filename = 'olap_'+ id + '.xls'
 
             # Загружается файл
             file.save(os.path.join(constants.UPLOAD_FOLDER, filename))
