@@ -43,6 +43,51 @@ def take_lines (line1, line2):
     print(measure_data)
     return measure_data, database_table, database_id
 
+def measure_stats(x, id):
+    x_stats = sm.Series(x).stats_line()
+
+    # Сохранение результатов в базу данных. Записываются данные по модели.
+    cursor.execute(
+        '''
+        UPDATE 
+            measures 
+        SET 
+            len='{1}',
+            sum='{2}',
+            min='{3}',
+            max='{4}',
+            max_freq='{5}',
+            ptp='{6}',
+            mean='{7}',
+            median='{8}',
+            mode='{9}',
+            average='{10}',
+            std='{11}',
+            var='{12}',
+            sem='{13}',
+            iqr='{14}'
+        WHERE 
+            id = '{0}';
+        '''.format(
+            id,
+            x_stats['Размер выборки'],
+            x_stats['Сумма'],
+            x_stats['Минимум'],
+            x_stats['Максимум'],
+            x_stats['Максимальная частота'],
+            x_stats['Размах'],
+            x_stats['Среднее'],
+            x_stats['Медиана'],
+            x_stats['Мода'],
+            x_stats['Средневзвешенное'],
+            x_stats['Стандартное отклонение'],
+            x_stats['Дисперсия'],
+            x_stats['Стандартная ошибка средней'],
+            x_stats['Межквартильный размах']
+        )
+    )
+    conn.commit()
+
 # Рассчета свойств модели и запись результатов в базу данных
 def search_model(hypothesis, x, y, adid1, adid2):
     print('Старт!')
@@ -115,6 +160,10 @@ def primal_calc(data_area_id, log_id):
             XY = np.array(xy)
             x = [float(i[0]) for i in XY]
             y = [float(i[1]) for i in XY]
+
+            # Рассчет статистки рядов
+            measure_stats(x, line_id_1)
+            measure_stats(y, line_id_2)
 
             # Рассчет параметров модели и запись их в базу
             search_model(hypothesis, x, y, line_id_1, line_id_2)

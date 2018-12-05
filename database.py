@@ -311,7 +311,21 @@ class measures:
                 "data_area_id" int, 
                 "type" int, 
                 "status" int, 
-                "ref_id" int
+                "len" varchar,
+                "sum" varchar,
+                "min" varchar,
+                "max" varchar,
+                "max_freq" varchar,
+                "ptp" varchar,
+                "mean" varchar,
+                "median" varchar,
+                "mode" varchar,
+                "average" varchar,
+                "std" varchar,
+                "var" varchar,
+                "sem" varchar,
+                "iqr" varchar
+                
             );
 
             CREATE TABLE ref_measures_type (
