@@ -7,6 +7,7 @@ import numpy as np
 import statistic_math as sm
 import database as db
 import itertools
+from model_calculation import take_lines
 
 # Мои модули
 from forms import *
@@ -39,40 +40,33 @@ def measures():
 @is_logged_in
 def measure(data_asrea_id, id):
     # Получение данных о мере
-    cursor.execute("SELECT * FROM measures WHERE id = %s", [id])
+    cursor.execute('''SELECT * FROM measures WHERE id = '{0}';'''.format(id))
     the_measure = cursor.fetchall()
 
-    cursor.execute("SELECT * FROM data_area WHERE id = %s", [data_asrea_id])
-    data_a = cursor.fetchall()
-    conn.commit()
-    proba1 = '20&60&22&23'
+    # Получение данных о предметной области
+    cursor.execute('''SELECT * FROM data_area WHERE id = '{0}';'''.format(data_asrea_id))
+    data_area = cursor.fetchall()
 
-    # Строка из URL разбивается на список
-    probability = proba1.split('&')
+    # Получение данных о мере
+    # TODO в интерфейс нужно забирать данные ограниченного количества, чтобы отрисовать только график
+    '''
+        SELECT {0}, {1} 
+        from (select row_number() 
+        over (order by {0}) num, count(*) over () as count, {0}, {1}   
+        from {2} p)A where case when count > {3} then num %(count/{3}) = 0 else 1 = 1 end;
+    '''
+    data_cursor.execute('''SELECT {0} FROM {1} WHERE {0} IS NOT NULL;'''.format(the_measure[0][1], data_area[0][5]))
+    d = data_cursor.fetchall()
 
-    # Передача данных на страницу
-    # Форма расчета фероятностив интервале
-    form1 = IntervalForm(request.form)
-    form1.di_from.data = probability[0]
-    form1.di_to.data = probability[1]
-
-    # Форма расчета доверительного интервала по значению вероятности
-    form2 = ProbabilityForm(request.form)
-    form2.probability.data = probability[2]
-
-    # Форма фильтра
-    form3 = MeFilterForm(request.form)
-    form3.test1.data = probability[0]
-    form3.test2.data = probability[1]
-
+    da = [i[0] for i in d]
+    dat = sm.Series(da)
+    data = dat.freq_line_view()
     return render_template('measure.html',
+                           data_asrea_id= data_asrea_id,
                            id = id,
                            the_measure = the_measure,
-                           form1=form1,
-                           form2=form2,
-                           form3=form3,
-                           probability = proba1,
-                           data_area = data_a
+                           data_area = data_area,
+                           data = data
                            )
 
 # Добавление параметра
@@ -374,19 +368,25 @@ def delete_data_measure(id, data_area_id):
 def pair_models():
     # Список пар
     cursor.execute(
-        '''select 
-            h.name, 
-            m1.r_value, 
-            a1.description, 
-            a2.description, 
-            m1.area_description_1, 
-            m1.area_description_2, 
-            m1.id 
-            from math_models m1
-            inner join hypotheses h on m1.hypothesis = h.id
-            inner join measures a1 on m1.area_description_1 = a1.id
-            inner join measures a2 on m1.area_description_2 = a2.id
-            order by m1.r_value DESC;''')
+        '''SELECT 
+                h.name, 
+                m1.r_value, 
+                a1.description, 
+                a2.description, 
+                m1.area_description_1, 
+                m1.area_description_2, 
+                m1.id 
+            FROM 
+                math_models m1
+            INNER JOIN 
+                hypotheses h on m1.hypothesis = h.id
+            INNER JOIN 
+                measures a1 on m1.area_description_1 = a1.id
+            INNER JOIN 
+                measures a2 on m1.area_description_2 = a2.id
+            WHERE 
+                m1.r_value IS NOT NULL
+            ORDER BY m1.r_value DESC;''')
     list = cursor.fetchall()
     return render_template('pair_models.html', list=list)
 
@@ -397,7 +397,17 @@ def pair(id1, id2, model_id):
     pop = [[id1, id2, 'Модель']]
 
     # Получение данных о модели
-    cursor.execute('''SELECT * FROM math_models WHERE id=%s;''', [model_id])
+    '''
+        SELECT {0}, {1} 
+        from (select row_number() 
+        over (order by {0}) num, count(*) over () as count, {0}, {1}   
+        from {2} p)A where case when count > {3} then num %(count/{3}) = 0 else 1 = 1 end;
+    '''
+    xy, database_table, database_id = take_lines(id1, id2)
+    XY = np.array(xy)
+    x = [float(i[0]) for i in XY]
+    y = [float(i[1]) for i in XY]
+    cursor.execute('''SELECT * FROM math_models WHERE id='{0}';'''.format(model_id))
     model = cursor.fetchall()
 
     slope = float(model[0][2])
@@ -405,8 +415,6 @@ def pair(id1, id2, model_id):
 
     # Получение данных для графика
     len = 100
-    x = np.array(foo.numline(id1, len=len))
-    y = np.array(foo.numline(id2, len=len))
 
     # Получение экземпляра класса обработки данных
     model_data = sm.Pairs(x, y)
@@ -434,7 +442,6 @@ def pair(id1, id2, model_id):
         pop.append([i[0], i[1], i[2]])
 
     popa = json.dumps(pop, ensure_ascii=False)
-
 
     return render_template('pair.html', list=list, for_graf=popa, model=model)
 

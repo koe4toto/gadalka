@@ -69,26 +69,11 @@ class Series:
 
 
     # Распределение частот и вероятности для графика в интерфейсе
-    def freq_line_view(self, limit, m_from = None, m_to = None):
-        lenfreq = len(self.freq)
-        pop = []
-        if lenfreq >= limit:
-            i = 0
-            step = int(lenfreq / limit)
-            while i < lenfreq:
-                if self.freq[i][0] < m_from or self.freq[i][0] < m_to:
-                    pop.append([self.freq[i][0], self.freq[i][1], None])
-                elif self.freq[i][0] >= m_from:
-                    pop.append([self.freq[i][0], self.freq[i][1], self.freq[i][1]])
-                i += step
-            return json.dumps(pop)
-        else:
-            for i in self.freq:
-                if i[0] < m_from or i[0] > m_to:
-                    pop.append([i[0], i[1], None])
-                elif i[0] > m_from:
-                    pop.append([i[0], i[1], i[1]])
-            return json.dumps(pop)
+    def freq_line_view(self):
+        pop=[]
+        for i in self.freq:
+            pop.append([i[0], i[1], i[1]])
+        return json.dumps(pop)
 
     # Математическое ожидание для среднего
     def mbayes(self, a):

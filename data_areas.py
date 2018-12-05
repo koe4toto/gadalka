@@ -116,7 +116,7 @@ def delete_data_area(id):
         os.remove(constants.UPLOAD_FOLDER + filename)
     except:
         pass
-    
+
     flash('Предметная область удалена', 'success')
 
     return redirect(url_for('data_areas.data_areas'))

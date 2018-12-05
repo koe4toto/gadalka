@@ -4,7 +4,8 @@
     <a class="text-secondary" href="/data_area/{{ data_area[0][0] }}">{{ data_area[0][1] }}</a><br>
     &#8595;
     <h1>{{ the_measure[0][2] }}</h1>
-    {% if sd %}
+    {{ data }}
+    {% if data %}
     <div class="row">
       <div class="col-md-9">
           <br>
@@ -24,7 +25,7 @@
                       data.addColumn('number', 'Вероятность');
 
                       data.addRows(
-                        {{ sdata }}
+                        {{ data }}
                       );
 
 
@@ -70,64 +71,11 @@
       </div>
 
       <div class="col-md-3 ml-auto">
-          <br>
-          <h4>Вероятность событий</h4>
-          {% from "includes/_formtamplate.html" import form_render %}
-          <form method="POST" action="" enctype="multipart/form-data">
-                {{ form_render(form1) }}
-                <p>
-                    <input type="submit" class="btn btn-success" value="Рассчитать вероятность">
-                </p>
 
-            </form>
-
-          <h6>Математическое ожидание</h6>
-          <p><kbd>{{ probability }}, {{ test }}</kbd></p>
-          <form method="POST" action="" enctype="multipart/form-data">
-                {{ form_render(form2) }}
-                <p>
-                    <input type="submit" class="btn btn-success" value="Рассчитать дов. интервал">
-                </p>
-
-            </form>
       </div>
     </div>
-
-
     <br>
     <br>
-
-    <div class="row">
-        <div class="col-md-9">
-            <h4>Статистики</h4>
-            <table class="table table-hover">
-              <thead>
-                <tr>
-                  <th scope="col">Статистика</th>
-                  <th scope="col">Значение</th>
-                </tr>
-              </thead>
-              <tbody>
-              {% for i in sd %}
-                <tr>
-                  <td>{{ i }}</td>
-                  <td>{{ sd[i] }}</td>
-                </tr>
-              {% endfor %}
-              </tbody>
-            </table>
-        </div>
-        <div class="col-md-3 ml-auto">
-            <h4>Фильтры</h4>
-            <form method="POST" action="" enctype="multipart/form-data">
-                {{ form_render(form3) }}
-                <p>
-                    <input type="submit" class="btn btn-outline-dark" value="Посмотреть">
-                </p>
-
-            </form>
-        </div>
-    </div>
     {% else %}
         Данных пока нет ((((
         <img src="https://static9.depositphotos.com/1594920/1086/i/450/depositphotos_10868487-stock-photo-female-owl-and-a-owlet.jpg">
