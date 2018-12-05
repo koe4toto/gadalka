@@ -81,3 +81,4 @@ def gen_data():
                        (i[0], i[1], i[2]))
         conn.commit()
     return end
+
