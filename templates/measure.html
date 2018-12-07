@@ -4,9 +4,18 @@
     <a class="text-secondary" href="/data_area/{{ data_area[0][0] }}">{{ data_area[0][1] }}</a><br>
     &#8595;
     <h1>{{ the_measure[0][2] }}</h1>
-    {{ the_measure[0] }}
+    <p>{{ the_measure[0][1] }},
+        {% if the_measure[0][4] == 1 %}Количественные данные
+        {% elif the_measure[0][4] == 2 %}Качественные данные
+        {% elif the_measure[0][4] == 3 %}Количественные данные по справочнику
+        {% elif the_measure[0][4] == 4 %}Время
+        {% elif the_measure[0][4] == 5 %}Дата
+        {% elif the_measure[0][4] == 6 %}Время и дата
+        {% endif %}
+    </p>
     {% if data %}
     <div class="row">
+
       <div class="col-md-9">
           <br>
           <h4>График распределения</h4>
@@ -67,13 +76,107 @@
 
             <!--Div that will hold the pie chart-->
             <div id="chart_div"></div>
-
+          <br>
+          <h4>Статистики</h4>
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Статистика</th>
+              <th scope="col">Значение</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">1</th>
+              <td>Размер выборки</td>
+              <td>{{ the_measure[0][7] }}</td>
+            </tr>
+            <tr>
+              <th scope="row">2</th>
+              <td>Сумма</td>
+              <td>{{ the_measure[0][8] }}</td>
+            </tr>
+            <tr>
+              <th scope="row">3</th>
+              <td>Минимум</td>
+              <td>{{ the_measure[0][9] }}</td>
+            </tr>
+          <tr>
+              <th scope="row">4</th>
+              <td>Максимум</td>
+              <td>{{ the_measure[0][10] }}</td>
+            </tr>
+          <tr>
+              <th scope="row">5</th>
+              <td>Максимальная частота</td>
+              <td>{{ the_measure[0][11] }}</td>
+            </tr>
+          <tr>
+              <th scope="row">6</th>
+              <td>Размах</td>
+              <td>{{ the_measure[0][12] }}</td>
+            </tr>
+          <tr>
+              <th scope="row">7</th>
+              <td>Среднее</td>
+              <td>{{ the_measure[0][13] }}</td>
+            </tr>
+          <tr>
+              <th scope="row">8</th>
+              <td>Медиана</td>
+              <td>{{ the_measure[0][14] }}</td>
+            </tr>
+          <tr>
+              <th scope="row">9</th>
+              <td>Мода</td>
+              <td>{{ the_measure[0][15] }}</td>
+            </tr>
+          <tr>
+              <th scope="row">10</th>
+              <td>Средневзвешенное</td>
+              <td>{{ the_measure[0][16] }}</td>
+            </tr>
+          <tr>
+              <th scope="row">11</th>
+              <td>Стандартное отклонение</td>
+              <td>{{ the_measure[0][17] }}</td>
+            </tr>
+          <tr>
+              <th scope="row">12</th>
+              <td>Дисперсия</td>
+              <td>{{ the_measure[0][18] }}</td>
+            </tr>
+          <tr>
+              <th scope="row">13</th>
+              <td>Стандартная ошибка средней</td>
+              <td>{{ the_measure[0][19] }}</td>
+            </tr>
+          <tr>
+              <th scope="row">14</th>
+              <td>Межквартильный размах</td>
+              <td>{{ the_measure[0][20] }}</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
 
       <div class="col-md-3 ml-auto">
-
+          <br>
+          <h4>Связи</h4>
+        {% for i in pairs %}
+          <a href="/pair/{{ i[4] }}/{{ i[5] }}/{{ i[6] }}" class="list-group-item list-group-item-action flex-column align-items-start">
+            <div class="d-flex w-100 justify-content-between">
+              <h5 class="mb-1 text-primary">Связь с {{ i[3] }}</h5>
+            </div>
+              <p class="mb-1">{{ i[0] }}, {{ i[1] }}</p>
+          </a>
+        {% endfor %}
       </div>
+
+
     </div>
+
     <br>
     <br>
     {% else %}
