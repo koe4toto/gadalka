@@ -1,53 +1,187 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-<h1>Пара {{ list[0] }} - {{ list[1] }}</h1>
+<h1>{{ maesures[0][2] }} и {{ maesures[1][2] }}</h1>
 <br>
 <div class="row">
+    <div class="col-md-9">
+      <br>
+      <h4>График модели</h4>
 
-      <div class="col-md-9">
+      <!--Load the AJAX API-->
+        <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+
+        <script type="text/javascript">
+
+        var encodedStr = '{{ for_graf }}';
+
+        var parser = new DOMParser;
+        var dom = parser.parseFromString(
+            '<!doctype html><body>' + encodedStr,
+            'text/html');
+        var decodedString = dom.body.textContent;
+
+            google.charts.load("current", {packages:["corechart"]});
+             google.charts.setOnLoadCallback(drawChart);
+             function drawChart() {
+               var data = google.visualization.arrayToDataTable(
+                JSON.parse(decodedString)
+               );
+
+               var options = {
+                };
+
+               var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
+               chart.draw(data, options);
+             }
+        </script>
+
+        <!--Div that will hold the pie chart-->
+        <div id="chart_div"></div>
+        <br>
+        <h4>Характеристики связи</h4>
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Параметр</th>
+              <th scope="col">Значение</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">1</th>
+              <td>Пересечение</td>
+              <td>{{ model[0][2] }}</td>
+            </tr>
+            <tr>
+              <th scope="row">2</th>
+              <td>Наклон</td>
+              <td>{{ model[0][3] }}</td>
+            </tr>
+            <tr>
+              <th scope="row">3</th>
+              <td>Сила связи</td>
+              <td>{{ model[0][4] }}</td>
+            </tr>
+          </tbody>
+    </table>
+        <br>
+        <h4>Параметры</h4>
+        <table class="table table-sm">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Статистика</th>
+              <th scope="col">{{ maesures[0][2] }}</th>
+                <th scope="col">{{ maesures[1][2] }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">1</th>
+              <td>Размер выборки</td>
+              <td>{{ maesures[0][7] }}</td>
+                <td>{{ maesures[1][7] }}</td>
+            </tr>
+            <tr>
+              <th scope="row">2</th>
+              <td>Сумма</td>
+              <td>{{ maesures[0][8] }}</td>
+                <td>{{ maesures[1][8] }}</td>
+            </tr>
+            <tr>
+              <th scope="row">3</th>
+              <td>Минимум</td>
+              <td>{{ maesures[0][9] }}</td>
+                <td>{{ maesures[1][9] }}</td>
+            </tr>
+          <tr>
+              <th scope="row">4</th>
+              <td>Максимум</td>
+              <td>{{ maesures[0][10] }}</td>
+                <td>{{ maesures[1][10] }}</td>
+            </tr>
+          <tr>
+              <th scope="row">5</th>
+              <td>Максимальная частота</td>
+              <td>{{ maesures[0][11] }}</td>
+                <td>{{ maesures[1][11] }}</td>
+            </tr>
+          <tr>
+              <th scope="row">6</th>
+              <td>Размах</td>
+              <td>{{ maesures[0][12] }}</td>
+                <td>{{ maesures[1][12] }}</td>
+            </tr>
+          <tr>
+              <th scope="row">7</th>
+              <td>Среднее</td>
+              <td>{{ maesures[0][13] }}</td>
+                <td>{{ maesures[1][13] }}</td>
+            </tr>
+          <tr>
+              <th scope="row">8</th>
+              <td>Медиана</td>
+              <td>{{ maesures[0][14] }}</td>
+                <td>{{ maesures[1][14] }}</td>
+            </tr>
+          <tr>
+              <th scope="row">9</th>
+              <td>Мода</td>
+              <td>{{ maesures[0][15] }}</td>
+                <td>{{ maesures[1][15] }}</td>
+            </tr>
+          <tr>
+              <th scope="row">10</th>
+              <td>Средневзвешенное</td>
+              <td>{{ maesures[0][16] }}</td>
+                <td>{{ maesures[1][16] }}</td>
+            </tr>
+          <tr>
+              <th scope="row">11</th>
+              <td>Стандартное отклонение</td>
+              <td>{{ maesures[0][17] }}</td>
+                <td>{{ maesures[1][17] }}</td>
+            </tr>
+          <tr>
+              <th scope="row">12</th>
+              <td>Дисперсия</td>
+              <td>{{ maesures[0][18] }}</td>
+                <td>{{ maesures[1][18] }}</td>
+            </tr>
+          <tr>
+              <th scope="row">13</th>
+              <td>Стандартная ошибка средней</td>
+              <td>{{ maesures[0][19] }}</td>
+                <td>{{ maesures[1][19] }}</td>
+            </tr>
+          <tr>
+              <th scope="row">14</th>
+              <td>Межквартильный размах</td>
+              <td>{{ maesures[0][20] }}</td>
+                <td>{{ maesures[1][20] }}</td>
+            </tr>
+          </tbody>
+    </table>
+
+  </div>
+    <div class="col-md-3 ml-auto">
           <br>
-          <h4>График распределения</h4>
-
-          <!--Load the AJAX API-->
-            <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-
-            <script type="text/javascript">
-
-            var encodedStr = '{{ for_graf }}';
-
-            var parser = new DOMParser;
-            var dom = parser.parseFromString(
-                '<!doctype html><body>' + encodedStr,
-                'text/html');
-            var decodedString = dom.body.textContent;
-
-                google.charts.load("current", {packages:["corechart"]});
-                 google.charts.setOnLoadCallback(drawChart);
-                 function drawChart() {
-                   var data = google.visualization.arrayToDataTable(
-                    JSON.parse(decodedString)
-                   );
-
-
-
-
-                   var options = {
-                    };
-
-                   var chart = new google.visualization.ScatterChart(document.getElementById('chart_div'));
-                   chart.draw(data, options);
-                 }
-            </script>
-
-            <!--Div that will hold the pie chart-->
-            <div id="chart_div"></div>
-
-
+          <h4>Модели</h4>
+        <ul class="list-group list-group-flush">
+        {% for i in list_models %}
+          <a href="/pair/{{ i[4] }}/{{ i[5] }}/{{ i[6] }}"
+             class="list-group-item list-group-item-action flex-column align-items-start {% if i[6] == model[0][0] %}active{% endif %}">
+            <div class="d-flex w-100 justify-content-between">
+              <p class="mb-1">{{ i[0] }}</p>
+            </div>
+              <small>{{ i[1] }}</small>
+          </a>
+        {% endfor %}
+        </ul>
+        </nav>
       </div>
     </div>
-<p>Модели</p>
-{{ model }}
 <br>
-
 {% endblock %}

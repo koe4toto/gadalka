@@ -385,6 +385,31 @@ class measures:
         result = cursor.fetchall()
         return result
 
+    def model(self, id):
+        # Список пар
+        cursor.execute(
+            '''SELECT 
+                    h.name, 
+                    m1.r_value, 
+                    a1.description, 
+                    a2.description, 
+                    m1.area_description_1, 
+                    m1.area_description_2, 
+                    m1.id 
+                FROM 
+                    math_models m1
+                INNER JOIN 
+                    hypotheses h on m1.hypothesis = h.id
+                INNER JOIN 
+                    measures a1 on m1.area_description_1 = a1.id
+                INNER JOIN 
+                    measures a2 on m1.area_description_2 = a2.id
+                WHERE 
+                    (m1.r_value IS NOT NULL) AND (m1.area_description_1 = '{0}' OR m1.area_description_2 = '{0}')
+                ORDER BY m1.r_value DESC;'''.format(id))
+        list = cursor.fetchall()
+        return list
+
 # Пользователи
 class users:
 
