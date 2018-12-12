@@ -40,7 +40,6 @@ def take_lines (line1, line2):
         '''.format(measures[0][0], measures[1][0], database_table)
     )
     measure_data = data_cursor.fetchall()
-    print(measure_data)
     return measure_data, database_table, database_id
 
 def measure_stats(x, id):

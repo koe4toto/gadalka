@@ -1,0 +1,49 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <h1>Загрузки</h1>
+    <br>
+    <table class="table">
+        <thead>
+        <tr>
+          <th scope="col">Статус</th>
+          <th scope="col">Ошибок</th>
+          <th scope="col">Загуржено</th>
+          <th scope="col">Время загрузки</th>
+            <th scope="col">Предметная область</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for i in log %}
+        <tr>
+            <td>
+                  {% if i[5] == '2' %}
+                        <span class="badge badge-light">Ожидает обработки</span>
+                    {% elif i[5] == '3' %}
+                        <span class="badge badge-warning">Обрабатывается</span>
+                    {% elif i[5] == '4' %}
+                        <span class="badge badge-danger">Данных не достаточно для анализа</span>
+                    {% elif i[5] == '5' %}
+                        <span class="badge badge-info">Поиск связей</span>
+                    {% elif i[5] == '6' %}
+                        <span class="badge badge-success">Обработано</span>
+                {% endif %}
+
+            </td>
+            <td>
+                {{ i[2] }}
+            </td>
+            <td>
+                {{ i[3] }}
+            </td>
+            <td>
+                {{ i[6] }}
+            </td>
+            <td>
+                {{ i[1] }}
+            </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+{% endblock %}

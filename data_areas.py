@@ -203,3 +203,20 @@ def data_area_log(id):
     log = cursor.fetchall()
 
     return render_template('data_area_log.html', data_area=data_area[0], log=log)
+
+# Загрузки
+@mod.route("/data_log/")
+def data_log():
+
+    # Получение последнй операции загрузки данных
+    cursor.execute(
+        '''
+        SELECT *
+        FROM 
+            data_log
+        ORDER BY id DESC;
+        '''
+    )
+    log = cursor.fetchall()
+
+    return render_template('data_log.html', log=log)

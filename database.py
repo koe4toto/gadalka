@@ -457,8 +457,8 @@ class users:
     def search(self, username):
         cursor.execute(
             '''
-            SELECT * FROM users WHERE username = %s
-            ''', username
+            SELECT * FROM users WHERE username = '{0}'
+            '''.format(username)
             )
         result = cursor.fetchall()
         return result
