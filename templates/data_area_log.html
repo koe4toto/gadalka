@@ -18,6 +18,7 @@
       <th scope="col">Ошибок</th>
       <th scope="col">Загуржено</th>
       <th scope="col">Время загрузки</th>
+        <th scope="col"></th>
     </tr>
   </thead>
   <tbody>
@@ -45,6 +46,14 @@
         </td>
         <td>
             {{ i[6] }}
+        </td>
+        <td>
+        {% if i[5] == '2' %}
+                <form action="{{url_for('data_areas.delete_data_log', id=i[0])}}" method="post">
+                  <input type="hidden" name="_method" value="DELETE">
+                  <input type="submit" value=" Удалить" class="btn btn-link float-right text-danger">
+                </form>
+            {% endif %}
         </td>
     </tr>
   {% endfor %}

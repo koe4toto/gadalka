@@ -15,6 +15,8 @@ mod = Blueprint('data_areas', __name__)
 # Работа с базами данных
 conn = db.conn
 cursor = db.cursor
+queue_conn = db.queue_conn
+queue_cursor = db.queue_cursor
 
 db_da = db.data_area()
 db_measure = db.measures()
@@ -214,9 +216,40 @@ def data_log():
         SELECT *
         FROM 
             data_log
-        ORDER BY id DESC;
+        LEFT JOIN data_area ON data_log.data_area_id = data_area.id
+        ORDER BY data_log.id DESC;
         '''
     )
     log = cursor.fetchall()
 
     return render_template('data_log.html', log=log)
+
+# Удаление предметной области
+@mod.route('/delete_data_log/<string:id>', methods=['POST'])
+@is_logged_in
+def delete_data_log(id):
+    filename = 'olap_' + id + '.xls'
+    # Удаление данных из таблиц
+    cursor.execute(
+        '''
+        DELETE FROM data_log WHERE id = '{0}';
+        '''.format(id)
+    )
+    conn.commit()
+
+    queue_cursor.execute(
+        '''
+        DELETE FROM data_queue WHERE data_log_id = '{0}';
+        '''.format(id)
+    )
+    queue_conn.commit()
+
+    # Удаление загруженного файла
+    try:
+        os.remove(constants.UPLOAD_FOLDER + filename)
+    except:
+        pass
+
+    flash('Загрузка отменена', 'success')
+
+    return redirect(url_for('data_areas.data_log'))

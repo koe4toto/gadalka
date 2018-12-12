@@ -40,10 +40,10 @@
 <a class="btn btn-outline-secondary" href="/upload_data_area_from_file/{{ data_area[0] }}">
         <i class="fas fa-cloud-upload-alt"></i> Загрузить данные из файла
     </a>
-<a href="/data_area_log/{{ data_area[0]}}" class="btn btn-link float-right">Посмотреть историю загрузок</a>
-{% endif %}
-{% endif %}
 
+{% endif %}
+{% endif %}
+<a href="/data_area_log/{{ data_area[0]}}" class="btn btn-link float-right">Посмотреть историю загрузок</a>
 {% if log_status == '1' or  log_status == '4' or log_status == '6'%}
 <a class="btn dropdown-toggle btn-secondary"   href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 Добавить параметр
