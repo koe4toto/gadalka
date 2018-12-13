@@ -2,15 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1719e8ec-808e-4103-a063-fff281569a44" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data_areas.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_areas.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data_for_test/2data.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/data_for_test/2data.xlsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/error_files/olap_56.xls" beforeDir="false" afterPath="$PROJECT_DIR$/error_files/olap_56.xls" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/statistic_math.py" beforeDir="false" afterPath="$PROJECT_DIR$/statistic_math.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/data_area.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/data_area.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/data_area_log.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/data_area_log.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/data_log.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/data_log.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/uploaded_files/olap_56.xls" beforeDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -46,27 +38,28 @@
         <counts>
           <entry key="HTML" value="1293" />
           <entry key="PLAIN_TEXT" value="1" />
-          <entry key="Python" value="5323" />
+          <entry key="Python" value="5349" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="1" />
           <entry key="html" value="1293" />
-          <entry key="py" value="5323" />
+          <entry key="py" value="5349" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/data_areas.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="238">
-              <caret line="71" column="25" selection-start-line="71" selection-start-column="17" selection-end-line="71" selection-end-column="25" />
+            <state relative-caret-position="-131">
+              <caret line="237" column="36" selection-start-line="237" selection-start-column="36" selection-end-line="237" selection-end-column="36" />
               <folding>
                 <element signature="e#0#88#0" expanded="true" />
+                <element signature="e#756#1464#0" />
                 <element signature="e#1593#2039#0" />
                 <element signature="e#2189#2996#0" />
                 <element signature="e#3134#3479#0" />
@@ -96,11 +89,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/templates/data_area.html">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="238">
-              <caret line="89" column="17" selection-start-line="89" selection-start-column="17" selection-end-line="89" selection-end-column="29" />
+              <caret line="89" column="17" lean-forward="true" selection-start-line="89" selection-start-column="17" selection-end-line="89" selection-end-column="44" />
             </state>
           </provider>
         </entry>
@@ -243,8 +236,8 @@
         <option value="$PROJECT_DIR$/statistic_math.py" />
         <option value="$PROJECT_DIR$/templates/data_area_log.html" />
         <option value="$PROJECT_DIR$/templates/data_log.html" />
-        <option value="$PROJECT_DIR$/data_areas.py" />
         <option value="$PROJECT_DIR$/templates/data_area.html" />
+        <option value="$PROJECT_DIR$/data_areas.py" />
       </list>
     </option>
   </component>
@@ -632,12 +625,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/data_areas.py">
+    <entry file="file://$PROJECT_DIR$/templates/data_area.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="238">
-          <caret line="71" column="25" selection-start-line="71" selection-start-column="17" selection-end-line="71" selection-end-column="25" />
+          <caret line="89" column="17" lean-forward="true" selection-start-line="89" selection-start-column="17" selection-end-line="89" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data_areas.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-131">
+          <caret line="237" column="36" selection-start-line="237" selection-start-column="36" selection-end-line="237" selection-end-column="36" />
           <folding>
             <element signature="e#0#88#0" expanded="true" />
+            <element signature="e#756#1464#0" />
             <element signature="e#1593#2039#0" />
             <element signature="e#2189#2996#0" />
             <element signature="e#3134#3479#0" />
@@ -645,13 +646,6 @@
             <element signature="e#5663#6076#0" />
             <element signature="e#6135#6467#0" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/data_area.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="238">
-          <caret line="89" column="17" selection-start-line="89" selection-start-column="17" selection-end-line="89" selection-end-column="29" />
         </state>
       </provider>
     </entry>

@@ -53,7 +53,7 @@ def task(result):
         FROM 
             data_queue 
         WHERE id=%s;
-        ''', [result[0][0]]
+        '''.format(id)
     )
     queue_conn.commit()
 

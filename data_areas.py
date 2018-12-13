@@ -235,7 +235,7 @@ def data_log():
 
     return render_template('data_log.html', log=log)
 
-# Удаление предметной области
+# Удаление задачи на загрузку данных
 @mod.route('/delete_data_log/<string:id>/<string:data_area_id>/<string:context>', methods=['POST'])
 @is_logged_in
 def delete_data_log(id, data_area_id, context):
