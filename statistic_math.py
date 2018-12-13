@@ -282,20 +282,26 @@ class Pairs:
     # Экспоненциальная модель
     def exponentialreg2(self):
         # Замена переменных
-        y1 = np.exp(self.y_div)
-        x1 = self.x_div
-        for i in y1:
-            if i == np.inf:
-                index, = np.where(y1 == np.inf)
-                y1 = np.delete(y1, [index[0]])
-                x1 = np.delete(x1, [index[0]])
+        try:
+            y1 = np.exp(self.y_div)
+            x1 = self.x_div
+            for i in y1:
+                if i == np.inf:
+                    index, = np.where(y1 == np.inf)
+                    y1 = np.delete(y1, [index[0]])
+                    x1 = np.delete(x1, [index[0]])
 
-        # Вычисление коэфициентов
-        slope1, intercept, r_value, p_value, std_err = sci.linregress(x1, y1)
+            # Вычисление коэфициентов
+            slope1, intercept, r_value, p_value, std_err = sci.linregress(x1, y1)
 
-        # Замена коэфициентов
-        slope = np.exp(slope1)
-
+            # Замена коэфициентов
+            slope = np.exp(slope1)
+        except:
+            slope = None
+            intercept = None
+            r_value = None
+            p_value = None
+            std_err = None
         return slope, intercept, r_value, p_value, std_err
 
     # Данные экспоненциальной модели 2

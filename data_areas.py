@@ -37,6 +37,10 @@ def data_area(id):
     # Поолучение данных о предметной области
     data_area = db_da.data_area(id)
 
+    # Путь к файлу
+    filename = 'olap_' + id + '.xls'
+    path_to_file = constants.UPLOAD_FOLDER + filename
+
     # Получение описания параметров
     measures = db_measure.select_measures_to_data_area(id)
 
@@ -59,7 +63,14 @@ def data_area(id):
         log_status = log[0][5]
         last_log = log[0]
 
-    return render_template('data_area.html', data_area=data_area[0], measures=measures, last_log = last_log, log_status = log_status)
+    return render_template(
+        'data_area.html',
+        data_area=data_area[0],
+        measures=measures,
+        last_log=last_log,
+        log_status=log_status,
+        filename=filename
+    )
 
 # Добавление предметной области
 @mod.route("/add_data_area", methods =['GET', 'POST'] )
@@ -225,9 +236,9 @@ def data_log():
     return render_template('data_log.html', log=log)
 
 # Удаление предметной области
-@mod.route('/delete_data_log/<string:id>', methods=['POST'])
+@mod.route('/delete_data_log/<string:id>/<string:data_area_id>/<string:context>', methods=['POST'])
 @is_logged_in
-def delete_data_log(id):
+def delete_data_log(id, data_area_id, context):
     filename = 'olap_' + id + '.xls'
     # Удаление данных из таблиц
     cursor.execute(
@@ -251,5 +262,9 @@ def delete_data_log(id):
         pass
 
     flash('Загрузка отменена', 'success')
-
-    return redirect(url_for('data_areas.data_log'))
+    if context == 'data_area_log':
+        return redirect(url_for('data_areas.data_area_log', id=data_area_id))
+    elif context == 'data_log':
+        return redirect(url_for('data_areas.data_log'))
+    elif context == 'data_area':
+        return redirect(url_for('data_areas.data_area', id=data_area_id))

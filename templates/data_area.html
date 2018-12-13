@@ -59,9 +59,19 @@
 {% endif %}
 <br><br>
   {% if log_status == '2' %}
+<div class="row">
+    <div class="col-10">
     <div class="alert alert-secondary" role="alert">
       Ожидает обработки
     </div>
+    </div>
+    <div class="col-2">
+        <form action="{{url_for('data_areas.delete_data_log', id=last_log[0], data_area_id=data_area[0], context = 'data_area')}}" method="post">
+          <input type="hidden" name="_method" value="DELETE">
+          <input type="submit" value="Отменить" class="btn btn-link float-right text-danger">
+        </form>
+    </div>
+</div>
     {% elif log_status == '3' %}
     <div class="alert alert-warning" role="alert">
       Обрабатывается
@@ -76,7 +86,8 @@
     </div>
     {% elif log_status == '6' %}
     <div class="alert alert-success" role="alert">
-      Обработано. Загружено строк: {{ last_log[3] }}. Строки с ошибками: {{ last_log[2] }}. Время: {{ last_log[6] }}
+      Обработано. Загружено строк: {{ last_log[3] }}. Строки с ошибками: {{ last_log[2] }}. Время: {{ last_log[6] }}.
+        <a href="/error_files/{{ filename }}" download="">Скачать отчет</a>
     </div>
   {% endif %}
 <br>
