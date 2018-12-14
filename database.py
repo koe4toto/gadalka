@@ -571,6 +571,26 @@ cursor.execute(
     '''
 )
 conn.commit()
+
+# Многомерные модели
+cursor.execute(
+    '''
+    CREATE SEQUENCE auto_id_multi_models;
+    
+    CREATE TABLE multi_models 
+    (
+        "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_multi_models'), 
+        "measures" varchar, 
+        "pair_models" varchar, 
+        "type" integer, 
+        "name" varchar, 
+        "r_value" varchar(300),
+        "description" varchar(300),
+        "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    '''
+)
+conn.commit()
 """
 
 
