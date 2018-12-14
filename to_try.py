@@ -82,3 +82,23 @@ def gen_data():
         conn.commit()
     return end
 
+models = [[12,19],[10,2],[1,2],[1,4],[5,7],[4,2],[5,8],[9,2],[3,6],[2,5]]
+etalon = [1,2,4,5,7,8,9,10]
+
+def big_model(models):
+    result = []
+    for i in models:
+        for k in i:
+            pi = [i for i in models if k in i]
+            if len(pi) >= 2:
+                for t in pi:
+                    if k in t:
+                        m = [p for p in t if p != k]
+                        find = m[0]
+                        if find not in result:
+                            result.append(find)
+    return result
+
+print('Результат:', big_model(models))
+print('Эталон:', etalon)
+

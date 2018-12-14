@@ -140,7 +140,7 @@ class data_area:
         )
         queue_conn.commit()
         task_id = cursor.fetchall()
-        print('Идентификатор задачи', task_id)
+        return task_id
 
     # Список задач
     def tasks(self):
