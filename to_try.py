@@ -82,8 +82,7 @@ def gen_data():
         conn.commit()
     return end
 
-models = [[12,3],[10,2],[1,2],[1,4],[5,7],[4,2],[5,8],[9,2],[3,6],[2,5]]
-etalon = [1,2,4,5,7,8,9,10]
+
 
 '''
 1. Модели отбираются в рамках предметной области. Пока между областями модели построить не понятно как. 
@@ -113,41 +112,30 @@ etalon = [1,2,4,5,7,8,9,10]
 модели 
 '''
 
+models = [[12,3],[10,2],[1,2],[1,4],[11,7],[4,2],[5,8],[9,2],[3,6],[2,5]]
+etalon = [1,2,4,5,7,8,9,10]
+
 # Поиск многомерной модели среди ряда пар
-# TODO Не находит две несвзанные модели в одном наборе
-# TODO На выходе нужно иметь не только перечень измерений, но и перечень моделей исходников
-def big_model(models):
+item = [8,5]
+models2 = [[1,2],[3,1],[3,4],[3,8],[8,5],[5,15],[15,7], [10,9],[9,11], [6,12], [16,17],[17,19],[34,19], [0,14]]
+
+# Поиск многомерной модели среди ряда пар
+def agreg(m):
+    models = m
     result = []
     for i in models:
-        for k in i:
-            pi = [i for i in models if k in i]
-            if len(pi) >= 2:
-                for t in pi:
-                    if k in t:
-                        m = [p for p in t if p != k]
-                        if m[0] not in result:
-                            result.append(m[0])
+        model = [n for n in models if i[0] in n or i[1] in n]
+        for i in model:
+            for o in i:
+                for p in models:
+                    if o in p:
+                        if p not in model:
+                            model.append(p)
+        models = [t for t in models if t not in model]
+        if len(model) >=2:
+            result.append(model)
     return result
 
-print('Результат:', big_model(models))
-print('Эталон:', etalon)
-
-# Многомерные модели
-cursor.execute(
-    '''
-    CREATE SEQUENCE auto_id_multi_models;
-
-    CREATE TABLE multi_models 
-    (
-        "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_multi_models'), 
-        "measures" varchar, 
-        "pair_models" varchar, 
-        "type" integer, 
-        "name" varchar, 
-        "r_value" varchar(300),
-        "description" varchar(300),
-        "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-    '''
-)
-conn.commit()
+re = agreg(models2)
+for i in re:
+    print('Модели:', i)
