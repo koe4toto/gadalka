@@ -156,3 +156,26 @@ def agreg(m):
 
 mod = agreg(models)
 print(mod)
+
+sorce = [[1, 6, 4, 0.8], [2, 1, 2, 0.81], [3, 2, 1, 0.82], [4, 3, 4, 0.4]]
+limit = 0.8
+def clean(sorce, limit):
+    pairs = [[i[1], i[2]] for i in sorce]
+    result = []
+    for i in sorce:
+        for k in pairs:
+            t = [k[0], k[1]]
+            if i[1] in t and i[2] in t:
+                if i[3] >= limit:
+                    result.append(i)
+    return result
+
+#print(clean(sorce, limit))
+f = [[1, 6, 0.5], [2, 1, 0.6], [2, 1, 0.9], [7, 3, 0.8]]
+lim = 0.7
+
+resu = []
+for i in f:
+    pom = [m for m in f if i[0] == m[0] and i[1] == m[1]]
+
+print(pom)

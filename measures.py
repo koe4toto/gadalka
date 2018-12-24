@@ -392,25 +392,34 @@ def delete_data_measure(id, data_area_id):
 def pair_models():
     # Список пар
     cursor.execute(
-        '''SELECT 
-                h.name, 
-                m1.r_value, 
-                a1.description, 
-                a2.description, 
-                m1.area_description_1, 
-                m1.area_description_2, 
-                m1.id 
-            FROM 
-                math_models m1
-            INNER JOIN 
-                hypotheses h on m1.hypothesis = h.id
-            INNER JOIN 
-                measures a1 on m1.area_description_1 = a1.id
-            INNER JOIN 
-                measures a2 on m1.area_description_2 = a2.id
-            WHERE 
-                m1.r_value IS NOT NULL
-            ORDER BY m1.r_value DESC;''')
+        '''SELECT *
+            FROM (
+                SELECT
+                    h.name, 
+                    ml.r_value,
+                    a1.description,
+                    a2.description,
+                    ml.area_description_1, 
+                    ml.area_description_2,
+                    ml.id, 
+                    ml.hypothesis,
+                    row_number() OVER (PARTITION BY area_description_1::text || area_description_2::text ORDER BY abs(to_number(r_value, '9.999999999999')) DESC)  AS rating_in_section
+                FROM 
+                    math_models ml
+                INNER JOIN 
+                    measures a1 on ml.area_description_1 = a1.id
+                INNER JOIN 
+                    measures a2 on ml.area_description_2 = a2.id
+                INNER JOIN 
+                    hypotheses h on ml.hypothesis = h.id
+                WHERE 
+                    r_value != 'None'
+                ORDER BY 
+                    rating_in_section
+            ) counted_news
+            WHERE rating_in_section <= 1
+            ORDER BY abs(to_number(r_value, '9.999999999999')) DESC;
+            ''')
     list = cursor.fetchall()
     return render_template('pair_models.html', list=list)
 

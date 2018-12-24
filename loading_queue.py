@@ -43,8 +43,12 @@ def task(result):
     loading = start(id, data_area_id, log_id, filename, type)
 
     # Проверка гипотиз
+    # TODO запускать рассчет моделей, только если есть имерения соответсвующего типа
     if loading == '5':
         primal_calc(data_area_id, log_id)
+
+        # Расчет многомерных моделей
+
 
     # Удаление отработаной задачи
     queue_cursor.execute(
