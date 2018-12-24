@@ -445,7 +445,7 @@ def pair(id1, id2, model_id):
 
     # Список моделей пары
     alt_models = db.measures()
-    list_models = alt_models.model(id1)
+    list_models = alt_models.model(id1, id2)
 
     # Параметры пары
     cursor.execute('''SELECT * FROM measures WHERE id='{0}' OR id='{1}';'''.format(id1, id2))

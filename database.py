@@ -385,7 +385,7 @@ class measures:
         result = cursor.fetchall()
         return result
 
-    def model(self, id):
+    def model(self, id1, id2):
         # Список пар
         cursor.execute(
             '''SELECT 
@@ -405,8 +405,10 @@ class measures:
                 INNER JOIN 
                     measures a2 on m1.area_description_2 = a2.id
                 WHERE 
-                    (m1.r_value IS NOT NULL) AND (m1.area_description_1 = '{0}' OR m1.area_description_2 = '{0}')
-                ORDER BY m1.r_value DESC;'''.format(id))
+                    (m1.r_value IS NOT NULL) 
+                    AND (m1.area_description_1 = '{0}' or m1.area_description_2 = '{0}') 
+                    AND (m1.area_description_1 = '{1}' or m1.area_description_2 = '{1}')
+                ORDER BY abs(to_number(m1.r_value, '9.999999999999')) DESC;'''.format(id1, id2))
         list = cursor.fetchall()
         return list
 
