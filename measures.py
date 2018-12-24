@@ -49,25 +49,39 @@ def measure(data_asrea_id, id):
 
     # Список пар
     cursor.execute(
-        '''SELECT 
-                h.name, 
-                m1.r_value, 
-                a1.description, 
-                a2.description, 
-                m1.area_description_1, 
-                m1.area_description_2, 
-                m1.id 
-            FROM 
-                math_models m1
-            INNER JOIN 
-                hypotheses h on m1.hypothesis = h.id
-            INNER JOIN 
-                measures a1 on m1.area_description_1 = a1.id
-            INNER JOIN 
-                measures a2 on m1.area_description_2 = a2.id
-            WHERE 
-                (m1.r_value IS NOT NULL) AND (m1.area_description_1 = '{0}' OR m1.area_description_2 = '{0}')
-            ORDER BY m1.r_value DESC;'''.format(id))
+        '''SELECT *
+            FROM (
+                SELECT
+                    h.name, 
+                    ml.r_value,
+                    a1.description,
+                    a2.description,
+                    ml.area_description_1, 
+                    ml.area_description_2,
+                    ml.id, 
+                    ml.hypothesis,
+                    row_number() 
+                    OVER (
+                        PARTITION BY area_description_1::text || area_description_2::text 
+                        ORDER BY abs(to_number(r_value, '9.999999999999')) DESC)  
+                        AS rating_in_section
+                FROM 
+                    math_models ml
+                INNER JOIN 
+                    measures a1 on ml.area_description_1 = a1.id
+                INNER JOIN 
+                    measures a2 on ml.area_description_2 = a2.id
+                INNER JOIN 
+                    hypotheses h on ml.hypothesis = h.id
+                WHERE 
+                    r_value != 'None' AND (ml.area_description_1 = '{0}' or ml.area_description_2 = '{0}')
+                ORDER BY 
+                    rating_in_section
+            ) counted_news
+            WHERE rating_in_section <= 1
+            ORDER BY abs(to_number(r_value, '9.999999999999')) DESC;
+            
+            '''.format(id))
     list = cursor.fetchall()
 
     # Получение данных о мере
@@ -430,6 +444,7 @@ def pair(id1, id2, model_id):
     pop = [[id1, id2, 'Модель']]
 
     # Получение данных о модели
+    # TODO Нужно выборку для графика делать не генеральную
     '''
         SELECT {0}, {1} 
         from (select row_number() 
