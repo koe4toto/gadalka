@@ -387,29 +387,32 @@ class measures:
 
     def model(self, id1, id2):
         # Список пар
-        cursor.execute(
-            '''SELECT 
-                    h.name, 
-                    m1.r_value, 
-                    a1.description, 
-                    a2.description, 
-                    m1.area_description_1, 
-                    m1.area_description_2, 
-                    m1.id 
-                FROM 
-                    math_models m1
-                INNER JOIN 
-                    hypotheses h on m1.hypothesis = h.id
-                INNER JOIN 
-                    measures a1 on m1.area_description_1 = a1.id
-                INNER JOIN 
-                    measures a2 on m1.area_description_2 = a2.id
-                WHERE 
-                    (m1.r_value IS NOT NULL) 
-                    AND (m1.area_description_1 = '{0}' or m1.area_description_2 = '{0}') 
-                    AND (m1.area_description_1 = '{1}' or m1.area_description_2 = '{1}')
-                ORDER BY abs(to_number(m1.r_value, '9.999999999999')) DESC;'''.format(id1, id2))
-        list = cursor.fetchall()
+        try:
+            cursor.execute(
+                '''SELECT 
+                        h.name, 
+                        m1.r_value, 
+                        a1.description, 
+                        a2.description, 
+                        m1.area_description_1, 
+                        m1.area_description_2, 
+                        m1.id 
+                    FROM 
+                        math_models m1
+                    INNER JOIN 
+                        hypotheses h on m1.hypothesis = h.id
+                    INNER JOIN 
+                        measures a1 on m1.area_description_1 = a1.id
+                    INNER JOIN 
+                        measures a2 on m1.area_description_2 = a2.id
+                    WHERE 
+                        (m1.r_value IS NOT NULL) 
+                        AND (m1.area_description_1 = '{0}' or m1.area_description_2 = '{0}') 
+                        AND (m1.area_description_1 = '{1}' or m1.area_description_2 = '{1}')
+                    ORDER BY abs(to_number(m1.r_value, '9.999999999999')) DESC;'''.format(id1, id2))
+            list = cursor.fetchall()
+        except:
+            list = []
         return list
 
 # Пользователи
@@ -464,6 +467,40 @@ class users:
             )
         result = cursor.fetchall()
         return result
+
+
+def get_models(limit):
+    cursor.execute(
+        '''SELECT *
+            FROM (
+                SELECT
+                    h.name, 
+                    ml.r_value,
+                    a1.description,
+                    a2.description,
+                    ml.area_description_1, 
+                    ml.area_description_2,
+                    ml.id, 
+                    ml.hypothesis,
+                    row_number() OVER (PARTITION BY area_description_1::text || area_description_2::text ORDER BY abs(to_number(r_value, '9.999999999999')) DESC)  AS rating_in_section
+                FROM 
+                    math_models ml
+                INNER JOIN 
+                    measures a1 on ml.area_description_1 = a1.id
+                INNER JOIN 
+                    measures a2 on ml.area_description_2 = a2.id
+                INNER JOIN 
+                    hypotheses h on ml.hypothesis = h.id
+                WHERE 
+                    r_value != 'None'
+                ORDER BY 
+                    rating_in_section
+            ) counted_news
+            WHERE rating_in_section <= 1 AND abs(to_number(r_value, '9.999999999999')) >= '{0}'
+            ORDER BY abs(to_number(r_value, '9.999999999999')) DESC;
+            '''.format(limit))
+    list = cursor.fetchall()
+    return list
 
 # Заполнение справочника
 def update_ref(ref, name):

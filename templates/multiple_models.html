@@ -2,5 +2,42 @@
 
 {% block body %}
 <h1>Многомерные модели</h1>
-<p>Для чего оно предназначено? И как с этим работать?</p>
+<h3>Достоверные</h3>
+<div class="list-group">
+    {% for i in good %}
+      <a href="data_area/{{ i[0] }}" class="list-group-item list-group-item-action flex-column align-items-start">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1 text-primary">{{ i }}</h5>
+        </div>
+      </a>
+    {% endfor %}
+    </div>
+<br>
+<br>
+<h3>Удовлетворительные</h3>
+<div class="list-group">
+    {% for i in norm %}
+      <a href="data_area/{{ i[0] }}" class="list-group-item list-group-item-action flex-column align-items-start">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1 text-primary">{{ i }}</h5>
+        </div>
+      </a>
+    {% endfor %}
+    </div>
+<br>
+<br>
+
+<h3>Общие</h3>
+<div class="list-group">
+    {% for i in all %}
+      <a href="data_area/{{ i[0] }}" class="list-group-item list-group-item-action flex-column align-items-start">
+        <div class="d-flex w-100 justify-content-between">
+          <h5 class="mb-1 text-primary">{{ i }}</h5>
+        </div>
+      </a>
+    {% endfor %}
+    </div>
+
+
+
 {% endblock %}

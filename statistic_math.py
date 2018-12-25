@@ -312,7 +312,52 @@ class Pairs:
             Y = []
         return Y
 
+# Поиск многомерной модели среди ряда пар
+def agreg(m):
+    # Список пар
+    models = [[i[4], i[5]] for i in m]
+    # Список сложных моделей
+    result = []
 
+    # Список идентицикатором парных моделей в многомерной модели
+    ides = []
+
+    # Список коэфициентов корреляции моделей
+    koefs = []
+
+    # Список названий измерений
+    names = []
+
+    # Поиск модели в списке
+    for i in models:
+        model = [n for n in models if i[0] in n or i[1] in n]
+        for i in model:
+            for o in i:
+                for p in models:
+                    if o in p and p not in model:
+                        model.append(p)
+        # Из списка пар исключаются те, что собрались в модель
+        models = [t for t in models if t not in model]
+
+        # Добавляем слождую модель в итоговый список
+        if len(model) >=2:
+            result.append(model)
+
+    # Формирование списка идентификаторов парных моделей для каждой многомерной модели
+    for i in result:
+        ids = []
+        for k in i:
+            for p in m:
+                p2 = [p[4], p[5]]
+                if k == p2:
+                    ids.append(p[6])
+
+        ides.append(ids)
+
+    # TODO нужно рассчет корреляции сделать отдельной функцией
+
+    # Формирование списка корреляций моделей
+    return ides
 
 
 

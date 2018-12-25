@@ -112,20 +112,76 @@ def gen_data():
 модели 
 '''
 
-# Поиск многомерной модели среди ряда пар
-models = [[1,6,12], [2,1,2],[3,3,1],[4,3,4], [5,10,9],[6,3,8],[7,8,5],[8,5,15],[9,15,7],[10,9,11], [11,16,17],[12,17,19],[13,34,19], [14,0,14]]
+# Выбрать модели соответсвующие искомой корреляции: уучшие, средние, общая
 
-# Выбрать модели соответсвующие искомой корреляции
-# Предварительно нужно отчистить список от дублей, найти уникальные пары с самой высокой корреляцией
+def get_models(limit):
+    cursor.execute(
+        '''SELECT *
+            FROM (
+                SELECT
+                    h.name, 
+                    ml.r_value,
+                    a1.description,
+                    a2.description,
+                    ml.area_description_1, 
+                    ml.area_description_2,
+                    ml.id, 
+                    ml.hypothesis,
+                    row_number() OVER (PARTITION BY area_description_1::text || area_description_2::text ORDER BY abs(to_number(r_value, '9.999999999999')) DESC)  AS rating_in_section
+                FROM 
+                    math_models ml
+                INNER JOIN 
+                    measures a1 on ml.area_description_1 = a1.id
+                INNER JOIN 
+                    measures a2 on ml.area_description_2 = a2.id
+                INNER JOIN 
+                    hypotheses h on ml.hypothesis = h.id
+                WHERE 
+                    r_value != 'None'
+                ORDER BY 
+                    rating_in_section
+            ) counted_news
+            WHERE rating_in_section <= 1 AND abs(to_number(r_value, '9.999999999999')) >= '{0}'
+            ORDER BY abs(to_number(r_value, '9.999999999999')) DESC;
+            '''.format(limit))
+    list = cursor.fetchall()
+    return list
+
+def versions():
+    good = get_models(0.8)
+    norm = get_models(0.5)
+    all = get_models(0)
+    return good, norm, all
+
+good, norm, all = versions()
+
+
+for i in good:
+    print('Хорошие:', i)
+
+for i in norm:
+    print('Посредственные:', i)
+
+for i in all:
+    print('Плохие:', i)
+
+# Расчет корреляций моделей и запись в базу
+
 # Поиск многомерной модели среди ряда пар
 def agreg(m):
     # Список пар
-    models = [[i[1], i[2]] for i in m]
+    models = [[i[4], i[5]] for i in m]
     # Список сложных моделей
     result = []
 
     # Список идентицикатором парных моделей в многомерной модели
     ides = []
+
+    # Список коэфициентов корреляции моделей
+    koefs = []
+
+    # Список названий измерений
+    names = []
 
     # Поиск модели в списке
     for i in models:
@@ -133,9 +189,8 @@ def agreg(m):
         for i in model:
             for o in i:
                 for p in models:
-                    if o in p:
-                        if p not in model:
-                            model.append(p)
+                    if o in p and p not in model:
+                        model.append(p)
         # Из списка пар исключаются те, что собрались в модель
         models = [t for t in models if t not in model]
 
@@ -148,34 +203,26 @@ def agreg(m):
         ids = []
         for k in i:
             for p in m:
-                p2 = [p[1], p[2]]
+                p2 = [p[4], p[5]]
                 if k == p2:
-                    ids.append(p[0])
+                    ids.append(p[6])
+
         ides.append(ids)
+
+    # TODO нужно рассчет корреляции сделать отдельной функцией
+
+    # Формирование списка корреляций моделей
     return ides
 
-mod = agreg(models)
-print(mod)
+mg = agreg(good)
+if len(mg) > 0:
+    print('Найдены', len(mg),'модели', mg)
 
-sorce = [[1, 6, 4, 0.8], [2, 1, 2, 0.81], [3, 2, 1, 0.82], [4, 3, 4, 0.4]]
-limit = 0.8
-def clean(sorce, limit):
-    pairs = [[i[1], i[2]] for i in sorce]
-    result = []
-    for i in sorce:
-        for k in pairs:
-            t = [k[0], k[1]]
-            if i[1] in t and i[2] in t:
-                if i[3] >= limit:
-                    result.append(i)
-    return result
+mn = agreg(norm)
+if len(mn) > 0:
+    print('Найдены', len(mn),'модели', mn)
 
-#print(clean(sorce, limit))
-f = [[1, 6, 0.5], [2, 1, 0.6], [2, 1, 0.9], [7, 3, 0.8]]
-lim = 0.7
+ma = agreg(all)
+if len(ma) > 0:
+    print('Найдены', len(ma),'модели', ma)
 
-resu = []
-for i in f:
-    pom = [m for m in f if i[0] == m[0] and i[1] == m[1]]
-
-print(pom)

@@ -504,4 +504,11 @@ def pair(id1, id2, model_id):
 # Многомерная модель
 @mod.route("/multiple_models")
 def multiple_models():
-    return render_template('multiple_models.html')
+    g = db.get_models(0.8)
+    n = db.get_models(0.5)
+    a = db.get_models(0)
+
+    good = sm.agreg(g)
+    norm = sm.agreg(n)
+    all = sm.agreg(a)
+    return render_template('multiple_models.html', good=good, norm=norm, all=all)
