@@ -1,8 +1,8 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-<h1>Многомерные модели</h1>
-<h3>Достоверные</h3>
+<h1>Сложные связи</h1>
+<h3>Сильные</h3>
 <div class="list-group">
     {% for i in good %}
       <a href="data_area/{{ i[0] }}" class="list-group-item list-group-item-action flex-column align-items-start">
@@ -14,7 +14,7 @@
     </div>
 <br>
 <br>
-<h3>Удовлетворительные</h3>
+<h3>Слабые</h3>
 <div class="list-group">
     {% for i in norm %}
       <a href="data_area/{{ i[0] }}" class="list-group-item list-group-item-action flex-column align-items-start">
