@@ -247,7 +247,7 @@ ma = agreg(all)
 if len(ma) > 0:
     print('Найдены', len(ma),'модели', ma)
 
-x1 = np.array([0.9375, 0.75, 0.4375, 2.0])
+x1 = np.array([0.9375, 0.75, 0.4375, 0.61])
 
 # Корреляционная матрица
 lenx1 = len(x1)+1
@@ -275,6 +275,6 @@ mka = np.linalg.det(ki)
 print('Минор 11:', mka)
 
 mnaka = mk/mka
-tom = np.absolute([1-mk/mka])
-vkorne = np.sqrt(tom)
-print('Выражение в корне', vkorne, mnaka)
+tom = [1-mk/mka]
+vkorne = np.sqrt(np.absolute(tom))
+print('Выражение в корне', vkorne, mnaka, tom)
