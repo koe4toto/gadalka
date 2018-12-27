@@ -254,21 +254,27 @@ lenx1 = len(x1)+1
 x2 = [ [ x1[i-1-j] if j<i else x1[-i-1+j] for j in range(lenx1) ] for i in range(lenx1) ]
 x2 = [ [ 1 if i==j else x2[i][j] for j in range(lenx1) ] for i in range(lenx1) ]
 x3 = [ i for i in x2 if x2.index(i) != 0]
-t = [1, 0.9375, 0.75, 0.4375, 2.0]
-n = [i for i in t if i ]
+
+for i in x2:
+    print(i)
+mk = np.linalg.det(x2)
+
+print('Определитель:', mk)
+
+ki = []
+for t in x3:
+    t.pop(0)
+    ki.append(t)
+
+for i in ki:
+    print(i)
 
 
 # Определитель матрицы
-mka = np.linalg.det(x2)
-print('Определитель матрицы x2:', mka)
-print('Матрица x2:')
-for el in x2:
-    print(el)
+mka = np.linalg.det(ki)
+print('Минор 11:', mka)
 
-
-print('Матрица x3:')
-for el in x4:
-    print(el)
-
-minor = np.linalg.det(x3)
-print('Минор:', minor)
+mnaka = mk/mka
+tom = np.absolute([1-mk/mka])
+vkorne = np.sqrt(tom)
+print('Выражение в корне', vkorne, mnaka)
