@@ -250,6 +250,7 @@ if len(ma) > 0:
 x1 = np.array([0.9375, 0.75, 0.4375, 0.61])
 
 # Корреляционная матрица
+# TODO неправильно расчитывается определитель потому, что не numpy array
 lenx1 = len(x1)+1
 x2 = [ [ x1[i-1-j] if j<i else x1[-i-1+j] for j in range(lenx1) ] for i in range(lenx1) ]
 x2 = [ [ 1 if i==j else x2[i][j] for j in range(lenx1) ] for i in range(lenx1) ]
@@ -269,10 +270,15 @@ for t in x3:
 for i in ki:
     print(i)
 
-
+a = np.array([[1, 0.9375, 0.75, 0.4375], [0.9375, 1, 0.9375, 0.75], [0.75, 0.9375, 1, 0.9], [0.4375, 0.75, 0.9375, 1]])
+b = np.array(ki)
+for i in b:
+    print(i)
 # Определитель матрицы
-mka = np.linalg.det(ki)
+mka = np.linalg.det(a)
 print('Минор 11:', mka)
+mkia = np.linalg.det(ki)
+print('Минор 11:', mkia)
 
 mnaka = mk/mka
 tom = [1-mk/mka]
