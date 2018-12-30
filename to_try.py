@@ -250,35 +250,29 @@ if len(ma) > 0:
 x1 = np.array([0.9375, 0.75, 0.4375, 0.61])
 
 # Корреляционная матрица
-# TODO неправильно расчитывается определитель потому, что не numpy array
+# TODO неправильно расчитывается определитель потому, что не корреляционная матрица, а говно
+# Чтобы собрать матрицу нужно вычислить все переменные модели, вычислить все уникальные пары,
+# получить r_value для каждой пары, сформировать матрицу
 lenx1 = len(x1)+1
 x2 = [ [ x1[i-1-j] if j<i else x1[-i-1+j] for j in range(lenx1) ] for i in range(lenx1) ]
 x2 = [ [ 1 if i==j else x2[i][j] for j in range(lenx1) ] for i in range(lenx1) ]
+a = np.array(x2)
+
+
+mk = np.linalg.det(a)
+
+print('Определитель mk:', mk)
 x3 = [ i for i in x2 if x2.index(i) != 0]
-
-for i in x2:
-    print(i)
-mk = np.linalg.det(x2)
-
-print('Определитель:', mk)
-
 ki = []
 for t in x3:
     t.pop(0)
     ki.append(t)
-
-for i in ki:
-    print(i)
-
-a = np.array([[1, 0.9375, 0.75, 0.4375], [0.9375, 1, 0.9375, 0.75], [0.75, 0.9375, 1, 0.9], [0.4375, 0.75, 0.9375, 1]])
 b = np.array(ki)
-for i in b:
-    print(i)
+print(a)
+print(b)
 # Определитель матрицы
-mka = np.linalg.det(a)
+mka = np.linalg.det(b)
 print('Минор 11:', mka)
-mkia = np.linalg.det(ki)
-print('Минор 11:', mkia)
 
 mnaka = mk/mka
 tom = [1-mk/mka]
