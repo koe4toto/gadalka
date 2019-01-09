@@ -56,7 +56,7 @@ def task(result):
         DELETE 
         FROM 
             data_queue 
-        WHERE id=%s;
+        WHERE id='{0}';
         '''.format(id)
     )
     queue_conn.commit()

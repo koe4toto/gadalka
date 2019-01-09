@@ -2,6 +2,7 @@ import os
 
 UPLOAD_FOLDER = os.path.abspath('.') + '/uploaded_files/'
 ERROR_FOLDER = os.path.abspath('.') + '/error_files/'
+TEST_FOLDER = os.path.abspath('.') + '/data_for_test/'
 ALLOWED_EXTENSIONS = set(['xls', 'xlsx'])
 USERS_DATABASE_NAME = "users_data"
 QUEUE_DATABASE_NAME = "queue"

@@ -12,7 +12,7 @@ data_cursor = db.data_cursor
 data_conn = db.data_conn
 
 
-# Редактирование предметной области
+# Обновление статуса предметной области
 def update_data_area_status(status, log_id):
     cursor.execute(
         '''
@@ -23,6 +23,7 @@ def update_data_area_status(status, log_id):
         )
     conn.commit()
 
+# Првоерка наличия ожидаемых колонок
 # Функция возвращает либо ошибку с неверным значением, либо набор значений, которые можно записать в базу
 def head_check(in_base, in_file):
 
@@ -106,23 +107,29 @@ def start(id, data_area_id, log_id, filename, type):
         bdline = []
         for i in headcheck[1]:
             item = []
+            # Выбирается значение нужной колонки в исходных данных
             item.append(row[i])
+            # Выбирается тип данных
             item.append(measures[headcheck[1].index(i)][2])
-            ref_table = measures[headcheck[1].index(i)][3]
-            if ref_table != None and ref_table != '':
-                item.append(ref_names[measures[headcheck[1].index(i)][0]])
+            # Первод даты в формат для записи в базу
+            if item[1] == 5 and rownum >= 1:
+                try:
+                    mi = datetime.datetime(*xlrd.xldate_as_tuple(item[0], rb.datemode))
+                    bdline.append([mi, '5'])
+                except:
+                    bdline.append([None, '5'])
             else:
-                item.append(None)
-            bdline.append(item)
+                bdline.append(item)
 
-        # Перебор строк
+
+        # Запись данных
         if rownum == 0:
             ws.write(rownum, 0, 'Номер строки', style0)
             ws.write(rownum, 1, 'Ошибка', style0)
         elif rownum >= 1:
-            # Проверка данных строки на соответсвие формату
-            # vlidate_status, result, description = validate_line(bdline)
-            result = [i[0] for i in bdline]
+            result = []
+            for t in bdline:
+                result.append(t[0])
             names_to_record = ', '.join(str(e[1]) for e in measures)
             data_to_record = ', '.join("'" + str(e) + "'" for e in result)
             try:
