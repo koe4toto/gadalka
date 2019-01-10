@@ -409,7 +409,8 @@ class measures:
                         (m1.r_value IS NOT NULL) 
                         AND (m1.area_description_1 = '{0}' or m1.area_description_2 = '{0}') 
                         AND (m1.area_description_1 = '{1}' or m1.area_description_2 = '{1}')
-                    ORDER BY abs(to_number(m1.r_value, '9.999999999999')) DESC;'''.format(id1, id2))
+                        AND (m1.r_value != 'None')
+                    ORDER BY abs(m1.r_value::real) DESC;'''.format(id1, id2))
             list = cursor.fetchall()
         except:
             list = []
