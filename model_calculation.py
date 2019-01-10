@@ -146,6 +146,20 @@ def primal_calc(data_area_id, log_id):
 
     cursor.execute('''SELECT * FROM math_models WHERE data_area_id = '{0}';'''.format(data_area_id))
     model = cursor.fetchall()
+
+    if len(model) <= 1:
+        # Изменить статус предметной области, измерений
+        cursor.execute(
+            '''
+            UPDATE data_log 
+            SET 
+                status='{1}' 
+            WHERE id = '{0}';
+            '''.format(log_id, '6')
+        )
+        conn.commit()
+        return True
+
     for i in model:
 
         hypothesis = i[1]
