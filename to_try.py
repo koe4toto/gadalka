@@ -83,96 +83,62 @@ def gen_data():
     return end
 
 
+me1 = 'time'
+me1_alt = 'EXTRACT(EPOCH FROM {0} )'.format(me1)
+me2 = 'students'
+database_table = 'olap_56_1'
 
-'''
-1. Модели отбираются в рамках предметной области. Пока между областями модели построить не понятно как. 
-Но об это следует подумать. Возможно следует измерения предметных областей связывать между собой 
-и в результате агрегатно их анализировать
-    
-2. Выбираем три типа моделей: 
-    1. Модели из пар с высокой (>0,8) корреляцийе, 
-       1. Выбираем все подходящие модели
-       2. Выбираем модели из пар и их измернения.
-        3. Сохраняем многомерную модель, список её измерений, список парных 
-       моделей
-    2. Модели из пар со слабыми (>0,5) корреляциями, 
-    3. Модели из всех пар
-4. Состав данных многомерной модели
-    id
-    Список измерений
-    Список парных моделей
-    Тип (автоматическая, пользовательская)
-    Название
-    Комментарий
-    Дата и время рассчета
-    Коэффициент корреляции
-5. Пока понятно как предсказать значения при фиксированном одном.
-6. При пересчете парных моделей нужно пересчитывть многомерные
-7. При удалении измерения (при удалении ПО так же), нужно обновлять многомерные модели. Удалить так же и отобранные 
-модели 
-'''
+# Выборка всех данных
+data_cursor.execute(
+    '''
+    SELECT {0}, {1}   
+    FROM {2} WHERE {0} IS NOT NULL OR {0} IS NOT NULL;
+    '''.format(me1_alt, me2, database_table)
+)
+measure_data = data_cursor.fetchall()
 
-# Выбрать модели соответсвующие искомой корреляции: уучшие, средние, общая
+for i in measure_data:
+    print(i)
 
-def get_models(limit):
-    cursor.execute(
-        '''SELECT *
-            FROM (
-                SELECT
-                    h.name, 
-                    ml.r_value,
-                    a1.description,
-                    a2.description,
-                    ml.area_description_1, 
-                    ml.area_description_2,
-                    ml.id, 
-                    ml.hypothesis,
-                    row_number() OVER (PARTITION BY area_description_1::text || area_description_2::text ORDER BY abs(to_number(r_value, '9.999999999999')) DESC)  AS rating_in_section
-                FROM 
-                    math_models ml
-                INNER JOIN 
-                    measures a1 on ml.area_description_1 = a1.id
-                INNER JOIN 
-                    measures a2 on ml.area_description_2 = a2.id
-                INNER JOIN 
-                    hypotheses h on ml.hypothesis = h.id
-                WHERE 
-                    r_value != 'None'
-                ORDER BY 
-                    rating_in_section
-            ) counted_news
-            WHERE rating_in_section <= 1 AND abs(to_number(r_value, '9.999999999999')) >= '{0}'
-            ORDER BY abs(to_number(r_value, '9.999999999999')) DESC;
-            '''.format(limit))
-    list = cursor.fetchall()
-    return list
-id1 = 6
-id2 = 7
-
+line1 = 6
+line2 = 7
 cursor.execute(
-    '''SELECT 
-            h.name, 
-            m1.r_value, 
-            a1.description, 
-            a2.description, 
-            m1.area_description_1, 
-            m1.area_description_2, 
-            m1.id 
-        FROM 
-            math_models m1
-        INNER JOIN 
-            hypotheses h on m1.hypothesis = h.id
-        INNER JOIN 
-            measures a1 on m1.area_description_1 = a1.id
-        INNER JOIN 
-            measures a2 on m1.area_description_2 = a2.id
-        WHERE 
-            (m1.r_value IS NOT NULL) 
-            AND (m1.area_description_1 = '{0}' or m1.area_description_2 = '{0}') 
-            AND (m1.area_description_1 = '{1}' or m1.area_description_2 = '{1}')
-            AND (m1.r_value != 'None') 
-        ORDER BY abs(m1.r_value::real) DESC;'''.format(id1, id2))
-list = cursor.fetchall()
+    '''
+    SELECT 
+        measures.column_name, 
+        data_area.database_table,
+        data_area.id,
+        measures.type
+    FROM 
+        measures 
+    LEFT JOIN data_area ON measures.data_area_id = data_area.id
+    WHERE measures.id = '{0}' OR measures.id = '{1}';
+    '''.format(line1, line2))
+measures = cursor.fetchall()
+date_conv = [(datetime.datetime.utcfromtimestamp(i[0]).strftime('%Y-%m-%d'), i[1]) for i in measure_data]
+time_conv = [(datetime.datetime.utcfromtimestamp(i[0]).strftime('%H:%M:%S'), i[1]) for i in measure_data]
+datetime_conv = [(datetime.datetime.utcfromtimestamp(i[0]).strftime('%H:%M:%S'), i[1]) for i in measure_data]
+for i in time_conv:
+    print(i)
 
-for i in list:
+x = [i[0] for i in measure_data]
+
+x_stats = sm.Series(x).stats_line()
+
+result = [x_stats['Размер выборки'],
+        x_stats['Сумма'],
+          datetime.datetime.utcfromtimestamp(x_stats['Минимум']).strftime('%H:%M:%S'),
+          datetime.datetime.utcfromtimestamp(x_stats['Максимум']).strftime('%H:%M:%S'),
+        x_stats['Максимальная частота'],
+          datetime.datetime.utcfromtimestamp(x_stats['Размах']).strftime('%H:%M:%S'),
+          datetime.datetime.utcfromtimestamp(x_stats['Среднее']).strftime('%H:%M:%S'),
+          datetime.datetime.utcfromtimestamp(x_stats['Медиана']).strftime('%H:%M:%S'),
+          datetime.datetime.utcfromtimestamp(x_stats['Мода']).strftime('%H:%M:%S'),
+          datetime.datetime.utcfromtimestamp(x_stats['Средневзвешенное']).strftime('%H:%M:%S'),
+          datetime.datetime.utcfromtimestamp(x_stats['Стандартное отклонение']).strftime('%H:%M:%S'),
+        x_stats['Дисперсия'],
+          datetime.datetime.utcfromtimestamp(x_stats['Стандартная ошибка средней']).strftime('%H:%M:%S'),
+          datetime.datetime.utcfromtimestamp(x_stats['Межквартильный размах']).strftime('%H:%M:%S')]
+
+for i in result:
     print(i)

@@ -17,7 +17,8 @@ def take_lines (line1, line2):
             SELECT 
                 measures.column_name, 
                 data_area.database_table,
-                data_area.id 
+                data_area.id,
+                measures.type
             FROM 
                 measures 
             LEFT JOIN data_area ON measures.data_area_id = data_area.id
@@ -30,6 +31,9 @@ def take_lines (line1, line2):
     # Название таблицы, в котрой хранятся данные
     database_table = measures[0][1]
     database_id = measures[0][2]
+
+    type_measure1 = measures[0][3]
+    type_measure2 = measures[1][3]
 
     # Данные
     # Выборка всех данных
@@ -144,6 +148,7 @@ def search_model(hypothesis, x, y, adid1, adid2):
 # Обработка моделей с пустыми значениями
 def primal_calc(data_area_id, log_id):
 
+    # Список моделей
     cursor.execute('''SELECT * FROM math_models WHERE data_area_id = '{0}';'''.format(data_area_id))
     model = cursor.fetchall()
 
