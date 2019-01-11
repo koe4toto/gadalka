@@ -239,12 +239,21 @@ def add_measure(data_area_id, type):
                 )
                 data_conn.commit()
 
-            cursor.execute("SELECT id FROM measures WHERE type = %s AND id != %s AND data_area_id = %s;",
-                           ['1', str(meg_id[0][0]), data_area_id])
+            cursor.execute(
+                '''
+                SELECT id 
+                FROM measures 
+                WHERE (type = '1' OR type = '4' OR type = '5' OR type = '6') 
+                    AND id != '{0}' 
+                    AND data_area_id = '{1}';
+                '''.format(str(meg_id[0][0]), data_area_id)
+            )
             megs_a = cursor.fetchall()
             megs = [i[0] for i in megs_a]
 
-            if type == '1' and len(megs) != 0:
+            types = ['1', '4', '5', '6']
+
+            if type in types and len(megs) != 0:
                 # Получить список идентификаторов гипотез
                 cursor.execute("SELECT id FROM hypotheses;")
                 hypotheses_id_a = cursor.fetchall()
@@ -381,7 +390,7 @@ def delete_data_measure(id, data_area_id):
     cursor.execute("SELECT database_table FROM data_area WHERE id = '{0}'".format(data_area_id))
     data_area = cursor.fetchall()
 
-    # Execute
+    # Удаление измерения и моделей
     cursor.execute("DELETE FROM measures WHERE id = '{0}'".format(id))
     cursor.execute("DELETE FROM math_models WHERE area_description_2 = '{0}' OR area_description_1 = '{0}'".format(id))
     conn.commit()

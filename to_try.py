@@ -83,10 +83,10 @@ def gen_data():
     return end
 
 
-me1 = 'time'
+me1 = 'date'
 me1_alt = 'EXTRACT(EPOCH FROM {0} )'.format(me1)
 me2 = 'students'
-database_table = 'olap_56_1'
+database_table = 'olap_62_1'
 
 # Выборка всех данных
 data_cursor.execute(
@@ -125,20 +125,23 @@ x = [i[0] for i in measure_data]
 
 x_stats = sm.Series(x).stats_line()
 
-result = [x_stats['Размер выборки'],
-        x_stats['Сумма'],
-          datetime.datetime.utcfromtimestamp(x_stats['Минимум']).strftime('%H:%M:%S'),
-          datetime.datetime.utcfromtimestamp(x_stats['Максимум']).strftime('%H:%M:%S'),
-        x_stats['Максимальная частота'],
-          datetime.datetime.utcfromtimestamp(x_stats['Размах']).strftime('%H:%M:%S'),
-          datetime.datetime.utcfromtimestamp(x_stats['Среднее']).strftime('%H:%M:%S'),
-          datetime.datetime.utcfromtimestamp(x_stats['Медиана']).strftime('%H:%M:%S'),
-          datetime.datetime.utcfromtimestamp(x_stats['Мода']).strftime('%H:%M:%S'),
-          datetime.datetime.utcfromtimestamp(x_stats['Средневзвешенное']).strftime('%H:%M:%S'),
-          datetime.datetime.utcfromtimestamp(x_stats['Стандартное отклонение']).strftime('%H:%M:%S'),
-        x_stats['Дисперсия'],
-          datetime.datetime.utcfromtimestamp(x_stats['Стандартная ошибка средней']).strftime('%H:%M:%S'),
-          datetime.datetime.utcfromtimestamp(x_stats['Межквартильный размах']).strftime('%H:%M:%S')]
 
-for i in result:
-    print(i)
+result = {'Размер выборки': x_stats['Размер выборки'],
+          'Сумма': datetime.datetime.utcfromtimestamp(x_stats['Сумма']).strftime('%H:%M:%S'),
+          'Минимум': datetime.datetime.utcfromtimestamp(x_stats['Минимум']).strftime('%H:%M:%S'),
+          'Максимум': datetime.datetime.utcfromtimestamp(x_stats['Максимум']).strftime('%H:%M:%S'),
+          'Максимальная частота': datetime.datetime.utcfromtimestamp(x_stats['Максимальная частота']).strftime('%H:%M:%S'),
+          'Размах': datetime.datetime.utcfromtimestamp(x_stats['Размах']).strftime('%H:%M:%S'),
+          'Среднее': datetime.datetime.utcfromtimestamp(x_stats['Среднее']).strftime('%H:%M:%S'),
+          'Медиана': datetime.datetime.utcfromtimestamp(x_stats['Медиана']).strftime('%H:%M:%S'),
+          'Мода': datetime.datetime.utcfromtimestamp(x_stats['Мода']).strftime('%H:%M:%S'),
+          'Средневзвешенное': datetime.datetime.utcfromtimestamp(x_stats['Средневзвешенное']).strftime('%H:%M:%S'),
+          'Стандартное отклонение': datetime.datetime.utcfromtimestamp(x_stats['Стандартное отклонение']).strftime('%H:%M:%S'),
+          'Дисперсия': datetime.datetime.utcfromtimestamp(x_stats['Дисперсия']).strftime('%H:%M:%S'),
+          'Стандартная ошибка средней': datetime.datetime.utcfromtimestamp(x_stats['Стандартная ошибка средней']).strftime('%H:%M:%S'),
+          'Межквартильный размах': datetime.datetime.utcfromtimestamp(x_stats['Межквартильный размах']).strftime('%H:%M:%S')
+          }
+
+print(result)
+
+

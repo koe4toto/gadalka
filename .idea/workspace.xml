@@ -2,7 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1719e8ec-808e-4103-a063-fff281569a44" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data_for_test/2data.xlsx" beforeDir="false" afterPath="$PROJECT_DIR$/data_for_test/2data.xlsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/error_files/olap_55.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/error_files/olap_56.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/error_files/olap_61.xls" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/measures.py" beforeDir="false" afterPath="$PROJECT_DIR$/measures.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/model_calculation.py" beforeDir="false" afterPath="$PROJECT_DIR$/model_calculation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/to_try.py" beforeDir="false" afterPath="$PROJECT_DIR$/to_try.py" afterDir="false" />
     </list>
@@ -25,7 +29,7 @@
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="html" value="31" />
-          <entry key="py" value="72" />
+          <entry key="py" value="73" />
           <entry key="txt" value="2" />
         </counts>
       </usages-collector>
@@ -33,7 +37,7 @@
         <counts>
           <entry key="HTML" value="31" />
           <entry key="Hoi4 file" value="2" />
-          <entry key="Python" value="72" />
+          <entry key="Python" value="73" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.vcs.git.usages" />
@@ -41,14 +45,14 @@
         <counts>
           <entry key="HTML" value="1441" />
           <entry key="PLAIN_TEXT" value="1" />
-          <entry key="Python" value="15316" />
+          <entry key="Python" value="15835" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="1" />
           <entry key="html" value="1441" />
-          <entry key="py" value="15316" />
+          <entry key="py" value="15835" />
         </counts>
       </usages-collector>
     </session>
@@ -79,8 +83,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/measures.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="229">
-              <caret line="464" column="32" selection-start-line="464" selection-start-column="32" selection-end-line="464" selection-end-column="32" />
+            <state relative-caret-position="116">
+              <caret line="265" lean-forward="true" selection-start-line="265" selection-end-line="265" />
               <folding>
                 <element signature="e#0#88#0" expanded="true" />
               </folding>
@@ -100,33 +104,25 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/model_calculation.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="134">
-              <caret line="75" column="12" lean-forward="true" selection-start-line="75" selection-start-column="12" selection-end-line="88" selection-end-column="44" />
+            <state relative-caret-position="223">
+              <caret line="17" column="17" lean-forward="true" selection-start-line="17" selection-start-column="17" selection-end-line="17" selection-end-column="17" />
               <folding>
                 <element signature="e#0#27#0" expanded="true" />
-                <marker date="1547129380545" expanded="true" signature="1283:2454" ph="..." />
+                <marker date="1547201356967" expanded="true" signature="495:516" ph="..." />
+                <marker date="1547201356967" expanded="true" signature="1634:2805" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/threading.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="106">
-              <caret line="1157" selection-start-line="1157" selection-end-line="1157" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/to_try.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="94">
-              <caret line="132" column="62" selection-start-line="132" selection-start-column="62" selection-end-line="132" selection-end-column="62" />
+            <state relative-caret-position="230">
+              <caret line="147" selection-start-line="147" selection-end-line="147" />
               <folding>
                 <element signature="e#0#16#0" expanded="true" />
                 <element signature="e#378#465#0" />
@@ -139,6 +135,15 @@
                 <element signature="e#1605#1709#0" />
                 <element signature="e#1731#2157#0" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/constants.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-34">
+              <caret line="4" column="52" selection-start-line="4" selection-start-column="52" selection-end-line="4" selection-end-column="52" />
             </state>
           </provider>
         </entry>
@@ -255,10 +260,10 @@
         <option value="$PROJECT_DIR$/statistic_math.py" />
         <option value="$PROJECT_DIR$/loading_queue.py" />
         <option value="$PROJECT_DIR$/loading_from_file.py" />
-        <option value="$PROJECT_DIR$/measures.py" />
         <option value="$PROJECT_DIR$/database.py" />
-        <option value="$PROJECT_DIR$/model_calculation.py" />
         <option value="$PROJECT_DIR$/to_try.py" />
+        <option value="$PROJECT_DIR$/measures.py" />
+        <option value="$PROJECT_DIR$/model_calculation.py" />
       </list>
     </option>
   </component>
@@ -312,7 +317,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.to_try">
+  <component name="RunManager" selected="Python.loading_queue">
     <configuration name="loading_queue" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="gadalka" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -383,8 +388,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.to_try" />
         <item itemvalue="Python.loading_queue" />
+        <item itemvalue="Python.to_try" />
         <item itemvalue="Python.model_calculation" />
       </list>
     </recent_temporary>
@@ -404,13 +409,14 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="0" width="1378" height="735" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.42429283" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.34941763" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -585,13 +591,6 @@
     <entry file="file://$PROJECT_DIR$/views.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
-    <entry file="file://$PROJECT_DIR$/constants.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="4" column="52" selection-start-line="4" selection-start-column="52" selection-end-line="4" selection-end-column="52" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$USER_HOME$/AppData/Local/Programs/Python/Python37-32/Lib/threading.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="106">
@@ -626,16 +625,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/measures.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="229">
-          <caret line="464" column="32" selection-start-line="464" selection-start-column="32" selection-end-line="464" selection-end-column="32" />
-          <folding>
-            <element signature="e#0#88#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/database.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="576">
@@ -645,17 +634,6 @@
             <element signature="e#1575#7646#0" />
             <element signature="e#8137#9704#0" />
             <element signature="e#12263#13581#0" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/loading_from_file.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="214">
-          <caret line="119" column="46" lean-forward="true" selection-start-line="119" selection-start-column="46" selection-end-line="119" selection-end-column="46" />
-          <folding>
-            <element signature="e#0#16#0" expanded="true" />
-            <element signature="e#596#978#0" />
           </folding>
         </state>
       </provider>
@@ -670,21 +648,28 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/model_calculation.py">
+    <entry file="file://$PROJECT_DIR$/constants.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="134">
-          <caret line="75" column="12" lean-forward="true" selection-start-line="75" selection-start-column="12" selection-end-line="88" selection-end-column="44" />
+        <state relative-caret-position="-34">
+          <caret line="4" column="52" selection-start-line="4" selection-start-column="52" selection-end-line="4" selection-end-column="52" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/loading_from_file.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="214">
+          <caret line="119" column="46" lean-forward="true" selection-start-line="119" selection-start-column="46" selection-end-line="119" selection-end-column="46" />
           <folding>
-            <element signature="e#0#27#0" expanded="true" />
-            <marker date="1547129380545" expanded="true" signature="1283:2454" ph="..." />
+            <element signature="e#0#16#0" expanded="true" />
+            <element signature="e#596#978#0" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/to_try.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="94">
-          <caret line="132" column="62" selection-start-line="132" selection-start-column="62" selection-end-line="132" selection-end-column="62" />
+        <state relative-caret-position="230">
+          <caret line="147" selection-start-line="147" selection-end-line="147" />
           <folding>
             <element signature="e#0#16#0" expanded="true" />
             <element signature="e#378#465#0" />
@@ -696,6 +681,28 @@
             <element signature="e#1421#1518#0" />
             <element signature="e#1605#1709#0" />
             <element signature="e#1731#2157#0" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/measures.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="116">
+          <caret line="265" lean-forward="true" selection-start-line="265" selection-end-line="265" />
+          <folding>
+            <element signature="e#0#88#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/model_calculation.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="223">
+          <caret line="17" column="17" lean-forward="true" selection-start-line="17" selection-start-column="17" selection-end-line="17" selection-end-column="17" />
+          <folding>
+            <element signature="e#0#27#0" expanded="true" />
+            <marker date="1547201356967" expanded="true" signature="495:516" ph="..." />
+            <marker date="1547201356967" expanded="true" signature="1634:2805" ph="..." />
           </folding>
         </state>
       </provider>

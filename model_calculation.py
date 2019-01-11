@@ -7,6 +7,17 @@ conn = db.conn
 data_cursor = db.data_cursor
 data_conn = db.data_conn
 
+# Определение типа измерения и вывод строчки для соответствуующего запроса
+def time_to_num(measure):
+    if measure[3] == 4 or measure[3] == 5 or measure[3] == 6:
+        result = 'EXTRACT(EPOCH FROM {0} )'.format(measure[0])
+    else:
+        result = measure[0]
+    print('Тип данных:', measure[3])
+    print('Выборка:', result)
+    return result
+
+
 # Данные для анализа
 def take_lines (line1, line2):
 
@@ -32,8 +43,8 @@ def take_lines (line1, line2):
     database_table = measures[0][1]
     database_id = measures[0][2]
 
-    type_measure1 = measures[0][3]
-    type_measure2 = measures[1][3]
+    me1_alt = time_to_num(measures[0])
+    me2_alt = time_to_num(measures[1])
 
     # Данные
     # Выборка всех данных
@@ -41,7 +52,7 @@ def take_lines (line1, line2):
         '''
         SELECT {0}, {1}   
         FROM {2} WHERE {0} IS NOT NULL OR {0} IS NOT NULL;
-        '''.format(measures[0][0], measures[1][0], database_table)
+        '''.format(me1_alt, me2_alt, database_table)
     )
     measure_data = data_cursor.fetchall()
     return measure_data, database_table, database_id
