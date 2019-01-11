@@ -7,6 +7,7 @@ import numpy as np
 import statistic_math as sm
 import database as db
 import itertools
+import datetime
 from model_calculation import take_lines
 
 # Мои модули
@@ -35,13 +36,49 @@ def measures():
     measures_list = cursor.fetchall()
     return render_template('measures.html', list = measures_list)
 
+
+# Продготовка данных времени к отображению
+def time_to_num(measure):
+    print(measure)
+    # Формат предствления статистик
+    format = {
+        4: '%H:%M:%S',
+        5: '%Y-%m-%d',
+        6: '%Y-%m-%d %H:%M:%S'
+    }
+
+    # Тип измерения
+    type = measure[4]
+
+    # Типы времения
+    time_types = [4, 5, 6]
+
+    # Статистики измерения
+    statistics = []
+
+    if type in time_types:
+        result = 'EXTRACT(EPOCH FROM {0} )'.format(measure[1])
+        for p, i in enumerate(measure):
+            if p >= 8:
+                m = float(i)
+                try:
+                    statistics.append(datetime.datetime.utcfromtimestamp(m).strftime(format[type]))
+                except:
+                    statistics.append(m)
+            else:
+                statistics.append(i)
+    else:
+        result = measure[1]
+        statistics = measure
+    return result, statistics
+
 # Карточка параметра
 @mod.route("/data_area/<string:data_asrea_id>/measure/<string:id>/", methods =['GET', 'POST'])
 @is_logged_in
 def measure(data_asrea_id, id):
     # Получение данных о мере
     cursor.execute('''SELECT * FROM measures WHERE id = '{0}';'''.format(id))
-    the_measure = cursor.fetchall()
+    measure = cursor.fetchall()
 
     # Получение данных о предметной области
     cursor.execute('''SELECT * FROM data_area WHERE id = '{0}';'''.format(data_asrea_id))
@@ -86,26 +123,34 @@ def measure(data_asrea_id, id):
 
     # Получение данных о мере
     # TODO в интерфейс нужно забирать данные ограниченного количества, чтобы отрисовать только график
+    ui_limit = 500
     '''
         SELECT {0}, {1} 
         from (select row_number() 
         over (order by {0}) num, count(*) over () as count, {0}, {1}   
         from {2} p)A where case when count > {3} then num %(count/{3}) = 0 else 1 = 1 end;
     '''
-    data_cursor.execute('''SELECT {0} FROM {1} WHERE {0} IS NOT NULL;'''.format(the_measure[0][1], data_area[0][5]))
+    # Настройка для измерений времени
+    data_column, measure2 = time_to_num(measure[0])
+
+    data_cursor.execute(
+        '''
+        SELECT {0} FROM {1} WHERE {0} IS NOT NULL;
+        '''.format(data_column, data_area[0][5]))
     d = data_cursor.fetchall()
 
+    # Получение данных для графика распределения
     da = [i[0] for i in d]
-    dat = sm.Series(da)
-    data = dat.freq_line_view()
-    return render_template('measure.html',
-                           data_asrea_id=data_asrea_id,
-                           id=id,
-                           the_measure=the_measure,
-                           data_area=data_area,
-                           data=data,
-                           pairs=list
-                           )
+    data = sm.Series(da).freq_line_view()
+    return render_template(
+        'measure.html',
+        data_asrea_id=data_asrea_id,
+        id=id,
+        the_measure=[measure2],
+        data_area=data_area,
+        data=data,
+        pairs=list
+    )
 
 # Добавление параметра
 @mod.route("/data_area/<string:data_area_id>/add_measure_type_<string:type>", methods =['GET', 'POST'] )

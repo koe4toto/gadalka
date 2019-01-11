@@ -70,9 +70,7 @@ class Series:
 
     # Распределение частот и вероятности для графика в интерфейсе
     def freq_line_view(self):
-        pop=[]
-        for i in self.freq:
-            pop.append([i[0], i[1], i[1]])
+        pop = [[i[0], i[1], i[1]] for i in self.freq]
         return json.dumps(pop)
 
     # Математическое ожидание для среднего

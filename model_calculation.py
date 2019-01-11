@@ -13,8 +13,6 @@ def time_to_num(measure):
         result = 'EXTRACT(EPOCH FROM {0} )'.format(measure[0])
     else:
         result = measure[0]
-    print('Тип данных:', measure[3])
-    print('Выборка:', result)
     return result
 
 
