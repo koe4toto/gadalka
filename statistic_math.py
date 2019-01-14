@@ -67,6 +67,20 @@ class Series:
         }
         return sline
 
+    # Список статистик качественных данных
+    def stats_qualitative_line(self):
+        result = {
+            # Размер выборки
+            'Размер выборки': len(self.line),
+
+            # Максимальная частота
+            'Максимальная частота': np.max(self.freq),
+
+            # Мода
+            'Мода': sci.mode(self.line)[0][0]
+        }
+        return result
+
 
     # Распределение частот и вероятности для графика в интерфейсе
     def freq_line_view(self):

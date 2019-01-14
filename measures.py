@@ -72,10 +72,10 @@ def time_to_num(measure):
         statistics = measure
     return result, statistics
 
-# Карточка параметра
-@mod.route("/data_area/<string:data_asrea_id>/measure/<string:id>/", methods =['GET', 'POST'])
+# Карточка параметра количественных данных
+@mod.route("/data_area/<string:data_asrea_id>/measure_quantitative/<string:id>/", methods =['GET', 'POST'])
 @is_logged_in
-def measure(data_asrea_id, id):
+def measure_quantitative(data_asrea_id, id):
     # Получение данных о мере
     cursor.execute('''SELECT * FROM measures WHERE id = '{0}';'''.format(id))
     measure = cursor.fetchall()
@@ -143,7 +143,167 @@ def measure(data_asrea_id, id):
     da = [i[0] for i in d]
     data = sm.Series(da).freq_line_view()
     return render_template(
-        'measure.html',
+        'measure_quantitative.html',
+        data_asrea_id=data_asrea_id,
+        id=id,
+        the_measure=[measure2],
+        data_area=data_area,
+        data=data,
+        pairs=list
+    )
+
+# Карточка параметра времени
+@mod.route("/data_area/<string:data_asrea_id>/measure_time/<string:id>/", methods=['GET', 'POST'])
+@is_logged_in
+def measure_time(data_asrea_id, id):
+    # Получение данных о мере
+    cursor.execute('''SELECT * FROM measures WHERE id = '{0}';'''.format(id))
+    measure = cursor.fetchall()
+
+    # Получение данных о предметной области
+    cursor.execute('''SELECT * FROM data_area WHERE id = '{0}';'''.format(data_asrea_id))
+    data_area = cursor.fetchall()
+
+    # Список пар
+    cursor.execute(
+        '''SELECT *
+            FROM (
+                SELECT
+                    h.name, 
+                    ml.r_value,
+                    a1.description,
+                    a2.description,
+                    ml.area_description_1, 
+                    ml.area_description_2,
+                    ml.id, 
+                    ml.hypothesis,
+                    row_number() 
+                    OVER (
+                        PARTITION BY area_description_1::text || area_description_2::text 
+                        ORDER BY abs(to_number(r_value, '9.999999999999')) DESC)  
+                        AS rating_in_section
+                FROM 
+                    math_models ml
+                INNER JOIN 
+                    measures a1 on ml.area_description_1 = a1.id
+                INNER JOIN 
+                    measures a2 on ml.area_description_2 = a2.id
+                INNER JOIN 
+                    hypotheses h on ml.hypothesis = h.id
+                WHERE 
+                    r_value != 'None' AND (ml.area_description_1 = '{0}' or ml.area_description_2 = '{0}')
+                ORDER BY 
+                    rating_in_section
+            ) counted_news
+            WHERE rating_in_section <= 1
+            ORDER BY abs(to_number(r_value, '9.999999999999')) DESC;
+
+            '''.format(id))
+    list = cursor.fetchall()
+
+    # Получение данных о мере
+    # TODO в интерфейс нужно забирать данные ограниченного количества, чтобы отрисовать только график
+    ui_limit = 500
+    '''
+        SELECT {0}, {1} 
+        from (select row_number() 
+        over (order by {0}) num, count(*) over () as count, {0}, {1}   
+        from {2} p)A where case when count > {3} then num %(count/{3}) = 0 else 1 = 1 end;
+    '''
+    # Настройка для измерений времени
+    data_column, measure2 = time_to_num(measure[0])
+
+    data_cursor.execute(
+        '''
+        SELECT {0} FROM {1} WHERE {0} IS NOT NULL;
+        '''.format(data_column, data_area[0][5]))
+    d = data_cursor.fetchall()
+
+    # Получение данных для графика распределения
+    da = [i[0] for i in d]
+    data = sm.Series(da).freq_line_view()
+    return render_template(
+        'measure_time.html',
+        data_asrea_id=data_asrea_id,
+        id=id,
+        the_measure=[measure2],
+        data_area=data_area,
+        data=data,
+        pairs=list
+    )
+
+# Карточка параметра качественных данных
+@mod.route("/data_area/<string:data_asrea_id>/measure_qualitative/<string:id>/", methods=['GET', 'POST'])
+@is_logged_in
+def measure_qualitative(data_asrea_id, id):
+    # Получение данных о мере
+    cursor.execute('''SELECT * FROM measures WHERE id = '{0}';'''.format(id))
+    measure = cursor.fetchall()
+
+    # Получение данных о предметной области
+    cursor.execute('''SELECT * FROM data_area WHERE id = '{0}';'''.format(data_asrea_id))
+    data_area = cursor.fetchall()
+
+    # Список пар
+    cursor.execute(
+        '''SELECT *
+            FROM (
+                SELECT
+                    h.name, 
+                    ml.r_value,
+                    a1.description,
+                    a2.description,
+                    ml.area_description_1, 
+                    ml.area_description_2,
+                    ml.id, 
+                    ml.hypothesis,
+                    row_number() 
+                    OVER (
+                        PARTITION BY area_description_1::text || area_description_2::text 
+                        ORDER BY abs(to_number(r_value, '9.999999999999')) DESC)  
+                        AS rating_in_section
+                FROM 
+                    math_models ml
+                INNER JOIN 
+                    measures a1 on ml.area_description_1 = a1.id
+                INNER JOIN 
+                    measures a2 on ml.area_description_2 = a2.id
+                INNER JOIN 
+                    hypotheses h on ml.hypothesis = h.id
+                WHERE 
+                    r_value != 'None' AND (ml.area_description_1 = '{0}' or ml.area_description_2 = '{0}')
+                ORDER BY 
+                    rating_in_section
+            ) counted_news
+            WHERE rating_in_section <= 1
+            ORDER BY abs(to_number(r_value, '9.999999999999')) DESC;
+
+            '''.format(id))
+    list = cursor.fetchall()
+
+    # Получение данных о мере
+    # TODO в интерфейс нужно забирать данные ограниченного количества, чтобы отрисовать только график
+    ui_limit = 500
+    '''
+        SELECT {0}, {1} 
+        from (select row_number() 
+        over (order by {0}) num, count(*) over () as count, {0}, {1}   
+        from {2} p)A where case when count > {3} then num %(count/{3}) = 0 else 1 = 1 end;
+    '''
+    # Настройка для измерений времени
+    data_column, measure2 = time_to_num(measure[0])
+
+    data_cursor.execute(
+        '''
+        SELECT {0} FROM {1} WHERE {0} IS NOT NULL;
+        '''.format(data_column, data_area[0][5]))
+    d = data_cursor.fetchall()
+
+    # Получение данных для графика распределения
+    da = [i[0] for i in d]
+    data = sm.Series(da).freq_line_view()
+    return render_template(
+        'measure_qualitative.html',
         data_asrea_id=data_asrea_id,
         id=id,
         the_measure=[measure2],

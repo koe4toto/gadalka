@@ -98,7 +98,16 @@
   {% for i in measures %}
     <tr>
         <td>
-            <b><a href="measure/{{ i[0] }}/">{{ i[2] }}</a></b><br>{{ i[1] }}
+
+            <b><a href="
+            {% if i[5] == 1 %}
+                measure_quantitative/{{ i[0] }}/
+            {% elif i[5] == 2 or i[5] == 3 %}
+                measure_qualitative/{{ i[0] }}/
+            {% elif i[5] == 4 or i[5] == 5 or i[5] == 6 %}
+                measure_time/{{ i[0] }}/
+            {% endif %}
+            ">{{ i[2] }}</a></b><br>{{ i[1] }}
         </td>
         <td>
             {{ i[3] }}

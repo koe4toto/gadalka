@@ -373,7 +373,8 @@ class measures:
                 measures.column_name,
                 measures.description, 
                 ref_measures_type.name, 
-                measures.status
+                measures.status,
+                measures.type
             FROM 
                 measures 
             LEFT JOIN ref_measures_type ON measures.type = ref_measures_type.id

@@ -6,8 +6,17 @@
     <br>
     <div class="list-group ">
     {% for i in list %}
-      <a href="data_area/{{ i[3] }}/measure/{{ i[0] }}/" class="list-group-item list-group-item-action flex-column align-items-start">
-        <div class="d-flex w-100 justify-content-between">
+        <a href="
+        {% if i[4] == 1 %}
+            data_area/{{ i[3] }}/measure_quantitative/{{ i[0] }}/
+        {% elif i[4] == 2 or i[4] == 3 %}
+            data_area/{{ i[3] }}/measure_qualitative/{{ i[0] }}/
+        {% elif i[4] == 4 or i[4] == 5 or i[4] == 6 %}
+            data_area/{{ i[3] }}/measure_time/{{ i[0] }}/
+        {% endif %}
+        "
+         class="list-group-item list-group-item-action flex-column align-items-start">
+          <div class="d-flex w-100 justify-content-between">
           <h5 class="mb-1 text-primary">{{ i[2] }}</h5>
         </div>
           <p class="mb-1">{{ i[1] }}</p>
