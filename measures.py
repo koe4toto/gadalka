@@ -244,42 +244,6 @@ def measure_qualitative(data_asrea_id, id):
     cursor.execute('''SELECT * FROM data_area WHERE id = '{0}';'''.format(data_asrea_id))
     data_area = cursor.fetchall()
 
-    # Список пар
-    cursor.execute(
-        '''SELECT *
-            FROM (
-                SELECT
-                    h.name, 
-                    ml.r_value,
-                    a1.description,
-                    a2.description,
-                    ml.area_description_1, 
-                    ml.area_description_2,
-                    ml.id, 
-                    ml.hypothesis,
-                    row_number() 
-                    OVER (
-                        PARTITION BY area_description_1::text || area_description_2::text 
-                        ORDER BY abs(to_number(r_value, '9.999999999999')) DESC)  
-                        AS rating_in_section
-                FROM 
-                    math_models ml
-                INNER JOIN 
-                    measures a1 on ml.area_description_1 = a1.id
-                INNER JOIN 
-                    measures a2 on ml.area_description_2 = a2.id
-                INNER JOIN 
-                    hypotheses h on ml.hypothesis = h.id
-                WHERE 
-                    r_value != 'None' AND (ml.area_description_1 = '{0}' or ml.area_description_2 = '{0}')
-                ORDER BY 
-                    rating_in_section
-            ) counted_news
-            WHERE rating_in_section <= 1
-            ORDER BY abs(to_number(r_value, '9.999999999999')) DESC;
-
-            '''.format(id))
-    list = cursor.fetchall()
 
     # Получение данных о мере
     # TODO в интерфейс нужно забирать данные ограниченного количества, чтобы отрисовать только график
@@ -301,15 +265,15 @@ def measure_qualitative(data_asrea_id, id):
 
     # Получение данных для графика распределения
     da = [i[0] for i in d]
-    data = sm.Series(da).freq_line_view()
+    data = [[int(i[0]), int(i[0]), 0] for i in da]
+    json.dumps(data)
     return render_template(
         'measure_qualitative.html',
         data_asrea_id=data_asrea_id,
         id=id,
         the_measure=[measure2],
         data_area=data_area,
-        data=data,
-        pairs=list
+        data=data
     )
 
 # Добавление параметра
