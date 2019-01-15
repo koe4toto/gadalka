@@ -669,7 +669,7 @@ def pair(id1, id2, model_id):
 
     return render_template('pair.html', list=list, for_graf=popa, model=model, list_models=list_models, maesures=maesures)
 
-# Многомерная модель
+# Многомерные модели
 @mod.route("/multiple_models")
 def multiple_models():
     g = db.get_models(0.8)

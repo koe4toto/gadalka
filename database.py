@@ -594,6 +594,35 @@ cursor.execute(
 )
 conn.commit()
 
+# Сложные связи
+cursor.execute(
+    '''
+    CREATE SEQUENCE auto_id_complex_models;
+    CREATE SEQUENCE auto_id_complex_model_measures;
+
+    CREATE TABLE complex_models 
+    (
+        "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_complex_models'), 
+        "name" varchar(300), 
+        "description" varchar(600), 
+        "type" integer, 
+        "kind" integer, 
+        "data_area_id" integer, 
+        "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );
+    
+    CREATE TABLE complex_model_measures 
+    (
+        "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_complex_model_measures'), 
+        "complex_model_id" integer, 
+        "measure_id" integer, 
+        "data_area_id" integer
+    );
+    '''
+)
+conn.commit()
+
+
 # История загрузки данных
 cursor.execute(
     '''
@@ -607,26 +636,6 @@ cursor.execute(
         "downloads" varchar(300), 
         "result" varchar(300), 
         "status" varchar(300),
-        "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );
-    '''
-)
-conn.commit()
-
-# Многомерные модели
-cursor.execute(
-    '''
-    CREATE SEQUENCE auto_id_multi_models;
-    
-    CREATE TABLE multi_models 
-    (
-        "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_multi_models'), 
-        "measures" varchar, 
-        "pair_models" varchar, 
-        "type" integer, 
-        "name" varchar, 
-        "r_value" varchar(300),
-        "description" varchar(300),
         "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     '''

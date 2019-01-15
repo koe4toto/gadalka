@@ -85,37 +85,8 @@ def gen_data():
 
 
 
-line1 = 'students'
-line2 = 'groups'
-olap = 'olap_62_1'
-limit = 4
 
 
-data_cursor.execute(
-    '''
-    SELECT {0}
-    FROM (
-        SELECT 
-            row_number() over (order by {0}) as num,
-            count(*) over () as count,
-            {0}  
-        FROM {2}
-        WHERE {0} IS NOT NULL
-        ) selected
-        where case when count > {3} then num %(count/{3}) = 0 else 1 = 1 end;
-    '''.format(line1, line2, olap, limit)
-)
-measure = data_cursor.fetchall()
 
-data_cursor.execute(
-        '''
-        SELECT {0}, {1} 
-        from (select row_number() 
-        over (order by {0}) num, count(*) over () as count, {0}, {1}   
-        from {2} p WHERE {0} IS NOT NULL)A where case when count > {3} then num %(count/{3}) = 0 else 1 = 1 end; 
-        
-        '''.format(line1, line2, olap, limit))
-d = data_cursor.fetchall()
-print('0000000000000000000')
-for i in d:
-    print(i)
+
+print('Готово, епта!')

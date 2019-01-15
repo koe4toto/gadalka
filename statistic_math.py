@@ -328,6 +328,7 @@ class Pairs:
 def agreg(m):
     # Список пар
     models = [[i[4], i[5]] for i in m]
+
     # Список сложных моделей
     result = []
 
@@ -335,12 +336,9 @@ def agreg(m):
     ides = []
 
     # Список коэфициентов корреляции моделей
-    koefs = []
+    measures = []
 
-    # Список названий измерений
-    names = []
-
-    # Поиск модели в списке
+    # Поиск сложных свзяей в списке
     for i in models:
         model = [n for n in models if i[0] in n or i[1] in n]
         for i in model:
@@ -358,16 +356,21 @@ def agreg(m):
     # Формирование списка идентификаторов парных моделей для каждой многомерной модели
     for i in result:
         ids = []
+        mea = []
         for k in i:
             for p in m:
                 p2 = [p[4], p[5]]
                 if k == p2:
                     ids.append(p[6])
+                    if p[4] not in mea:
+                        mea.append(p[4])
+                    if p[5] not in mea:
+                        mea.append(p[5])
 
         ides.append(ids)
+        measures.append(mea)
 
-    # Формирование списка корреляций моделей
-    return ides
+    return measures
 
 
 
