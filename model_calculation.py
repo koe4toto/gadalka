@@ -17,7 +17,7 @@ def time_to_num(measure):
 
 
 # Данные для анализа
-def take_lines (line1, line2):
+def take_lines (line1, line2, limit=None):
 
     # Измерения
     try:
@@ -46,13 +46,24 @@ def take_lines (line1, line2):
 
     # Данные
     # Выборка всех данных
-    data_cursor.execute(
-        '''
-        SELECT {0}, {1}   
-        FROM {2} WHERE {0} IS NOT NULL OR {0} IS NOT NULL;
-        '''.format(me1_alt, me2_alt, database_table)
-    )
-    measure_data = data_cursor.fetchall()
+    if limit == None:
+        data_cursor.execute(
+            '''
+            SELECT {0}, {1}   
+            FROM {2} WHERE {0} IS NOT NULL OR {0} IS NOT NULL;
+            '''.format(me1_alt, me2_alt, database_table)
+        )
+        measure_data = data_cursor.fetchall()
+    else:
+        data_cursor.execute(
+            '''
+            SELECT {0}, {1} 
+            from (select row_number() 
+            over (order by {0}) num, count(*) over () as count, {0}, {1}   
+            from {2} p WHERE {0} IS NOT NULL)A where case when count > {3} then num %(count/{3}) = 0 else 1 = 1 end; 
+            '''.format(me1_alt, me2_alt, database_table, limit)
+        )
+        measure_data = data_cursor.fetchall()
     return measure_data, database_table, database_id
 
 def measure_stats(x, id):

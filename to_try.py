@@ -83,63 +83,39 @@ def gen_data():
     return end
 
 
-me1 = 'date'
-me1_alt = 'EXTRACT(EPOCH FROM {0} )'.format(me1)
-me2 = 'students'
-database_table = 'olap_62_1'
 
-# Выборка всех данных
+
+line1 = 'students'
+line2 = 'groups'
+olap = 'olap_62_1'
+limit = 4
+
+
 data_cursor.execute(
     '''
-    SELECT {0}, {1}   
-    FROM {2} WHERE {0} IS NOT NULL OR {0} IS NOT NULL;
-    '''.format(me1_alt, me2, database_table)
+    SELECT {0}
+    FROM (
+        SELECT 
+            row_number() over (order by {0}) as num,
+            count(*) over () as count,
+            {0}  
+        FROM {2}
+        WHERE {0} IS NOT NULL
+        ) selected
+        where case when count > {3} then num %(count/{3}) = 0 else 1 = 1 end;
+    '''.format(line1, line2, olap, limit)
 )
-measure_data = data_cursor.fetchall()
+measure = data_cursor.fetchall()
 
-for i in measure_data:
+data_cursor.execute(
+        '''
+        SELECT {0}, {1} 
+        from (select row_number() 
+        over (order by {0}) num, count(*) over () as count, {0}, {1}   
+        from {2} p WHERE {0} IS NOT NULL)A where case when count > {3} then num %(count/{3}) = 0 else 1 = 1 end; 
+        
+        '''.format(line1, line2, olap, limit))
+d = data_cursor.fetchall()
+print('0000000000000000000')
+for i in d:
     print(i)
-
-line1 = 6
-line2 = 7
-cursor.execute(
-    '''
-    SELECT 
-        measures.column_name, 
-        data_area.database_table,
-        data_area.id,
-        measures.type
-    FROM 
-        measures 
-    LEFT JOIN data_area ON measures.data_area_id = data_area.id
-    WHERE measures.id = '{0}' OR measures.id = '{1}';
-    '''.format(line1, line2))
-measures = cursor.fetchall()
-date_conv = [(datetime.datetime.utcfromtimestamp(i[0]).strftime('%Y-%m-%d'), i[1]) for i in measure_data]
-time_conv = [(datetime.datetime.utcfromtimestamp(i[0]).strftime('%H:%M:%S'), i[1]) for i in measure_data]
-datetime_conv = [(datetime.datetime.utcfromtimestamp(i[0]).strftime('%H:%M:%S'), i[1]) for i in measure_data]
-for i in time_conv:
-    print(i)
-
-x = [i[0] for i in measure_data]
-
-x_stats = sm.Series(x).stats_line()
-
-
-result = {'Размер выборки': x_stats['Размер выборки'],
-          'Сумма': datetime.datetime.utcfromtimestamp(x_stats['Сумма']).strftime('%H:%M:%S'),
-          'Минимум': datetime.datetime.utcfromtimestamp(x_stats['Минимум']).strftime('%H:%M:%S'),
-          'Максимум': datetime.datetime.utcfromtimestamp(x_stats['Максимум']).strftime('%H:%M:%S'),
-          'Максимальная частота': datetime.datetime.utcfromtimestamp(x_stats['Максимальная частота']).strftime('%H:%M:%S'),
-          'Размах': datetime.datetime.utcfromtimestamp(x_stats['Размах']).strftime('%H:%M:%S'),
-          'Среднее': datetime.datetime.utcfromtimestamp(x_stats['Среднее']).strftime('%H:%M:%S'),
-          'Медиана': datetime.datetime.utcfromtimestamp(x_stats['Медиана']).strftime('%H:%M:%S'),
-          'Мода': datetime.datetime.utcfromtimestamp(x_stats['Мода']).strftime('%H:%M:%S'),
-          'Средневзвешенное': datetime.datetime.utcfromtimestamp(x_stats['Средневзвешенное']).strftime('%H:%M:%S'),
-          'Стандартное отклонение': datetime.datetime.utcfromtimestamp(x_stats['Стандартное отклонение']).strftime('%H:%M:%S'),
-          'Дисперсия': datetime.datetime.utcfromtimestamp(x_stats['Дисперсия']).strftime('%H:%M:%S'),
-          'Стандартная ошибка средней': datetime.datetime.utcfromtimestamp(x_stats['Стандартная ошибка средней']).strftime('%H:%M:%S'),
-          'Межквартильный размах': datetime.datetime.utcfromtimestamp(x_stats['Межквартильный размах']).strftime('%H:%M:%S')
-          }
-
-print(result)

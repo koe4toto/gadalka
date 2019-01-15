@@ -122,21 +122,24 @@ def measure_quantitative(data_asrea_id, id):
     list = cursor.fetchall()
 
     # Получение данных о мере
-    # TODO в интерфейс нужно забирать данные ограниченного количества, чтобы отрисовать только график
     ui_limit = 500
-    '''
-        SELECT {0}, {1} 
-        from (select row_number() 
-        over (order by {0}) num, count(*) over () as count, {0}, {1}   
-        from {2} p)A where case when count > {3} then num %(count/{3}) = 0 else 1 = 1 end;
-    '''
+
     # Настройка для измерений времени
     data_column, measure2 = time_to_num(measure[0])
 
     data_cursor.execute(
         '''
-        SELECT {0} FROM {1} WHERE {0} IS NOT NULL;
-        '''.format(data_column, data_area[0][5]))
+        SELECT {0}
+            FROM (
+                SELECT 
+                    row_number() over (order by {0}) as num,
+                    count(*) over () as count,
+                    {0}  
+                FROM {1}
+                WHERE {0} IS NOT NULL
+                ) selected
+        WHERE (case when count > {2} then num %(count/{2}) = 0 else 1 = 1 end);
+        '''.format(data_column, data_area[0][5], ui_limit))
     d = data_cursor.fetchall()
 
     # Получение данных для графика распределения
@@ -202,21 +205,23 @@ def measure_time(data_asrea_id, id):
     list = cursor.fetchall()
 
     # Получение данных о мере
-    # TODO в интерфейс нужно забирать данные ограниченного количества, чтобы отрисовать только график
     ui_limit = 500
-    '''
-        SELECT {0}, {1} 
-        from (select row_number() 
-        over (order by {0}) num, count(*) over () as count, {0}, {1}   
-        from {2} p)A where case when count > {3} then num %(count/{3}) = 0 else 1 = 1 end;
-    '''
     # Настройка для измерений времени
     data_column, measure2 = time_to_num(measure[0])
 
     data_cursor.execute(
         '''
-        SELECT {0} FROM {1} WHERE {0} IS NOT NULL;
-        '''.format(data_column, data_area[0][5]))
+        SELECT {0}
+            FROM (
+                SELECT 
+                    row_number() over (order by {0}) as num,
+                    count(*) over () as count,
+                    {0}  
+                FROM {1}
+                WHERE {0} IS NOT NULL
+                ) selected
+        WHERE (case when count > {2} then num %(count/{2}) = 0 else 1 = 1 end);
+        '''.format(data_column, data_area[0][5], ui_limit))
     d = data_cursor.fetchall()
 
     # Получение данных для графика распределения
@@ -246,14 +251,6 @@ def measure_qualitative(data_asrea_id, id):
 
 
     # Получение данных о мере
-    # TODO в интерфейс нужно забирать данные ограниченного количества, чтобы отрисовать только график
-    ui_limit = 500
-    '''
-        SELECT {0}, {1} 
-        from (select row_number() 
-        over (order by {0}) num, count(*) over () as count, {0}, {1}   
-        from {2} p)A where case when count > {3} then num %(count/{3}) = 0 else 1 = 1 end;
-    '''
     # Настройка для измерений времени
     data_column, measure2 = time_to_num(measure[0])
 
@@ -622,22 +619,17 @@ def pair(id1, id2, model_id):
     pop = [[id1, id2, 'Модель']]
 
     # Получение данных о модели
-    # TODO Нужно выборку для графика делать не генеральную
-    '''
-        SELECT {0}, {1} 
-        from (select row_number() 
-        over (order by {0}) num, count(*) over () as count, {0}, {1}   
-        from {2} p)A where case when count > {3} then num %(count/{3}) = 0 else 1 = 1 end;
-    '''
-    xy, database_table, database_id = take_lines(id1, id2)
+    xy, database_table, database_id = take_lines(id1, id2, limit=500)
     XY = np.array(xy)
     x = [float(i[0]) for i in XY]
     y = [float(i[1]) for i in XY]
     cursor.execute('''SELECT * FROM math_models WHERE id='{0}';'''.format(model_id))
     model = cursor.fetchall()
+
     # Список моделей пары
     alt_models = db.measures()
     list_models = alt_models.model(id1, id2)
+
     # Параметры пары
     cursor.execute('''SELECT * FROM measures WHERE id='{0}' OR id='{1}';'''.format(id1, id2))
     maesures = cursor.fetchall()
