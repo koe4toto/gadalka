@@ -99,6 +99,10 @@ app.register_blueprint(refsModule)
 from measures import mod as measuresModule
 app.register_blueprint(measuresModule)
 
+# Интерфейс результатов статистической обработки связей
+from models import mod as modelsModule
+app.register_blueprint(modelsModule)
+
 
 
 
