@@ -60,7 +60,7 @@ def take_lines (line1, line2, limit=None):
             SELECT {0}, {1} 
             from (select row_number() 
             over (order by {0}) num, count(*) over () as count, {0}, {1}   
-            from {2} p WHERE {0} IS NOT NULL)A where case when count > {3} then num %(count/{3}) = 0 else 1 = 1 end; 
+            from {2} p WHERE {0} IS NOT NULL OR {1} IS NOT NULL)A where case when count > {3} then num %(count/{3}) = 0 else 1 = 1 end; 
             '''.format(me1_alt, me2_alt, database_table, limit)
         )
         measure_data = data_cursor.fetchall()
