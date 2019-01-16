@@ -362,10 +362,12 @@ def agreg(m):
                 p2 = [p[4], p[5]]
                 if k == p2:
                     ids.append(p[6])
-                    if p[4] not in mea:
-                        mea.append(p[4])
-                    if p[5] not in mea:
-                        mea.append(p[5])
+                    next1 = [p[4], p[9], p[2]]
+                    if next1 not in mea:
+                        mea.append(next1)
+                    next2 = [p[5], p[10], p[3]]
+                    if next2 not in mea:
+                        mea.append(next2)
 
         ides.append(ids)
         measures.append(mea)

@@ -1,6 +1,6 @@
 import threading
 from database import queue_conn, queue_cursor
-from model_calculation import primal_calc
+from model_calculation import primal_calc, multiple_models_calc
 from loading_from_file import start
 
 # Переменная для потока
@@ -43,11 +43,13 @@ def task(result):
     loading = start(id, data_area_id, log_id, filename, type)
 
     # Проверка гипотиз
-    # TODO запускать рассчет моделей, только если есть имерения соответсвующего типа
     if loading == '5':
+        # TODO нужно обработать ошибку расчета моделей и поставить конечный статус
         primal_calc(data_area_id, log_id)
 
         # Расчет многомерных моделей
+        # TODO нужно обработать ошибку расчета моделей и поставить конечный статус
+        multiple_models_calc(data_area_id)
 
 
     # Удаление отработаной задачи

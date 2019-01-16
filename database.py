@@ -484,7 +484,9 @@ def get_models(limit):
                     ml.area_description_2,
                     ml.id, 
                     ml.hypothesis,
-                    row_number() OVER (PARTITION BY area_description_1::text || area_description_2::text ORDER BY abs(to_number(r_value, '9.999999999999')) DESC)  AS rating_in_section
+                    row_number() OVER (PARTITION BY area_description_1::text || area_description_2::text ORDER BY abs(to_number(r_value, '9.999999999999')) DESC)  AS rating_in_section,
+                    a1.column_name,
+                    a2.column_name
                 FROM 
                     math_models ml
                 INNER JOIN 

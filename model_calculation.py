@@ -50,7 +50,7 @@ def take_lines (line1, line2, limit=None):
         data_cursor.execute(
             '''
             SELECT {0} as A, {1} as B  
-            FROM {2} WHERE A IS NOT NULL OR B IS NOT NULL;
+            FROM {2} WHERE {0} IS NOT NULL OR {1} IS NOT NULL;
             '''.format(me1_alt, me2_alt, database_table)
         )
         measure_data = data_cursor.fetchall()
@@ -230,5 +230,38 @@ def primal_calc(data_area_id, log_id):
             '''.format(log_id, status)
         )
         conn.commit()
+
+# Определение сложных связей
+def multiple_models_calc(data_area_id):
+
+    # Выбирается три группы моделей по силе связи
+    g = db.get_models(0.8)
+    n = db.get_models(0.5)
+    a = db.get_models(0)
+
+    # Поиск сложных связей в каждой группе
+    good = sm.agreg(g)
+    norm = sm.agreg(n)
+    all = sm.agreg(a)
+
+    print('Хорошие', good)
+    print('Пойдёт', norm)
+    print('Плохие', all)
+
+    # Удаление старых связей
+    # TODO так как модель может состоять из измерений разных ПО, то удалять старые модели нужно внимательно
+    '''
+    try:
+        cursor.execute(
+            '''
+    '''DELATE FROM complex_model_measures WHERE id = '{0}';'''
+    '''.format(good)
+        )
+    except:
+        pass
+    '''
+    # Запись новых связей в базу данных
+
+    return True
 
 # primal_calc(42)
