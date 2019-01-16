@@ -39,7 +39,6 @@ def measures():
 
 # Продготовка данных времени к отображению
 def time_to_num(measure):
-    print(measure)
     # Формат предствления статистик
     format = {
         4: '%H:%M:%S',
@@ -211,18 +210,19 @@ def measure_time(data_asrea_id, id):
 
     data_cursor.execute(
         '''
-        SELECT {0}
+        SELECT result
             FROM (
                 SELECT 
                     row_number() over (order by {0}) as num,
                     count(*) over () as count,
-                    {0}  
+                    {0} as result  
                 FROM {1}
                 WHERE {0} IS NOT NULL
                 ) selected
         WHERE (case when count > {2} then num %(count/{2}) = 0 else 1 = 1 end);
         '''.format(data_column, data_area[0][5], ui_limit))
     d = data_cursor.fetchall()
+    print('Пщщщщщщщщщщщщщ:', d)
 
     # Получение данных для графика распределения
     da = [i[0] for i in d]

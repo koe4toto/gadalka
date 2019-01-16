@@ -49,18 +49,20 @@ def take_lines (line1, line2, limit=None):
     if limit == None:
         data_cursor.execute(
             '''
-            SELECT {0}, {1}   
-            FROM {2} WHERE {0} IS NOT NULL OR {0} IS NOT NULL;
+            SELECT {0} as A, {1} as B  
+            FROM {2} WHERE A IS NOT NULL OR B IS NOT NULL;
             '''.format(me1_alt, me2_alt, database_table)
         )
         measure_data = data_cursor.fetchall()
     else:
         data_cursor.execute(
             '''
-            SELECT {0}, {1} 
-            from (select row_number() 
-            over (order by {0}) num, count(*) over () as count, {0}, {1}   
-            from {2} p WHERE {0} IS NOT NULL OR {1} IS NOT NULL)A where case when count > {3} then num %(count/{3}) = 0 else 1 = 1 end; 
+            SELECT B1, B2 
+            from (
+                select row_number() 
+                over (order by {0}) num, count(*) over () as count, {0} as B1, {1} as B2   
+                from {2} p WHERE {0} IS NOT NULL OR {1} IS NOT NULL)A 
+            where case when count > {3} then num %(count/{3}) = 0 else 1 = 1 end; 
             '''.format(me1_alt, me2_alt, database_table, limit)
         )
         measure_data = data_cursor.fetchall()
