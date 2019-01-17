@@ -239,36 +239,35 @@ def multiple_models_safe(koef):
 
     # Поиск сложных связей
     models = sm.agreg(g)
+    print('Измерение модели', models)
 
     # Имя модели
     if len(models) > 0:
         for mod in models:
-            model_name = ', '.join(str(e[1]) for e in [i[1] for i in mod])
-            model = mod
+            model_name = ', '.join([i[1] for i in mod])
             if koef >= 0.8:
                 model_kind = constants.KIND_OF_MODEL['Сильная связь']
             else:
                 model_kind = constants.KIND_OF_MODEL['Слабая связь']
             model_type = constants.TYPE_OF_MODEL['Автоматически расчитанный']
 
-
             # Сохранение модели
             cursor.execute(
                 '''
                 INSERT INTO complex_models (
-                    name, 
-                    description, 
+                    name,
                     type, 
                     kind
-                ) VALUES ('{0}', '{0}', '{0}', '{0}') RETURNING id;
+                ) VALUES ('{0}', '{1}', '{2}') RETURNING id;
                 '''.format(model_name, model_type, model_kind)
             )
+            conn.commit()
             model_id = cursor.fetchall()
 
-            for i in model:
+            for measure in mod:
                 # Характеристики измерений модели
-                measure_id = i[0]
-                measure_data_area_id = i[3]
+                measure_id = measure[0]
+                measure_data_area_id = measure[3]
 
                 # Сохранение измерений модели
                 cursor.execute(
@@ -278,9 +277,10 @@ def multiple_models_safe(koef):
                         measure_id, 
                         data_area_id,
                         model_type
-                    ) VALUES ('{0}', '{0}', '{0}', '{0}');
-                    '''.format(model_id, measure_id, measure_data_area_id, model_type)
+                    ) VALUES ('{0}', '{1}', '{2}', '{3}');
+                    '''.format(model_id[0][0], measure_id, measure_data_area_id, model_type)
                 )
+                conn.commit()
         return True
     else:
         return False

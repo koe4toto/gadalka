@@ -82,8 +82,11 @@ def gen_data():
         conn.commit()
     return end
 
-model_type = constants.KIND_OF_MODEL['Сильная связь']
-model_kind = 1
 
-print(model_type)
+model = [[31, 'students', 'Учащиеся', 62], [32, 'teachers', 'Учителя', 62], [33, 'groups', 'Группы', 62]]
+mod = [i[1] for i in model]
+mo = [e[1] for e in mod]
+model_name = ', '.join(mod)
+print('Имя связи:', mod)
+print('Имя связи:', model_name)
 print('Готово, епта!')
