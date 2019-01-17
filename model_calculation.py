@@ -115,7 +115,6 @@ def measure_stats(x, id):
 
 # Рассчета свойств модели и запись результатов в базу данных
 def search_model(hypothesis, x, y, adid1, adid2):
-    print('Старт!')
 
     # Экземпляр класса обработки данных по парам
     pairs = sm.Pairs(x, y)
@@ -164,8 +163,6 @@ def search_model(hypothesis, x, y, adid1, adid2):
         )
     )
     conn.commit()
-
-    print('Готово!')
 
 # Расчте моделей моделей предметной области
 def primal_calc(data_area_id, log_id):
@@ -239,7 +236,6 @@ def multiple_models_safe(koef):
 
     # Поиск сложных связей
     models = sm.agreg(g)
-    print('Измерение модели', models)
 
     # Имя модели
     if len(models) > 0:
