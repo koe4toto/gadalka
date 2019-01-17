@@ -1,6 +1,7 @@
 import statistic_math as sm
 import numpy as np
 import database as db
+import constants
 
 cursor = db.cursor
 conn = db.conn
@@ -14,7 +15,6 @@ def time_to_num(measure):
     else:
         result = measure[0]
     return result
-
 
 # Данные для анализа
 def take_lines (line1, line2, limit=None):
@@ -167,7 +167,7 @@ def search_model(hypothesis, x, y, adid1, adid2):
 
     print('Готово!')
 
-# Обработка моделей с пустыми значениями
+# Расчте моделей моделей предметной области
 def primal_calc(data_area_id, log_id):
 
     # Список моделей
@@ -231,36 +231,78 @@ def primal_calc(data_area_id, log_id):
         )
         conn.commit()
 
+# Запись сложной модели в базу
+def multiple_models_safe(koef):
+
+    # Выбираются модели по силе связи
+    g = db.get_models(koef)
+
+    # Поиск сложных связей
+    models = sm.agreg(g)
+
+    # Имя модели
+    if len(models) > 0:
+        for mod in models:
+            model_name = ', '.join(str(e[1]) for e in [i[1] for i in mod])
+            model = mod
+            if koef >= 0.8:
+                model_kind = constants.KIND_OF_MODEL['Сильная связь']
+            else:
+                model_kind = constants.KIND_OF_MODEL['Слабая связь']
+            model_type = constants.TYPE_OF_MODEL['Автоматически расчитанный']
+
+
+            # Сохранение модели
+            cursor.execute(
+                '''
+                INSERT INTO complex_models (
+                    name, 
+                    description, 
+                    type, 
+                    kind
+                ) VALUES ('{0}', '{0}', '{0}', '{0}') RETURNING id;
+                '''.format(model_name, model_type, model_kind)
+            )
+            model_id = cursor.fetchall()
+
+            for i in model:
+                # Характеристики измерений модели
+                measure_id = i[0]
+                measure_data_area_id = i[3]
+
+                # Сохранение измерений модели
+                cursor.execute(
+                    '''
+                    INSERT INTO complex_model_measures (
+                        complex_model_id, 
+                        measure_id, 
+                        data_area_id,
+                        model_type
+                    ) VALUES ('{0}', '{0}', '{0}', '{0}');
+                    '''.format(model_id, measure_id, measure_data_area_id, model_type)
+                )
+        return True
+    else:
+        return False
+
 # Определение сложных связей
-def multiple_models_calc(data_area_id):
-
-    # Выбирается три группы моделей по силе связи
-    g = db.get_models(0.8)
-    n = db.get_models(0.5)
-    a = db.get_models(0)
-
-    # Поиск сложных связей в каждой группе
-    good = sm.agreg(g)
-    norm = sm.agreg(n)
-    all = sm.agreg(a)
-
-    print('Хорошие', good)
-    print('Пойдёт', norm)
-    print('Плохие', all)
+def multiple_models_calc():
 
     # Удаление старых связей
-    # TODO так как модель может состоять из измерений разных ПО, то удалять старые модели нужно внимательно
-    '''
     try:
         cursor.execute(
             '''
-    '''DELATE FROM complex_model_measures WHERE id = '{0}';'''
-    '''.format(good)
+            DELETE FROM complex_models WHERE type = '{0}';
+            DELETE FROM complex_model_measures WHERE model_type = '{0}';
+            '''.format(constants.TYPE_OF_MODEL['Автоматически расчитанный'])
         )
+        conn.commit()
     except:
         pass
-    '''
-    # Запись новых связей в базу данных
+
+    # Поиск и запись моделей опираясь на текущие данные
+    multiple_models_safe(0.8)
+    multiple_models_safe(0.5)
 
     return True
 

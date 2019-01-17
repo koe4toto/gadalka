@@ -486,7 +486,9 @@ def get_models(limit):
                     ml.hypothesis,
                     row_number() OVER (PARTITION BY area_description_1::text || area_description_2::text ORDER BY abs(to_number(r_value, '9.999999999999')) DESC)  AS rating_in_section,
                     a1.column_name,
-                    a2.column_name
+                    a2.column_name,
+                    a1.data_area_id,
+                    a2.data_area_id
                 FROM 
                     math_models ml
                 INNER JOIN 
@@ -608,8 +610,7 @@ cursor.execute(
         "name" varchar(300), 
         "description" varchar(600), 
         "type" integer, 
-        "kind" integer, 
-        "data_area_id" integer, 
+        "kind" integer,
         "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
     );
     
@@ -619,6 +620,7 @@ cursor.execute(
         "complex_model_id" integer, 
         "measure_id" integer, 
         "data_area_id" integer
+        "model_type" integer 
     );
     '''
 )

@@ -21,6 +21,15 @@ TYPE_OF_MEASURE = {
     5: 'DATE',
     6: 'timestamp without time zone'
 }
+TYPE_OF_MODEL = {
+    'Автоматически расчитанный': 1,
+    'Пользовательская': 2
+}
+KIND_OF_MODEL = {
+    'Сильная связь': 1,
+    'Слабая связь': 2,
+    'Нет связи': 3
+}
 
 
 

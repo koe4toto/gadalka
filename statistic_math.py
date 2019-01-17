@@ -362,10 +362,10 @@ def agreg(m):
                 p2 = [p[4], p[5]]
                 if k == p2:
                     ids.append(p[6])
-                    next1 = [p[4], p[9], p[2]]
+                    next1 = [p[4], p[9], p[2], p[11]]
                     if next1 not in mea:
                         mea.append(next1)
-                    next2 = [p[5], p[10], p[3]]
+                    next2 = [p[5], p[10], p[3], p[12]]
                     if next2 not in mea:
                         mea.append(next2)
 

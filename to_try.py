@@ -82,23 +82,8 @@ def gen_data():
         conn.commit()
     return end
 
-me2_alt = 'EXTRACT(EPOCH FROM {0})'.format('datetime')
-me1_alt = 'groups'
-database_table = 'olap_62_1'
-ui_limit = 500
+model_type = constants.KIND_OF_MODEL['Сильная связь']
+model_kind = 1
 
-data_cursor.execute(
-    '''
-    SELECT B1, B2 
-    from (
-        select row_number() 
-        over (order by {0}) num, count(*) over () as count, {0} as B1, {1} as B2   
-        from {2} p WHERE {0} IS NOT NULL OR {1} IS NOT NULL)A 
-    where case when count > {3} then num %(count/{3}) = 0 else 1 = 1 end; 
-    '''.format(me1_alt, me2_alt, database_table, ui_limit)
-)
-measure_data = data_cursor.fetchall()
-print('Пщщщщщщщщщщщщщ:', measure_data)
-print('Пщщщщщщщщщщщщщ:', me2_alt)
-
+print(model_type)
 print('Готово, епта!')
