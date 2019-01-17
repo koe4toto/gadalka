@@ -286,7 +286,7 @@ def multiple_models_safe(koef):
         return False
 
 # Определение сложных связей
-def multiple_models_calc():
+def multiple_models_auto_calc():
 
     # Удаление старых связей
     try:

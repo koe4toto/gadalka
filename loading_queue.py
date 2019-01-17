@@ -1,6 +1,6 @@
 import threading
 from database import queue_conn, queue_cursor
-from model_calculation import primal_calc, multiple_models_calc
+from model_calculation import primal_calc, multiple_models_auto_calc
 from loading_from_file import start
 
 # Переменная для потока
@@ -48,8 +48,7 @@ def task(result):
         primal_calc(data_area_id, log_id)
 
         # Расчет многомерных моделей
-        # TODO нужно обработать ошибку расчета моделей и поставить конечный статус
-        multiple_models_calc(data_area_id)
+        multiple_models_auto_calc()
 
 
     # Удаление отработаной задачи
