@@ -603,12 +603,14 @@ cursor.execute(
     '''
     CREATE SEQUENCE auto_id_complex_models;
     CREATE SEQUENCE auto_id_complex_model_measures;
+    CREATE SEQUENCE auto_id_complex_model_pairs;
 
     CREATE TABLE complex_models 
     (
         "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_complex_models'), 
         "name" varchar(300), 
         "description" varchar(600), 
+        "pairs" varchar,
         "type" integer, 
         "kind" integer,
         "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -622,6 +624,15 @@ cursor.execute(
         "data_area_id" integer,
         "model_type" integer 
     );
+    
+    CREATE TABLE complex_model_pairs 
+    (
+        "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_complex_model_pairs'), 
+        "complex_model_id" integer, 
+        "pair_id" integer,
+        "model_type" integer 
+    );
+    '''
     '''
 )
 conn.commit()

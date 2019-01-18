@@ -83,3 +83,5 @@ def gen_data():
     return end
 
 
+
+print('Готово!!!')

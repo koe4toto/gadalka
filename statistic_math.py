@@ -354,6 +354,7 @@ def agreg(m):
             result.append(model)
 
 
+    remod = []
 
     # Формирование списка идентификаторов парных моделей для каждой многомерной модели
     for i in result:
@@ -373,8 +374,8 @@ def agreg(m):
 
         ides.append(ids)
         measures.append(mea)
-
-    return measures
+        remod.append([mea, ids])
+    return remod
 
 
 

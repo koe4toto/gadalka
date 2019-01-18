@@ -27,7 +27,7 @@ data_conn = db.data_conn
 data_cursor = db.data_cursor
 
 
-# Пары
+# Простые связи
 @mod.route("/pair_models")
 def pair_models():
     # Список пар
@@ -63,7 +63,7 @@ def pair_models():
     list = cursor.fetchall()
     return render_template('pair_models.html', list=list)
 
-# Пара
+# Карточка простой связи
 @mod.route("/pair/<string:id1>/<string:id2>/<string:model_id>")
 def pair(id1, id2, model_id):
     list = [id1, id2]
@@ -120,9 +120,9 @@ def pair(id1, id2, model_id):
 
     return render_template('pair.html', list=list, for_graf=popa, model=model, list_models=list_models, maesures=maesures)
 
-# Многомерные модели
+# Сложные связи
 @mod.route("/complex_models")
-def multiple_models():
+def complex_models():
     cursor.execute(
         '''
         SELECT * FROM complex_models WHERE type = 1 LIMIT 5;
@@ -137,3 +137,38 @@ def multiple_models():
     )
     user_models = cursor.fetchall()
     return render_template('complex_models.html', auto_models=auto_models, user_models=user_models)
+
+# Карточка сложной связи
+@mod.route("/complex_model/<string:model_id>")
+def complex_model(model_id):
+
+    # Сведения о модели
+    cursor.execute(
+        '''
+        SELECT * FROM complex_models WHERE id = '{0}';
+        '''.format(model_id)
+    )
+    model = cursor.fetchall()
+
+    # Измерения модели
+    cursor.execute(
+        '''
+        SELECT * FROM complex_model_measures WHERE complex_model_id = '{0}';
+        '''.format(model_id)
+    )
+    complex_model_measures = cursor.fetchall()
+
+    # Простые связи
+    cursor.execute(
+        '''
+        SELECT * FROM complex_model_pairs WHERE complex_model_id = '{0}';
+        '''.format(model_id)
+    )
+    pair_models = cursor.fetchall()
+
+    return render_template(
+        'complex_model.html',
+        model=model,
+        complex_model_measures=complex_model_measures,
+        pair_models=pair_models
+    )

@@ -246,9 +246,12 @@ def multiple_models_safe(koef):
     # Имя модели
     if len(models) > 0:
         for mod in models:
-            model_name = ', '.join([i[1] for i in mod])
+            model_name = ', '.join([i[1] for i in mod[0]])
             model_kind = constants.KIND_OF_MODEL['Сильная связь']
             model_type = constants.TYPE_OF_MODEL['Автоматически расчитанный']
+
+            # Список идентификаторов простых моделей в строку
+            ti = ','.join(str(e) for e in mod[1])
 
             # Сохранение модели
             cursor.execute(
@@ -256,14 +259,15 @@ def multiple_models_safe(koef):
                 INSERT INTO complex_models (
                     name,
                     type, 
-                    kind
-                ) VALUES ('{0}', '{1}', '{2}') RETURNING id;
-                '''.format(model_name, model_type, model_kind)
+                    kind, 
+                    pairs
+                ) VALUES ('{0}', '{1}', '{2}', '{3}') RETURNING id;
+                '''.format(model_name, model_type, model_kind, ti)
             )
             conn.commit()
             model_id = cursor.fetchall()
 
-            for measure in mod:
+            for measure in mod[0]:
                 # Характеристики измерений модели
                 measure_id = measure[0]
                 measure_data_area_id = measure[3]
@@ -280,6 +284,20 @@ def multiple_models_safe(koef):
                     '''.format(model_id[0][0], measure_id, measure_data_area_id, model_type)
                 )
                 conn.commit()
+
+            for pair in mod[1]:
+
+                # Сохранение измерений модели
+                cursor.execute(
+                    '''
+                    INSERT INTO complex_model_pairs (
+                        complex_model_id, 
+                        pair_id,
+                        model_type
+                    ) VALUES ('{0}', '{1}', '{2}');
+                    '''.format(model_id[0][0], int(pair), model_type)
+                )
+                conn.commit()
         return True
     else:
         return False
@@ -293,6 +311,7 @@ def multiple_models_auto_calc():
             '''
             DELETE FROM complex_models WHERE type = '{0}';
             DELETE FROM complex_model_measures WHERE model_type = '{0}';
+            DELETE FROM complex_model_pairs WHERE model_type = '{0}';
             '''.format(constants.TYPE_OF_MODEL['Автоматически расчитанный'])
         )
         conn.commit()
@@ -300,7 +319,7 @@ def multiple_models_auto_calc():
         pass
 
     # Поиск и запись моделей опираясь на текущие данные
-    multiple_models_safe(0.7)
+    multiple_models_safe(constants.COMPLEX_MODEL_KOEF)
 
     return True
 
