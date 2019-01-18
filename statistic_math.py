@@ -327,7 +327,7 @@ class Pairs:
 # Поиск многомерной модели среди ряда пар
 def agreg(m):
     # Список пар
-    models = [[i[4], i[5]] for i in m]
+    models = [[i[9], i[10]] for i in m]
 
     # Список сложных моделей
     result = []
@@ -353,7 +353,7 @@ def agreg(m):
         if len(model) >=2:
             result.append(model)
 
-
+    # Формирование списка
     remod = []
 
     # Формирование списка идентификаторов парных моделей для каждой многомерной модели
@@ -362,7 +362,7 @@ def agreg(m):
         mea = []
         for k in i:
             for p in m:
-                p2 = [p[4], p[5]]
+                p2 = [p[9], p[10]]
                 if k == p2:
                     ids.append(p[6])
                     next1 = [p[4], p[9], p[2], p[11]]
