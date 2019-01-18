@@ -619,7 +619,7 @@ cursor.execute(
         "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_complex_model_measures'), 
         "complex_model_id" integer, 
         "measure_id" integer, 
-        "data_area_id" integer
+        "data_area_id" integer,
         "model_type" integer 
     );
     '''

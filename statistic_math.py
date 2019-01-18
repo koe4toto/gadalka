@@ -353,6 +353,8 @@ def agreg(m):
         if len(model) >=2:
             result.append(model)
 
+
+
     # Формирование списка идентификаторов парных моделей для каждой многомерной модели
     for i in result:
         ids = []

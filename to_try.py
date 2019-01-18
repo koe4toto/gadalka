@@ -83,10 +83,3 @@ def gen_data():
     return end
 
 
-model = [[31, 'students', 'Учащиеся', 62], [32, 'teachers', 'Учителя', 62], [33, 'groups', 'Группы', 62]]
-mod = [i[1] for i in model]
-mo = [e[1] for e in mod]
-model_name = ', '.join(mod)
-print('Имя связи:', mod)
-print('Имя связи:', model_name)
-print('Готово, епта!')
