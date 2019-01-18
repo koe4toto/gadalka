@@ -190,32 +190,37 @@ def primal_calc(data_area_id, log_id):
         line_id_1 = i[10]
         line_id_2 = i[11]
         # Получение данных
-        xy, database_table, database_id = take_lines(line_id_1, line_id_2)
-        if xy == None:
+        try:
+            xy, database_table, database_id = take_lines(line_id_1, line_id_2)
+
+            if xy == None:
+                status = '4'
+            else:
+                XY = np.array(xy)
+                x = [float(i[0]) for i in XY]
+                y = [float(i[1]) for i in XY]
+
+                # Рассчет статистки рядов
+                measure_stats(x, line_id_1)
+                measure_stats(y, line_id_2)
+
+                # Рассчет параметров модели и запись их в базу
+                search_model(hypothesis, x, y, line_id_1, line_id_2)
+                status = '6'
+
+                # Изменить статус предметной области, измерений
+                cursor.execute(
+                    '''
+                    UPDATE measures 
+                    SET 
+                        status='{3}'
+                    WHERE id = '{1}' OR id = '{2}';
+                    '''.format(database_id, line_id_1, line_id_2, status)
+                )
+                conn.commit()
+        except:
             status = '4'
-        else:
-            XY = np.array(xy)
-            x = [float(i[0]) for i in XY]
-            y = [float(i[1]) for i in XY]
-
-            # Рассчет статистки рядов
-            measure_stats(x, line_id_1)
-            measure_stats(y, line_id_2)
-
-            # Рассчет параметров модели и запись их в базу
-            search_model(hypothesis, x, y, line_id_1, line_id_2)
-            status = '6'
-
-            # Изменить статус предметной области, измерений
-            cursor.execute(
-                '''
-                UPDATE measures 
-                SET 
-                    status='{3}'
-                WHERE id = '{1}' OR id = '{2}';
-                '''.format(database_id, line_id_1, line_id_2, status)
-            )
-            conn.commit()
+            pass
 
         # Изменить статус предметной области, измерений
         cursor.execute(
@@ -228,6 +233,7 @@ def primal_calc(data_area_id, log_id):
         )
         conn.commit()
 
+        
 # Запись сложной модели в базу
 def multiple_models_safe(koef):
 
