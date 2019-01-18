@@ -8,7 +8,7 @@ import statistic_math as sm
 import database as db
 import itertools
 import datetime
-from model_calculation import take_lines
+from model_calculation import multiple_models_auto_calc
 
 # Мои модули
 from forms import *
@@ -571,6 +571,8 @@ def delete_data_measure(id, data_area_id):
         )
     )
     data_conn.commit()
+
+    multiple_models_auto_calc()
 
     flash('Предметная область удалена', 'success')
 

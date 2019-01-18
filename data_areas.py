@@ -3,8 +3,10 @@ import psycopg2
 import xlrd
 import os
 from decorators import is_logged_in
+from model_calculation import multiple_models_auto_calc
 import constants
 import database as db
+
 
 # Мои модули
 from foo import *
@@ -129,6 +131,9 @@ def delete_data_area(id):
         os.remove(constants.UPLOAD_FOLDER + filename)
     except:
         pass
+
+    # Перерасчет моделей
+    multiple_models_auto_calc()
 
     flash('Предметная область удалена', 'success')
 

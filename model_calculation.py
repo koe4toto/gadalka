@@ -298,7 +298,7 @@ def multiple_models_auto_calc():
 
     # Поиск и запись моделей опираясь на текущие данные
     multiple_models_safe(0.8)
-    multiple_models_safe(0.5)
+    multiple_models_safe(0.3)
 
     return True
 
