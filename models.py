@@ -121,19 +121,19 @@ def pair(id1, id2, model_id):
     return render_template('pair.html', list=list, for_graf=popa, model=model, list_models=list_models, maesures=maesures)
 
 # Многомерные модели
-@mod.route("/multiple_models")
+@mod.route("/complex_models")
 def multiple_models():
     cursor.execute(
         '''
-        SELECT * FROM complex_models WHERE kind = 1 LIMIT 5;
+        SELECT * FROM complex_models WHERE type = 1 LIMIT 5;
         '''
     )
-    good = cursor.fetchall()
+    auto_models = cursor.fetchall()
 
     cursor.execute(
         '''
-        SELECT * FROM complex_models WHERE kind = 2 LIMIT 5;
+        SELECT * FROM complex_models WHERE type = 2 LIMIT 5;
         '''
     )
-    norm = cursor.fetchall()
-    return render_template('multiple_models.html', good=good, norm=norm)
+    user_models = cursor.fetchall()
+    return render_template('complex_models.html', auto_models=auto_models, user_models=user_models)

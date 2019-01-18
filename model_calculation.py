@@ -241,10 +241,7 @@ def multiple_models_safe(koef):
     if len(models) > 0:
         for mod in models:
             model_name = ', '.join([i[1] for i in mod])
-            if koef >= 0.8:
-                model_kind = constants.KIND_OF_MODEL['Сильная связь']
-            else:
-                model_kind = constants.KIND_OF_MODEL['Слабая связь']
+            model_kind = constants.KIND_OF_MODEL['Сильная связь']
             model_type = constants.TYPE_OF_MODEL['Автоматически расчитанный']
 
             # Сохранение модели
@@ -297,8 +294,7 @@ def multiple_models_auto_calc():
         pass
 
     # Поиск и запись моделей опираясь на текущие данные
-    multiple_models_safe(0.8)
-    multiple_models_safe(0.3)
+    multiple_models_safe(0.7)
 
     return True
 

@@ -557,8 +557,13 @@ def delete_data_measure(id, data_area_id):
     data_area = cursor.fetchall()
 
     # Удаление измерения и моделей
-    cursor.execute("DELETE FROM measures WHERE id = '{0}'".format(id))
-    cursor.execute("DELETE FROM math_models WHERE area_description_2 = '{0}' OR area_description_1 = '{0}'".format(id))
+    cursor.execute(
+        '''
+        DELETE FROM measures WHERE id = '{0}';
+        DELETE FROM math_models WHERE area_description_2 = '{0}' OR area_description_1 = '{0}'
+        DELETE FROM complex_model_measures WHERE measure_id = '{0}'
+        '''.format(id)
+    )
     conn.commit()
 
     # Удаление колонки
