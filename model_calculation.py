@@ -219,7 +219,7 @@ def primal_calc(data_area_id, log_id):
                 )
                 conn.commit()
         except:
-            status = '4'
+            status = '6'
             pass
 
         # Изменить статус предметной области, измерений
@@ -233,7 +233,7 @@ def primal_calc(data_area_id, log_id):
         )
         conn.commit()
 
-        
+
 # Запись сложной модели в базу
 def multiple_models_safe(koef):
 
