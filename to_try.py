@@ -11,6 +11,7 @@ import xlwt
 import os
 import psycopg2
 
+
 cursor = db.cursor
 conn = db.conn
 data_cursor = db.data_cursor
@@ -82,5 +83,11 @@ def gen_data():
         conn.commit()
     return end
 
+id = 45
 
+# Получение данных о мере
+cursor.execute("SELECT * FROM measures WHERE id = '{0}';".format(id))
+the_measure = cursor.fetchall()
+
+print(the_measure)
 print('Готово!!!')
