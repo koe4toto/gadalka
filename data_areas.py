@@ -4,10 +4,10 @@ import os
 from decorators import is_logged_in
 from model_calculation import multiple_models_auto_calc
 import constants
-import database as db
 from foo import *
 from forms import *
 import databases.db_app as db_app
+import databases.db_queue as db_queue
 
 
 mod = Blueprint('data_areas', __name__)
@@ -78,7 +78,7 @@ def add_data_area():
 def edit_data_area(id):
 
     # Достаётся предметная область из базы по идентификатору
-    data_area = db_da.data_area(id)[0]
+    data_area = db_app.data_area(id)[0]
 
     # Форма заполняется данными из базы
     form = DataAreaForm(request.form)
@@ -94,7 +94,7 @@ def edit_data_area(id):
         if form.validate():
 
             # Обновление базе данных
-            db_da.update_data_area(form.title.data, form.description.data, data_area[4], id)
+            db_app.update_data_area(form.title.data, form.description.data, data_area[4], id)
 
             flash('Данные обновлены', 'success')
             return redirect(url_for('data_areas.data_area', id=id))
@@ -137,7 +137,7 @@ def upload_data_area_from_file(id):
 
     id_to_da = id
     # Достаётся предметная область из базы по идентификатору
-    data_area = db_da.data_area(id)[0]
+    data_area = db_app.data_area(id)[0]
 
     form = DataFile(request.form)
 
@@ -173,7 +173,7 @@ def upload_data_area_from_file(id):
             log_id = cursor.fetchall()
 
             # Создание задачи в очереди на обработку
-            db_da.create_task(id, filename, type_of, session['user_id'], log_id[0][0])
+            db_queue.create_task(id, filename, type_of, session['user_id'], log_id[0][0])
             flash('Данные добавлены и ожидают обработки', 'success')
             return redirect(url_for('data_areas.data_area', id=id))
 
