@@ -1,18 +1,14 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, session, request
 from decorators import is_logged_in
 import constants
-import foo
 import json
 import numpy as np
 import statistic_math as sm
 import database as db
-import itertools
-import datetime
 from model_calculation import take_lines
 
 # Мои модули
-from forms import *
-from statistic_math import Series
+import databases.db_app as db_app
 
 mod = Blueprint('models', __name__)
 
@@ -29,42 +25,16 @@ data_cursor = db.data_cursor
 
 # Простые связи
 @mod.route("/pair_models")
+@is_logged_in
 def pair_models():
-    # Список пар
-    cursor.execute(
-        '''SELECT *
-            FROM (
-                SELECT
-                    h.name, 
-                    ml.r_value,
-                    a1.description,
-                    a2.description,
-                    ml.area_description_1, 
-                    ml.area_description_2,
-                    ml.id, 
-                    ml.hypothesis,
-                    row_number() OVER (PARTITION BY area_description_1::text || area_description_2::text ORDER BY abs(to_number(r_value, '9.999999999999')) DESC)  AS rating_in_section
-                FROM 
-                    math_models ml
-                INNER JOIN 
-                    measures a1 on ml.area_description_1 = a1.id
-                INNER JOIN 
-                    measures a2 on ml.area_description_2 = a2.id
-                INNER JOIN 
-                    hypotheses h on ml.hypothesis = h.id
-                WHERE 
-                    r_value != 'None'
-                ORDER BY 
-                    rating_in_section
-            ) counted_news
-            WHERE rating_in_section <= 1
-            ORDER BY abs(to_number(r_value, '9.999999999999')) DESC;
-            ''')
-    list = cursor.fetchall()
-    return render_template('pair_models.html', list=list)
+    return render_template(
+        'pair_models.html',
+        list=db_app.select_pairs()
+    )
 
 # Карточка простой связи
 @mod.route("/pair/<string:id1>/<string:id2>/<string:model_id>")
+@is_logged_in
 def pair(id1, id2, model_id):
     list = [id1, id2]
     pop = [[id1, id2, 'Модель']]
@@ -74,16 +44,15 @@ def pair(id1, id2, model_id):
     XY = np.array(xy)
     x = [float(i[0]) for i in XY]
     y = [float(i[1]) for i in XY]
-    cursor.execute('''SELECT * FROM math_models WHERE id='{0}';'''.format(model_id))
-    model = cursor.fetchall()
+
+    # Модель
+    model = db_app.select_model(model_id)
 
     # Список моделей пары
-    alt_models = db.measures()
-    list_models = alt_models.model(id1, id2)
+    list_models = db_app.select_pair_models(id1, id2)
 
     # Параметры пары
-    cursor.execute('''SELECT * FROM measures WHERE id='{0}' OR id='{1}';'''.format(id1, id2))
-    maesures = cursor.fetchall()
+    maesures = db_app.select_pairs_measures(id1, id2)
 
     slope = float(model[0][2])
     intercept = float(model[0][3])
@@ -122,53 +91,21 @@ def pair(id1, id2, model_id):
 
 # Сложные связи
 @mod.route("/complex_models")
+@is_logged_in
 def complex_models():
-    cursor.execute(
-        '''
-        SELECT * FROM complex_models WHERE type = 1 LIMIT 5;
-        '''
+    return render_template(
+        'complex_models.html',
+        auto_models=db_app.select_complex_models(1),
+        user_models=db_app.select_complex_models(2)
     )
-    auto_models = cursor.fetchall()
-
-    cursor.execute(
-        '''
-        SELECT * FROM complex_models WHERE type = 2 LIMIT 5;
-        '''
-    )
-    user_models = cursor.fetchall()
-    return render_template('complex_models.html', auto_models=auto_models, user_models=user_models)
 
 # Карточка сложной связи
 @mod.route("/complex_model/<string:model_id>")
+@is_logged_in
 def complex_model(model_id):
-
-    # Сведения о модели
-    cursor.execute(
-        '''
-        SELECT * FROM complex_models WHERE id = '{0}';
-        '''.format(model_id)
-    )
-    model = cursor.fetchall()
-
-    # Измерения модели
-    cursor.execute(
-        '''
-        SELECT * FROM complex_model_measures WHERE complex_model_id = '{0}';
-        '''.format(model_id)
-    )
-    complex_model_measures = cursor.fetchall()
-
-    # Простые связи
-    cursor.execute(
-        '''
-        SELECT * FROM complex_model_pairs WHERE complex_model_id = '{0}';
-        '''.format(model_id)
-    )
-    pair_models = cursor.fetchall()
-
     return render_template(
         'complex_model.html',
-        model=model,
-        complex_model_measures=complex_model_measures,
-        pair_models=pair_models
+        model=db_app.select_complex_model(model_id),
+        complex_model_measures=db_app.select_complex_model_measures(model_id),
+        pair_models=db_app.select_complex_model_pairs(model_id)
     )

@@ -204,7 +204,9 @@ def select_measures_to_data_area(data_area_id):
     result = cursor.fetchall()
     return result
 
-def model(id1, id2):
+
+# Список моделей пары
+def select_pair_models(id1, id2):
     # Список пар
     try:
         cursor.execute(
@@ -234,6 +236,16 @@ def model(id1, id2):
     except:
         list = []
     return list
+
+
+# Параметры пары
+def select_pairs_measures(id1, id2):
+    cursor.execute(
+        '''
+        SELECT * FROM measures WHERE id='{0}' OR id='{1}';
+        '''.format(id1, id2))
+    maesures = cursor.fetchall()
+    return maesures
 
 # Создание пользователя
 def create_user(name, username, email, password):
@@ -353,6 +365,7 @@ def delete_ref(id):
 
     return ref_name
 
+# Обновление описания справочника
 def update_ref(name, description, id):
     cursor.execute(
         '''
@@ -361,5 +374,85 @@ def update_ref(name, description, id):
     )
     conn.commit()
 
+# Список простых связей
+def select_pairs():
+    cursor.execute(
+        '''SELECT *
+            FROM (
+                SELECT
+                    h.name, 
+                    ml.r_value,
+                    a1.description,
+                    a2.description,
+                    ml.area_description_1, 
+                    ml.area_description_2,
+                    ml.id, 
+                    ml.hypothesis,
+                    row_number() OVER (PARTITION BY area_description_1::text || area_description_2::text ORDER BY abs(to_number(r_value, '9.999999999999')) DESC)  AS rating_in_section
+                FROM 
+                    math_models ml
+                INNER JOIN 
+                    measures a1 on ml.area_description_1 = a1.id
+                INNER JOIN 
+                    measures a2 on ml.area_description_2 = a2.id
+                INNER JOIN 
+                    hypotheses h on ml.hypothesis = h.id
+                WHERE 
+                    r_value != 'None'
+                ORDER BY 
+                    rating_in_section
+            ) counted_news
+            WHERE rating_in_section <= 1
+            ORDER BY abs(to_number(r_value, '9.999999999999')) DESC;
+            ''')
+    result = cursor.fetchall()
+    return result
 
 
+# Модель
+def select_model(model_id):
+    cursor.execute('''SELECT * FROM math_models WHERE id='{0}';'''.format(model_id))
+    model = cursor.fetchall()
+
+    return model
+
+# Сложные связи
+def select_complex_models(type):
+    cursor.execute(
+        '''
+        SELECT * FROM complex_models WHERE type = {0} LIMIT 5;
+        '''.format(type)
+    )
+    result = cursor.fetchall()
+    return result
+
+# Сведения о модели
+def select_complex_model(model_id):
+    cursor.execute(
+        '''
+        SELECT * FROM complex_models WHERE id = '{0}';
+        '''.format(model_id)
+    )
+    result = cursor.fetchall()
+    return result
+
+# Измерения модели
+def select_complex_model_measures(model_id):
+    cursor.execute(
+        '''
+        SELECT * FROM complex_model_measures WHERE complex_model_id = '{0}';
+        '''.format(model_id)
+    )
+    result = cursor.fetchall()
+    return result
+
+
+# Простые связи
+def select_complex_model_pairs(model_id):
+    cursor.execute(
+        '''
+        SELECT * FROM complex_model_pairs WHERE complex_model_id = '{0}';
+        '''.format(model_id)
+    )
+    result = cursor.fetchall()
+    return result

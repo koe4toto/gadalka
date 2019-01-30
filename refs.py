@@ -24,6 +24,7 @@ def refs():
 
 # Справочник
 @mod.route("/ref/<string:id>/")
+@is_logged_in
 def ref(id):
     # Подключение к базе данных
     the_ref = db_app.ref_data(id)

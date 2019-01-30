@@ -35,6 +35,7 @@ def data_areas():
 
 # Предметная область
 @mod.route("/data_area/<string:id>/")
+@is_logged_in
 def data_area(id):
     # Поолучение данных о предметной области
     data_area = db_da.data_area(id)
@@ -203,6 +204,7 @@ def upload_data_area_from_file(id):
 
 # Загрузки в предметную область
 @mod.route("/data_area_log/<string:id>/")
+@is_logged_in
 def data_area_log(id):
 
     # Поолучение данных о предметной области
@@ -224,6 +226,7 @@ def data_area_log(id):
 
 # Загрузки
 @mod.route("/data_log/")
+@is_logged_in
 def data_log():
 
     # Получение последнй операции загрузки данных
