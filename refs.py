@@ -4,12 +4,13 @@ import xlrd
 import os
 from decorators import is_logged_in
 from datetime import datetime
-import constants
 
 # Мои модули
 from foo import allowed_file, looking, sqllist, sqlvar
 from forms import *
-from database import conn, cursor, data_cursor, data_conn
+import constants
+import databases.db_app as db_app
+import databases.db_data as db_data
 
 mod = Blueprint('refs', __name__)
 
@@ -18,29 +19,24 @@ mod = Blueprint('refs', __name__)
 @is_logged_in
 def refs():
     # Список справочников
-    cursor.execute('''SELECT * FROM refs ORDER BY register_date DESC;''')
-    ref_list = cursor.fetchall()
+    ref_list = db_app.ref_list()
     return render_template('refs.html', list = ref_list)
 
 # Справочник
 @mod.route("/ref/<string:id>/")
 def ref(id):
     # Подключение к базе данных
-    try:
-        cursor.execute("SELECT * FROM refs WHERE id = %s", [id])
-        the_ref = cursor.fetchall()
-    except:
-        redirect(url_for('refs.refs'))
+    the_ref = db_app.ref_data(id)
 
-    ref_data = the_ref[0][4]
+    # Имя справочника
+    ref_name = the_ref[0][4]
 
-    data_cursor.execute('''SELECT * FROM {0} ;'''.format(str(ref_data)))
-    columns = data_cursor.fetchall()
+    # Содержание справочника
+    columns = db_data.ref_data(ref_name)
 
     return render_template('ref.html', id = id, ref = the_ref, columns=columns)
 
 # Добавление справочника
-# TODO Справоничк нужно сохранять в специальной базе
 @mod.route("/add_ref", methods =['GET', 'POST'] )
 @is_logged_in
 def add_ref():
@@ -73,19 +69,14 @@ def add_ref():
 
             try:
                 # Создаётся запись в таблице с базой данных
-                cursor.execute(
-                    '''
-                    INSERT INTO refs (name, description, user_id, data) VALUES ('{0}', '{1}', '{2}', '{3}');
-                    '''.format(name, description, user, table_name)
-                )
-                conn.commit()
+                db_app.insert_ref(name, description, user, table_name)
 
                 # Создаёется таблица для хранения данных
-                data_cursor.execute('''CREATE TABLE {0} ("code" varchar primary key, "value" varchar, "parent_value" varchar);'''.format(table_name))
-                data_conn.commit()
+                db_data.create_ref_table(table_name)
             except psycopg2.Error as e:
                 flash(e.diag.message_primary, 'danger')
                 return redirect(request.url)
+
             # Открывается сохраненный файл
             rb = xlrd.open_workbook(os.path.abspath('.') + '/uploaded_files/' + filename)
             sheet = rb.sheet_by_index(0)
@@ -96,12 +87,9 @@ def add_ref():
                 for rownum in in_table:
                     if rownum >= 1:
                         row = sheet.row_values(rownum)
-                        data_cursor.execute(
-                            '''
-                            INSERT INTO {0} (code, value, parent_value) VALUES ('{1}', '{2}', '{3}');
-                            '''.format(table_name, row[0], row[1], row[2])
-                        )
-                        data_conn.commit()
+
+                        # Запсиь строчек справочника в базу данных
+                        db_data.insert_data_in_ref(table_name, row[0], row[1], row[2])
             except:
                 flash('Неверный формат данных в файле', 'danger')
                 return redirect(url_for('add_ref'))
@@ -120,14 +108,9 @@ def add_ref():
 @mod.route('/delete_ref/<string:id>', methods=['POST'])
 @is_logged_in
 def delete_ref(id):
-    # Execute
-    cursor.execute('''SELECT * FROM refs WHERE id = '{0}';'''.format(id))
-    the_ref = cursor.fetchall()
-    ref_data = the_ref[0][4]
-    cursor.execute('''DELETE FROM refs WHERE id = '{0}';'''.format(id))
-    conn.commit()
-    data_cursor.execute('''DROP TABLE {0}'''.format(ref_data))
-    data_conn.commit()
+
+    # Удаление записи о справочнике
+    db_app.delete_ref(id)
 
     flash('Справочник удалён', 'success')
 
@@ -137,9 +120,8 @@ def delete_ref(id):
 @mod.route("/edit_ref/<string:id>", methods =['GET', 'POST'] )
 @is_logged_in
 def edit_ref(id):
-    # Достаётся предметная область из базы по идентификатору
-    cursor.execute("SELECT * FROM refs WHERE id = %s", [id])
-    result = cursor.fetchall()
+    # Данные о справочнике
+    result = db_app.ref_data(id)
 
     # Форма заполняется данными из базы
     form = RefForm(request.form)
@@ -155,12 +137,7 @@ def edit_ref(id):
         if form.validate():
 
             # Обновление базе данных
-            cursor.execute(
-                '''
-                UPDATE refs SET name='{0}', description='{1}' WHERE id='{2}';
-                '''.format(form.name.data, form.description.data, id)
-            )
-            conn.commit()
+            db_app.update_ref(form.name.data, form.description.data, id)
 
             flash('Данные обновлены', 'success')
             return redirect(url_for('refs.ref', id=id))
@@ -171,9 +148,8 @@ def edit_ref(id):
 @mod.route("/update_ref/<string:id>", methods =['GET', 'POST'] )
 @is_logged_in
 def update_ref(id):
-    # Достаётся предметная область из базы по идентификатору
-    cursor.execute('''SELECT * FROM refs WHERE id = '{0}';'''.format(id))
-    result = cursor.fetchall()
+    # Данные о справочнике
+    result = db_app.ref_data(id)
 
     if request.method == 'POST':
 
@@ -195,9 +171,7 @@ def update_ref(id):
             table_name = result[0][4]
 
             # Отчистка таблицы
-            data_cursor.execute(
-                '''DELETE FROM '{0}';'''.format(table_name))
-            data_conn.commit()
+            db_data.delete_from_table(table_name)
 
             # Открывается сохраненный файл
             rb = xlrd.open_workbook(constants.UPLOAD_FOLDER + filename)
@@ -209,12 +183,8 @@ def update_ref(id):
                 for rownum in in_table:
                     if rownum >= 1:
                         row = sheet.row_values(rownum)
-                        data_cursor.execute(
-                            '''
-                            INSERT INTO {0} (code, value, parent_value) VALUES ('{1}', '{2}', '{3}');
-                            '''.format(table_name, row[0], row[1], row[2])
-                            )
-                        data_conn.commit()
+                        # Запсиь строчек справочника в базу данных
+                        db_data.insert_data_in_ref(table_name, row[0], row[1], row[2])
             except:
                 flash('Неверный формат данных в файле', 'danger')
                 return redirect(url_for('update_ref'))

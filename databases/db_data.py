@@ -47,3 +47,43 @@ def delete_olap(olap_name):
         '''.format(olap_name)
     )
     conn.commit()
+
+# Содержание справочника
+def ref_data(ref_name):
+    cursor.execute(
+        '''SELECT * FROM {0} ;
+        '''.format(ref_name)
+    )
+    result = cursor.fetchall()
+    return result
+
+# Создание таблицы для хранения данных
+def create_ref_table(table_name):
+    cursor.execute(
+        '''
+        CREATE TABLE {0} ("code" varchar primary key, "value" varchar, "parent_value" varchar);
+        '''.format(table_name)
+    )
+    conn.commit()
+
+# Добавление данных в справочник
+def insert_data_in_ref(table_name, row1, row2, row3):
+    cursor.execute(
+        '''
+        INSERT INTO {0} (code, value, parent_value) VALUES ('{1}', '{2}', '{3}');
+        '''.format(table_name, row1, row2, row3)
+    )
+    conn.commit()
+
+# Удаление таблицы хранения данных
+def delete_table(table_name):
+    cursor.execute('''DROP TABLE {0}'''.format(table_name))
+    conn.commit()
+
+# Удаление таблицы хранения данных
+def delete_from_table(table_name):
+    cursor.execute(
+        '''
+        DELETE FROM '{0}';
+        '''.format(table_name))
+    conn.commit()

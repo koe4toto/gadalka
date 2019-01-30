@@ -1,11 +1,11 @@
 # Библиотеки
 from flask import Flask, render_template, flash, redirect, url_for, session, request
 from passlib.hash import sha256_crypt
-import constants
-import database as db
 
 # Мои модули
 from forms import *
+import constants
+import databases.db_app as db_app
 
 # Настройки
 app = Flask(__name__)
@@ -22,7 +22,6 @@ def page_not_found(error):
     return 'This page does not exist', 404
 
 
-
 # Регистрация
 @app.route("/register", methods =['GET', 'POST'] )
 def register():
@@ -34,7 +33,7 @@ def register():
         password = sha256_crypt.encrypt(str(form.password.data))
 
         # Сохранение в базу данных
-        db_user.create(name, username, email, password)
+        db_app.create_user(name, username, email, password)
 
         flash('Вы зарегистрированны и можете войти', 'success')
 
@@ -51,7 +50,7 @@ def login():
 
 
         # Поиск пользователя в базе по значению username
-        result = db_user.search(username)
+        result = db_app.user_search(username)
 
         if str(result) == '[]':
             error = 'Пользователь не найден'

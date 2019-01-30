@@ -1,5 +1,6 @@
 import psycopg2
 import constants
+import databases.db_data as dbdata
 
 # Подключение к базам данных
 class DBConnect(object):
@@ -27,270 +28,241 @@ conn = DBConnect.inst().conn
 cursor = conn.cursor()
 
 
-# Предметные оболасти
-class data_area:
+status = {
+    1: 'Нет данных',
+    2: 'Ожидает обработки',
+    3: 'Обработка данных',
+    4: 'Данных недостаточно для анализа',
+    5: 'Поиск связей',
+    6: 'Обработано'
+}
 
-    def __init__(self):
-        # Статусы
-        self.status = {
-            1: 'Нет данных',
-            2: 'Ожидает обработки',
-            3: 'Обработка данных',
-            4: 'Данных недостаточно для анализа',
-            5: 'Поиск связей',
-            6: 'Обработано'
-        }
+# Список предметных областей
+def select_da(user):
+    cursor.execute(
+        '''
+        SELECT 
+            data_area.id, 
+            data_area.name, 
+            data_area.register_date, 
+            data_area.description, 
+            data_area.status 
+        FROM 
+            data_area 
+        WHERE data_area.user_id='{0}'
+        ORDER BY data_area.register_date DESC;
+        '''.format(user)
+    )
+    result = cursor.fetchall()
+    return result
 
-    # Список предметных областей
-    def select_da(self, user):
+# Предметная область
+def data_area(id):
+    cursor.execute(
+        '''
+        SELECT 
+            *
+        FROM 
+            data_area 
+        WHERE id={0};
+        '''.format(id)
+    )
+    result = cursor.fetchall()
+    return result
+
+# Создание предметной области
+def create_data_area(name, description, user_id, status):
+    cursor.execute(
+        '''
+        INSERT INTO data_area (
+            name, 
+            description, 
+            user_id, 
+            status
+        ) VALUES (%s, %s, %s, %s)
+        RETURNING id;
+        ''',
+        (
+            name,
+            description,
+            user_id,
+            status
+        ))
+    conn.commit()
+    data_base_id = cursor.fetchall()
+
+    olap_name = 'olap_' + str(data_base_id[0][0]) + '_' + str(user_id)
+
+    # Удаление таблицы с данными
+    dbdata.delete_olap(olap_name)
+
+    cursor.execute(
+        '''
+        UPDATE data_area SET
+            database_table=%s
+        WHERE id=%s;
+        ''',
+        (
+            olap_name,
+            data_base_id[0][0]
+        ))
+    conn.commit()
+
+# Редактирование предметной области
+def update_data_area(name, username, status, id):
+    cursor.execute(
+        '''
+        UPDATE data_area SET
+            name=%s, 
+            description=%s, 
+            status=%s
+        WHERE id=%s;
+        ''',
+        (
+            name,
+            username,
+            status,
+            id
+        ))
+    conn.commit()
+
+# Удаление предметной области
+def delete_data_area(id):
+    # Получение свдений о предметной области
+    cursor.execute("SELECT database_table FROM data_area WHERE id = '{0}'".format(id))
+    data_a = cursor.fetchall()
+
+    # Удаление данных из таблиц
+    cursor.execute(
+        '''
+        DELETE FROM measures WHERE data_area_id = '{0}';
+        DELETE FROM data_area WHERE id = '{0}';
+        DELETE FROM math_models WHERE data_area_id = '{0}';
+        DELETE FROM data_log WHERE data_area_id = '{0}';
+        '''.format(id)
+    )
+    conn.commit()
+
+    # Удаление таблицы с данными
+    dbdata.delete_olap(data_a[0][0])
+
+
+# Типы параметров
+types = {
+    1: 'Количественные данные',
+    2: 'Качественные данные',
+    3: 'Данные по справочнику',
+    4: 'Время',
+    5: 'Дата',
+    6: 'Время и дата'
+}
+
+# Статусы параметров
+status = {
+    1: 'Нет данных',
+    2: 'Обработано'
+}
+
+# Список измерений
+def select_measures(user):
+    cursor.execute(
+        '''
+        SELECT 
+            measures.id, 
+            measures.description, 
+            measures.type, 
+            measures.status
+        FROM 
+            measures 
+        LEFT JOIN data_area ON measures.data_area_id = data_area.id
+        WHERE data_area_id.user_id='{0}'
+        ORDER BY data_area.register_date DESC;
+        '''.format(user)
+    )
+    result = cursor.fetchall()
+    return result
+
+# Список измерений предметной области
+def select_measures_to_data_area(data_area_id):
+    cursor.execute(
+        '''
+        SELECT 
+            measures.id, 
+            measures.column_name,
+            measures.description, 
+            ref_measures_type.name, 
+            measures.status,
+            measures.type
+        FROM 
+            measures 
+        LEFT JOIN ref_measures_type ON measures.type = ref_measures_type.id
+        LEFT JOIN ref_measures_status ON measures.status = ref_measures_status.id
+        WHERE measures.data_area_id='{0}'
+        ORDER BY measures.type DESC;
+        '''.format(data_area_id)
+    )
+    result = cursor.fetchall()
+    return result
+
+def model(id1, id2):
+    # Список пар
+    try:
         cursor.execute(
-            '''
-            SELECT 
-                data_area.id, 
-                data_area.name, 
-                data_area.register_date, 
-                data_area.description, 
-                data_area.status 
-            FROM 
-                data_area 
-            WHERE data_area.user_id='{0}'
-            ORDER BY data_area.register_date DESC;
-            '''.format(user)
-        )
-        result = cursor.fetchall()
-        return result
+            '''SELECT 
+                    h.name, 
+                    m1.r_value, 
+                    a1.description, 
+                    a2.description, 
+                    m1.area_description_1, 
+                    m1.area_description_2, 
+                    m1.id 
+                FROM 
+                    math_models m1
+                INNER JOIN 
+                    hypotheses h on m1.hypothesis = h.id
+                INNER JOIN 
+                    measures a1 on m1.area_description_1 = a1.id
+                INNER JOIN 
+                    measures a2 on m1.area_description_2 = a2.id
+                WHERE 
+                    (m1.r_value IS NOT NULL) 
+                    AND (m1.area_description_1 = '{0}' or m1.area_description_2 = '{0}') 
+                    AND (m1.area_description_1 = '{1}' or m1.area_description_2 = '{1}')
+                    AND (m1.r_value != 'None')
+                ORDER BY abs(m1.r_value::real) DESC;'''.format(id1, id2))
+        list = cursor.fetchall()
+    except:
+        list = []
+    return list
 
-    # Предметная область
-    def data_area(self, id):
-        cursor.execute(
-            '''
-            SELECT 
-                *
-            FROM 
-                data_area 
-            WHERE id={0};
-            '''.format(id)
-        )
-        result = cursor.fetchall()
-        return result
+# Создание пользователя
+def create_user(name, username, email, password):
+    cursor.execute(
+        '''
+        INSERT INTO users (
+            name, 
+            username, 
+            email, 
+            password
+        ) VALUES (%s, %s, %s, %s);
+        ''',
+        (
+            name,
+            username,
+            email,
+            password
+        ))
+    conn.commit()
 
-    # Создание предметной области
-    def create_data_area(self, name, description, user_id, status):
-        cursor.execute(
-            '''
-            INSERT INTO data_area (
-                name, 
-                description, 
-                user_id, 
-                status
-            ) VALUES (%s, %s, %s, %s)
-            RETURNING id;
-            ''',
-            (
-                name,
-                description,
-                user_id,
-                status
-            ))
-        conn.commit()
-        data_base_id = cursor.fetchall()
-
-        olap_name = 'olap_' + str(data_base_id[0][0]) + '_' + str(user_id)
-
-        data_cursor.execute(
-            '''
-            CREATE SEQUENCE auto_id_{0};
-
-            CREATE TABLE {0} (
-                "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_{0}')
-            );
-            '''.format(olap_name))
-        data_conn.commit()
-
-        cursor.execute(
-            '''
-            UPDATE data_area SET
-                database_table=%s
-            WHERE id=%s;
-            ''',
-            (
-                olap_name,
-                data_base_id[0][0]
-            ))
-        conn.commit()
-
-    # Редактирование предметной области
-    def update_data_area(self, name, username, status, id):
-        cursor.execute(
-            '''
-            UPDATE data_area SET
-                name=%s, 
-                description=%s, 
-                status=%s
-            WHERE id=%s;
-            ''',
-            (
-                name,
-                username,
-                status,
-                id
-            ))
-        conn.commit()
-
-    # Удаление предметной области
-    def delate_data_area(self, id):
-        # Получение свдений о предметной области
-        cursor.execute("SELECT database_table FROM data_area WHERE id = '{0}'".format(id))
-        data_a = cursor.fetchall()
-
-        # Удаление данных из таблиц
-        cursor.execute(
-            '''
-            DELETE FROM measures WHERE data_area_id = '{0}';
-            DELETE FROM data_area WHERE id = '{0}';
-            DELETE FROM math_models WHERE data_area_id = '{0}';
-            DELETE FROM data_log WHERE data_area_id = '{0}';
-            '''.format(id)
-        )
-        conn.commit()
-
-        # Удаление таблицы с данными
-        data_cursor.execute(
-            '''
-                DROP TABLE {0}; 
-                DROP SEQUENCE auto_id_{1};
-            '''.format(data_a[0][0], data_a[0][0])
-        )
-        data_conn.commit()
-
-
-# Параметры
-class measures:
-
-    def __init__(self):
-
-        # Типы параметров
-        self.types = {
-            1: 'Количественные данные',
-            2: 'Качественные данные',
-            3: 'Данные по справочнику',
-            4: 'Время',
-            5: 'Дата',
-            6: 'Время и дата'
-        }
-
-        # Статусы параметров
-        self.status = {
-            1: 'Нет данных',
-            2: 'Обработано'
-        }
-
-
-
-    # Список измерений
-    def select_measures(self, user):
-        cursor.execute(
-            '''
-            SELECT 
-                measures.id, 
-                measures.description, 
-                measures.type, 
-                measures.status
-            FROM 
-                measures 
-            LEFT JOIN data_area ON measures.data_area_id = data_area.id
-            WHERE data_area_id.user_id='{0}'
-            ORDER BY data_area.register_date DESC;
-            '''.format(user)
-        )
-        result = cursor.fetchall()
-        return result
-
-    # Список измерений предметной области
-    def select_measures_to_data_area(self, data_area_id):
-        cursor.execute(
-            '''
-            SELECT 
-                measures.id, 
-                measures.column_name,
-                measures.description, 
-                ref_measures_type.name, 
-                measures.status,
-                measures.type
-            FROM 
-                measures 
-            LEFT JOIN ref_measures_type ON measures.type = ref_measures_type.id
-            LEFT JOIN ref_measures_status ON measures.status = ref_measures_status.id
-            WHERE measures.data_area_id='{0}'
-            ORDER BY measures.type DESC;
-            '''.format(data_area_id)
-        )
-        result = cursor.fetchall()
-        return result
-
-    def model(self, id1, id2):
-        # Список пар
-        try:
-            cursor.execute(
-                '''SELECT 
-                        h.name, 
-                        m1.r_value, 
-                        a1.description, 
-                        a2.description, 
-                        m1.area_description_1, 
-                        m1.area_description_2, 
-                        m1.id 
-                    FROM 
-                        math_models m1
-                    INNER JOIN 
-                        hypotheses h on m1.hypothesis = h.id
-                    INNER JOIN 
-                        measures a1 on m1.area_description_1 = a1.id
-                    INNER JOIN 
-                        measures a2 on m1.area_description_2 = a2.id
-                    WHERE 
-                        (m1.r_value IS NOT NULL) 
-                        AND (m1.area_description_1 = '{0}' or m1.area_description_2 = '{0}') 
-                        AND (m1.area_description_1 = '{1}' or m1.area_description_2 = '{1}')
-                        AND (m1.r_value != 'None')
-                    ORDER BY abs(m1.r_value::real) DESC;'''.format(id1, id2))
-            list = cursor.fetchall()
-        except:
-            list = []
-        return list
-
-
-# Пользователи
-class users:
-
-    # Создание пользователя
-    def create(self, name, username, email, password):
-        cursor.execute(
-            '''
-            INSERT INTO users (
-                name, 
-                username, 
-                email, 
-                password
-            ) VALUES (%s, %s, %s, %s);
-            ''',
-            (
-                name,
-                username,
-                email,
-                password
-            ))
-        conn.commit()
-
-    # Поиск пользователя в базе по значению username
-    def search(self, username):
-        cursor.execute(
-            '''
-            SELECT * FROM users WHERE username = '{0}'
-            '''.format(username)
-        )
-        result = cursor.fetchall()
-        return result
+# Поиск пользователя в базе по значению username
+def user_search(username):
+    cursor.execute(
+        '''
+        SELECT * FROM users WHERE username = '{0}'
+        '''.format(username)
+    )
+    result = cursor.fetchall()
+    return result
 
 
 def get_models(limit):
@@ -332,13 +304,62 @@ def get_models(limit):
     list = cursor.fetchall()
     return list
 
+# Список правлчников
+def ref_list():
+    cursor.execute(
+        '''
+        SELECT * FROM refs ORDER BY register_date DESC;
+        '''
+    )
+    result = cursor.fetchall()
+    return result
+
+
+# Справочник
+def ref_data(id):
+    cursor.execute(
+        '''
+        SELECT * FROM refs WHERE id = '{0}';
+        '''.format(id)
+    )
+    result = cursor.fetchall()
+    return result
+
+# Запись о справочнике
+def insert_ref(name, description, user, table_name):
+    cursor.execute(
+        '''
+        INSERT INTO refs (name, description, user_id, data) VALUES ('{0}', '{1}', '{2}', '{3}');
+        '''.format(name, description, user, table_name)
+    )
+    conn.commit()
 
 
 
+# Удаление справочника
+def delete_ref(id):
+    cursor.execute('''SELECT * FROM refs WHERE id = '{0}';'''.format(id))
+    the_ref = cursor.fetchall()
 
+    # Имя справочника
+    ref_name = the_ref[0][4]
 
+    # Удаление записи о справочнике
+    cursor.execute('''DELETE FROM refs WHERE id = '{0}';'''.format(id))
+    conn.commit()
 
+    # Удаление таблицы с данными
+    dbdata.delete_table(ref_name)
 
+    return ref_name
+
+def update_ref(name, description, id):
+    cursor.execute(
+        '''
+        UPDATE refs SET name='{0}', description='{1}' WHERE id='{2}';
+        '''.format(name, description, id)
+    )
+    conn.commit()
 
 
 
