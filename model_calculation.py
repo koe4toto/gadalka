@@ -322,5 +322,3 @@ def multiple_models_auto_calc():
     multiple_models_safe(constants.COMPLEX_MODEL_KOEF)
 
     return True
-
-# primal_calc(42)

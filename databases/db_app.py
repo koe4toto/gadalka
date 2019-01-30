@@ -94,7 +94,7 @@ def create_data_area(name, description, user_id, status):
     olap_name = 'olap_' + str(data_base_id[0][0]) + '_' + str(user_id)
 
     # Удаление таблицы с данными
-    dbdata.delete_olap(olap_name)
+    dbdata.create_olap(olap_name)
 
     cursor.execute(
         '''
@@ -453,6 +453,20 @@ def select_complex_model_pairs(model_id):
         '''
         SELECT * FROM complex_model_pairs WHERE complex_model_id = '{0}';
         '''.format(model_id)
+    )
+    result = cursor.fetchall()
+    return result
+
+# Получение последнй операции загрузки данных
+def select_data_log(id):
+    cursor.execute(
+        '''
+        SELECT *
+        FROM 
+            data_log 
+        WHERE data_area_id = '{0}'
+        ORDER BY id DESC LIMIT 1;
+        '''.format(id)
     )
     result = cursor.fetchall()
     return result

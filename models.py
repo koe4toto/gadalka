@@ -4,12 +4,9 @@ import json
 import numpy as np
 import statistic_math as sm
 from model_calculation import take_lines
-
-# Мои модули
 import databases.db_app as db_app
 
 mod = Blueprint('models', __name__)
-
 
 # Простые связи
 @mod.route("/pair_models")
@@ -75,7 +72,14 @@ def pair(id1, id2, model_id):
 
     popa = json.dumps(pop, ensure_ascii=False)
 
-    return render_template('pair.html', list=list, for_graf=popa, model=model, list_models=list_models, maesures=maesures)
+    return render_template(
+        'pair.html',
+        list=list,
+        for_graf=popa,
+        model=model,
+        list_models=list_models,
+        maesures=maesures
+    )
 
 # Сложные связи
 @mod.route("/complex_models")

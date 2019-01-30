@@ -1,27 +1,16 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, session, request
-import psycopg2
 import xlrd
 import os
 from decorators import is_logged_in
 from model_calculation import multiple_models_auto_calc
 import constants
 import database as db
-
-
-# Мои модули
 from foo import *
 from forms import *
+import databases.db_app as db_app
+
 
 mod = Blueprint('data_areas', __name__)
-
-# Работа с базами данных
-conn = db.conn
-cursor = db.cursor
-queue_conn = db.queue_conn
-queue_cursor = db.queue_cursor
-
-db_da = db.data_area()
-db_measure = db.measures()
 
 
 # Предметные области
@@ -29,8 +18,10 @@ db_measure = db.measures()
 @is_logged_in
 def data_areas():
     user = str(session['user_id'])
-    list = db_da.select_da(user)
-    return render_template('data_areas.html', list = list)
+    return render_template(
+        'data_areas.html',
+        list = db_app.select_da(user)
+    )
 
 
 # Предметная область
@@ -38,26 +29,16 @@ def data_areas():
 @is_logged_in
 def data_area(id):
     # Поолучение данных о предметной области
-    data_area = db_da.data_area(id)
+    data_area = db_app.data_area(id)
 
     # Путь к файлу
     filename = 'olap_' + id + '.xls'
-    path_to_file = constants.UPLOAD_FOLDER + filename
 
     # Получение описания параметров
-    measures = db_measure.select_measures_to_data_area(id)
+    measures = db_app.select_measures_to_data_area(id)
 
     # Получение последнй операции загрузки данных
-    cursor.execute(
-        '''
-        SELECT *
-        FROM 
-            data_log 
-        WHERE data_area_id = '{0}'
-        ORDER BY id DESC LIMIT 1;
-        '''.format(id)
-    )
-    log = cursor.fetchall()
+    log = db_app.select_data_log(id)
 
     if len(log) == 0:
         log_status = '1'
@@ -85,7 +66,7 @@ def add_data_area():
         description = form.description.data
 
         # Запись в базу данных
-        db_da.create_data_area(title, description, session['user_id'], '1')
+        db_app.create_data_area(title, description, session['user_id'], '1')
 
         flash('Предметная область добавлена', 'success')
         return redirect(url_for('data_areas.data_areas'))
@@ -124,7 +105,7 @@ def edit_data_area(id):
 @is_logged_in
 def delete_data_area(id):
     filename = 'olap_'+ id + '.xls'
-    db_da.delate_data_area(id)
+    db_app.delete_data_area(id)
 
     # Удаление загруженного файла
     try:
