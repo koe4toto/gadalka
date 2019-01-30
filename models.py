@@ -1,26 +1,14 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, session, request
 from decorators import is_logged_in
-import constants
 import json
 import numpy as np
 import statistic_math as sm
-import database as db
 from model_calculation import take_lines
 
 # Мои модули
 import databases.db_app as db_app
 
 mod = Blueprint('models', __name__)
-
-# работа с базой данных
-db_measures = db.measures()
-db_data_area = db.data_area()
-
-conn = db.conn
-cursor = db.cursor
-
-data_conn = db.data_conn
-data_cursor = db.data_cursor
 
 
 # Простые связи
