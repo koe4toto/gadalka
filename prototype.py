@@ -1,6 +1,6 @@
 import constants
 import statistic_math as sm
-import foo
+import tools
 import numpy as np
 import random
 import xlrd

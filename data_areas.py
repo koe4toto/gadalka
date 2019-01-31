@@ -1,17 +1,15 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, session, request
-import xlrd
 import os
 from decorators import is_logged_in
 from model_calculation import multiple_models_auto_calc
-import constants
-from foo import *
 from forms import *
 import databases.db_app as db_app
 import databases.db_queue as db_queue
+import constants
+from tools import allowed_file, looking, sqllist, sqlvar
 
 
 mod = Blueprint('data_areas', __name__)
-
 
 # Предметные области
 @mod.route("/data_areas")
@@ -161,22 +159,12 @@ def upload_data_area_from_file(id):
 
             # Изменение статуса предметной области
             status = '2'
-            cursor.execute(
-                '''
-                INSERT INTO data_log (
-                    data_area_id,
-                    status
-                ) VALUES ('{0}', '{1}') RETURNING id;
-                '''.format(id, status)
-            )
-            conn.commit()
-            log_id = cursor.fetchall()
+            log_id = db_app.insert_data_log(id, status)
 
             # Создание задачи в очереди на обработку
             db_queue.create_task(id, filename, type_of, session['user_id'], log_id[0][0])
             flash('Данные добавлены и ожидают обработки', 'success')
             return redirect(url_for('data_areas.data_area', id=id))
-
 
         else:
             flash('Неверный формат файла. Справочник должен быть в формате .xlsx', 'danger')
@@ -187,42 +175,20 @@ def upload_data_area_from_file(id):
 @mod.route("/data_area_log/<string:id>/")
 @is_logged_in
 def data_area_log(id):
-
-    # Поолучение данных о предметной области
-    data_area = db_da.data_area(id)
-
-    # Получение последнй операции загрузки данных
-    cursor.execute(
-        '''
-        SELECT *
-        FROM 
-            data_log 
-        WHERE data_area_id = '{0}'
-        ORDER BY id DESC;
-        '''.format(id)
+    return render_template(
+        'data_area_log.html',
+        data_area=db_app.data_area(id)[0],
+        log=db_app.select_data_area_log(id)
     )
-    log = cursor.fetchall()
-
-    return render_template('data_area_log.html', data_area=data_area[0], log=log)
 
 # Загрузки
 @mod.route("/data_log/")
 @is_logged_in
 def data_log():
-
-    # Получение последнй операции загрузки данных
-    cursor.execute(
-        '''
-        SELECT *
-        FROM 
-            data_log
-        LEFT JOIN data_area ON data_log.data_area_id = data_area.id
-        ORDER BY data_log.id DESC;
-        '''
+    return render_template(
+        'data_log.html',
+        log=db_app.select_all_data_log()
     )
-    log = cursor.fetchall()
-
-    return render_template('data_log.html', log=log)
 
 # Удаление задачи на загрузку данных
 @mod.route('/delete_data_log/<string:id>/<string:data_area_id>/<string:context>', methods=['POST'])
@@ -230,19 +196,8 @@ def data_log():
 def delete_data_log(id, data_area_id, context):
     filename = 'olap_' + id + '.xls'
     # Удаление данных из таблиц
-    cursor.execute(
-        '''
-        DELETE FROM data_log WHERE id = '{0}';
-        '''.format(id)
-    )
-    conn.commit()
-
-    queue_cursor.execute(
-        '''
-        DELETE FROM data_queue WHERE data_log_id = '{0}';
-        '''.format(id)
-    )
-    queue_conn.commit()
+    db_app.delete_data_log(id)
+    db_queue.delete_task(id)
 
     # Удаление загруженного файла
     try:

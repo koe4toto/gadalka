@@ -470,3 +470,55 @@ def select_data_log(id):
     )
     result = cursor.fetchall()
     return result
+
+
+# Добавление записи в историю загрузок
+def insert_data_log(id, status):
+    cursor.execute(
+        '''
+        INSERT INTO data_log (
+            data_area_id,
+            status
+        ) VALUES ('{0}', '{1}') RETURNING id;
+        '''.format(id, status)
+    )
+    conn.commit()
+    result = cursor.fetchall()
+    return result
+
+# Получение последнй операции загрузки данных
+def select_data_area_log(id):
+    cursor.execute(
+        '''
+        SELECT *
+        FROM 
+            data_log 
+        WHERE data_area_id = '{0}'
+        ORDER BY id DESC;
+        '''.format(id)
+    )
+    result = cursor.fetchall()
+    return result
+
+# Список всех загрузок
+def select_all_data_log():
+    cursor.execute(
+        '''
+        SELECT *
+        FROM 
+            data_log
+        LEFT JOIN data_area ON data_log.data_area_id = data_area.id
+        ORDER BY data_log.id DESC;
+        '''
+    )
+    result = cursor.fetchall()
+    return result
+
+# Удаление данных из истории загрузок
+def delete_data_log(id):
+    cursor.execute(
+        '''
+        DELETE FROM data_log WHERE id = '{0}';
+        '''.format(id)
+    )
+    conn.commit()
