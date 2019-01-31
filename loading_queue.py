@@ -1,7 +1,7 @@
 import threading
-from database import queue_conn, queue_cursor
 from model_calculation import primal_calc, multiple_models_auto_calc
 from loading_from_file import start
+import databases.db_queue as db_queue
 
 # Переменная для потока
 t = None
@@ -9,8 +9,8 @@ t = None
 # Проверка наичия задачи в очереди
 def check ():
     global t
-    queue_cursor.execute('''SELECT * FROM data_queue WHERE status = '1' LIMIT 1;''')
-    result = queue_cursor.fetchall()
+    # Выбирается задача
+    result = db_queue.task()
     if len(result) < 1:
         # Если задач нет, то запускается поток по таймеру
         t = threading.Timer(2.0, check)
@@ -28,16 +28,10 @@ def task(result):
     log_id = result[0][2]
     filename = result[0][3]
     type = result[0][4]
+    status = 2
 
     # Обновление статуса задачи
-    queue_cursor.execute(
-        '''
-        UPDATE data_queue 
-        SET status='2'
-        WHERE id='{0}';
-        '''.format(id)
-    )
-    queue_conn.commit()
+    db_queue.update_task_status(id, status)
 
     # Проверка и загрузка данных
     loading = start(id, data_area_id, log_id, filename, type)
@@ -50,17 +44,8 @@ def task(result):
         # Расчет многомерных моделей
         multiple_models_auto_calc()
 
-
     # Удаление отработаной задачи
-    queue_cursor.execute(
-        '''
-        DELETE 
-        FROM 
-            data_queue 
-        WHERE id='{0}';
-        '''.format(id)
-    )
-    queue_conn.commit()
+    db_queue.delete_task_by_id(id)
 
     # Запуск проверки наличия новой задачи
     if t == None:

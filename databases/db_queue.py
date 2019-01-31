@@ -92,3 +92,37 @@ def delete_task(id):
         '''.format(id)
     )
     conn.commit()
+
+# Список задач
+def task():
+    cursor.execute(
+        '''
+        SELECT * FROM data_queue WHERE status = '1' LIMIT 1;
+        '''
+    )
+    result = cursor.fetchall()
+    return result
+
+# Обновление статуса задачи
+def update_task_status(id, status):
+    cursor.execute(
+        '''
+        UPDATE data_queue 
+        SET status='{1}'
+        WHERE id='{0}';
+        '''.format(id, status)
+    )
+    conn.commit()
+
+
+# Удаление отработаной задачи
+def delete_task_by_id(id):
+    cursor.execute(
+        '''
+        DELETE 
+        FROM 
+            data_queue 
+        WHERE id='{0}';
+        '''.format(id)
+    )
+    conn.commit()
