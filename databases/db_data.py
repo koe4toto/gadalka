@@ -105,3 +105,22 @@ def distribution(column_name, olap_nmae, ui_limit):
         '''.format(column_name, olap_nmae, ui_limit))
     result = cursor.fetchall()
     return result
+
+# Данные для графика распределения
+def time_distribution(data_column, olap_name, ui_limit):
+    cursor.execute(
+        '''
+        SELECT result
+            FROM (
+                SELECT 
+                    row_number() over (order by {0}) as num,
+                    count(*) over () as count,
+                    {0} as result  
+                FROM {1}
+                WHERE {0} IS NOT NULL
+                ) selected
+        WHERE (case when count > {2} then num %(count/{2}) = 0 else 1 = 1 end);
+        '''.format(data_column, olap_name, ui_limit)
+    )
+    result = cursor.fetchall()
+    return result

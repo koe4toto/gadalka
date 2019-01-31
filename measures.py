@@ -54,7 +54,7 @@ def time_to_num(measure):
     if type in time_types:
         result = 'EXTRACT(EPOCH FROM {0} )'.format(measure[1])
         for p, i in enumerate(measure):
-            if p >= 8:
+            if p >= 8 and p <= 21:
                 m = float(i)
                 try:
                     statistics.append(datetime.datetime.utcfromtimestamp(m).strftime(format[type]))
@@ -82,13 +82,13 @@ def measure_quantitative(data_asrea_id, id):
     ui_limit = 500
 
     # Название таблицы с данными
-    olap_nmae = measure[0][26]
+    olap_name = measure[0][26]
 
     # Название колонки с данными
     column_name = measure[0][1]
 
     # Данные для графика распределения
-    d = db_data.distribution(column_name, olap_nmae, ui_limit)
+    d = db_data.distribution(column_name, olap_name, ui_limit)
 
     # Формирование графика распределения
     da = [i[0] for i in d]
@@ -107,70 +107,22 @@ def measure_quantitative(data_asrea_id, id):
 @is_logged_in
 def measure_time(data_asrea_id, id):
     # Получение данных о мере
-    cursor.execute('''SELECT * FROM measures WHERE id = '{0}';'''.format(id))
-    measure = cursor.fetchall()
-
-    # Получение данных о предметной области
-    cursor.execute('''SELECT * FROM data_area WHERE id = '{0}';'''.format(data_asrea_id))
-    data_area = cursor.fetchall()
+    measure = db_app.select_measure(id)
 
     # Список пар
-    cursor.execute(
-        '''SELECT *
-            FROM (
-                SELECT
-                    h.name, 
-                    ml.r_value,
-                    a1.description,
-                    a2.description,
-                    ml.area_description_1, 
-                    ml.area_description_2,
-                    ml.id, 
-                    ml.hypothesis,
-                    row_number() 
-                    OVER (
-                        PARTITION BY area_description_1::text || area_description_2::text 
-                        ORDER BY abs(to_number(r_value, '9.999999999999')) DESC)  
-                        AS rating_in_section
-                FROM 
-                    math_models ml
-                INNER JOIN 
-                    measures a1 on ml.area_description_1 = a1.id
-                INNER JOIN 
-                    measures a2 on ml.area_description_2 = a2.id
-                INNER JOIN 
-                    hypotheses h on ml.hypothesis = h.id
-                WHERE 
-                    r_value != 'None' AND (ml.area_description_1 = '{0}' or ml.area_description_2 = '{0}')
-                ORDER BY 
-                    rating_in_section
-            ) counted_news
-            WHERE rating_in_section <= 1
-            ORDER BY abs(to_number(r_value, '9.999999999999')) DESC;
-
-            '''.format(id))
-    list = cursor.fetchall()
+    pairs = db_app.get_measure_models(id)
 
     # Получение данных о мере
     ui_limit = 500
+
+    # Название таблицы с данными
+    olap_name = measure[0][26]
+
     # Настройка для измерений времени
     data_column, measure2 = time_to_num(measure[0])
 
-    data_cursor.execute(
-        '''
-        SELECT result
-            FROM (
-                SELECT 
-                    row_number() over (order by {0}) as num,
-                    count(*) over () as count,
-                    {0} as result  
-                FROM {1}
-                WHERE {0} IS NOT NULL
-                ) selected
-        WHERE (case when count > {2} then num %(count/{2}) = 0 else 1 = 1 end);
-        '''.format(data_column, data_area[0][5], ui_limit))
-    d = data_cursor.fetchall()
-    print('Пщщщщщщщщщщщщщ:', d)
+    # Данные для графика распределения
+    d = db_data.time_distribution(data_column, olap_name, ui_limit)
 
     # Получение данных для графика распределения
     da = [i[0] for i in d]
@@ -179,10 +131,9 @@ def measure_time(data_asrea_id, id):
         'measure_time.html',
         data_asrea_id=data_asrea_id,
         id=id,
-        the_measure=[measure2],
-        data_area=data_area,
+        measure=measure2,
         data=data,
-        pairs=list
+        pairs=pairs
     )
 
 # Карточка параметра качественных данных
@@ -190,35 +141,12 @@ def measure_time(data_asrea_id, id):
 @is_logged_in
 def measure_qualitative(data_asrea_id, id):
     # Получение данных о мере
-    cursor.execute('''SELECT * FROM measures WHERE id = '{0}';'''.format(id))
-    measure = cursor.fetchall()
-
-    # Получение данных о предметной области
-    cursor.execute('''SELECT * FROM data_area WHERE id = '{0}';'''.format(data_asrea_id))
-    data_area = cursor.fetchall()
-
-
-    # Получение данных о мере
-    # Настройка для измерений времени
-    data_column, measure2 = time_to_num(measure[0])
-
-    data_cursor.execute(
-        '''
-        SELECT {0} FROM {1} WHERE {0} IS NOT NULL;
-        '''.format(data_column, data_area[0][5]))
-    d = data_cursor.fetchall()
-
-    # Получение данных для графика распределения
-    da = [i[0] for i in d]
-    data = [[int(i[0]), int(i[0]), 0] for i in da]
-    json.dumps(data)
+    measure = db_app.select_measure(id)
     return render_template(
         'measure_qualitative.html',
         data_asrea_id=data_asrea_id,
         id=id,
-        the_measure=[measure2],
-        data_area=data_area,
-        data=data
+        the_measure=measure
     )
 
 # Добавление параметра
@@ -525,6 +453,7 @@ def delete_data_measure(id, data_area_id):
     )
     data_conn.commit()
 
+    # Запуск расчета сложных связей
     multiple_models_auto_calc()
 
     flash('Предметная область удалена', 'success')

@@ -93,7 +93,7 @@ def create_data_area(name, description, user_id, status):
 
     olap_name = 'olap_' + str(data_base_id[0][0]) + '_' + str(user_id)
 
-    # Удаление таблицы с данными
+    # Создание таблицы с данными
     dbdata.create_olap(olap_name)
 
     cursor.execute(
@@ -145,7 +145,6 @@ def delete_data_area(id):
 
     # Удаление таблицы с данными
     dbdata.delete_olap(data_a[0][0])
-
 
 # Типы параметров
 types = {
@@ -221,7 +220,6 @@ def select_measures_to_data_area(data_area_id):
     result = cursor.fetchall()
     return result
 
-
 # Список моделей пары
 def select_pair_models(id1, id2):
     # Список пар
@@ -253,7 +251,6 @@ def select_pair_models(id1, id2):
     except:
         list = []
     return list
-
 
 # Параметры пары
 def select_pairs_measures(id1, id2):
@@ -381,7 +378,6 @@ def ref_list():
     result = cursor.fetchall()
     return result
 
-
 # Справочник
 def ref_data(id):
     cursor.execute(
@@ -400,8 +396,6 @@ def insert_ref(name, description, user, table_name):
         '''.format(name, description, user, table_name)
     )
     conn.commit()
-
-
 
 # Удаление справочника
 def delete_ref(id):
@@ -463,7 +457,6 @@ def select_pairs():
     result = cursor.fetchall()
     return result
 
-
 # Модель
 def select_model(model_id):
     cursor.execute('''SELECT * FROM math_models WHERE id='{0}';'''.format(model_id))
@@ -501,7 +494,6 @@ def select_complex_model_measures(model_id):
     result = cursor.fetchall()
     return result
 
-
 # Простые связи
 def select_complex_model_pairs(model_id):
     cursor.execute(
@@ -525,7 +517,6 @@ def select_data_log(id):
     )
     result = cursor.fetchall()
     return result
-
 
 # Добавление записи в историю загрузок
 def insert_data_log(id, status):
