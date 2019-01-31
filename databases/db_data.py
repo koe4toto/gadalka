@@ -124,3 +124,21 @@ def time_distribution(data_column, olap_name, ui_limit):
     )
     result = cursor.fetchall()
     return result
+
+# Сооздание колонки
+def add_ref_column(olap_name, column_name, type_of_measure, ref_name):
+    cursor.execute(
+        '''
+        ALTER TABLE 
+        {0} 
+        ADD COLUMN 
+        {1} {2} {3}(code);
+        '''.format(
+            olap_name,
+            column_name,
+            type_of_measure,
+            ref_name
+        )
+    )
+    conn.commit()
+    

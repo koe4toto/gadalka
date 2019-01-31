@@ -1,7 +1,7 @@
 import psycopg2
 import constants
 import databases.db_data as dbdata
-
+# TODO работу с базой хранения исходныъ данных нужно перенести в слой работы с юизнес логикой
 # Подключение к базам данных
 class DBConnect(object):
     __instance = None
@@ -568,3 +568,71 @@ def delete_data_log(id):
         '''.format(id)
     )
     conn.commit()
+
+# Список справочников пользователя
+def user_ref_list(user_id):
+    cursor.execute(
+        '''
+        SELECT id, name FROM refs WHERE user_id = '{0}';
+        '''.format(user_id))
+    result = cursor.fetchall()
+    return result
+
+# Проверка уникальности имени колонки
+def measures_for_check(column_name, data_area_id):
+    cursor.execute(
+        '''
+        SELECT 
+            * 
+        FROM  
+            measures
+        WHERE
+            column_name = '{0}' AND data_area_id = '{1}';
+        '''.format(
+            column_name,
+            data_area_id
+        )
+    )
+    result = cursor.fetchall()
+    return result
+
+# Добавление записи об измерении
+def insetr_measure(
+        column_name,
+        description,
+        data_area_id,
+        type,
+        status,
+        ref):
+    cursor.execute(
+        '''
+        INSERT INTO measures (
+            column_name, 
+            description, 
+            data_area_id, 
+            type, 
+            status,
+            ref_id) 
+        VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}') RETURNING id;
+        '''.format(
+            column_name,
+            description,
+            data_area_id,
+            type,
+            status,
+            ref
+        )
+    )
+    conn.commit()
+    result = cursor.fetchall()
+    return result
+
+# Навание таблицы хранящей справочник
+def ref_name(ref):
+    cursor.execute(
+        '''
+        SELECT data FROM refs WHERE id = '{0}';
+        '''.format(ref)
+    )
+    ref_name = cursor.fetchall()[0][0]
+    return ref_name

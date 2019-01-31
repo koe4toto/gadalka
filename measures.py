@@ -158,8 +158,8 @@ def add_measure(data_area_id, type):
 
     if type == '3':
         # Список справочников пользователя
-        cursor.execute("SELECT id, name FROM refs WHERE user_id = '{0}'".format(str(session['user_id'])))
-        result = cursor.fetchall()
+        user_id = str(session['user_id'])
+        result = db_app.user_ref_list(user_id)
         dif = [(str(i[0]), str(i[1])) for i in result]
         form = RefMeasureForm(request.form)
         form.ref.choices = dif
@@ -170,24 +170,10 @@ def add_measure(data_area_id, type):
     if request.method == 'POST' and form.validate():
         column_name = form.column_name.data
         description = form.description.data
-
         status = '1'
 
         # Проверка уникальности имени колонки
-        cursor.execute(
-            '''
-            SELECT 
-                * 
-            FROM  
-                measures
-            WHERE
-                column_name = '{0}' AND data_area_id = '{1}';
-            '''.format(
-                column_name,
-                data_area_id
-            )
-        )
-        check = cursor.fetchall()
+        check = db_app.measures_for_check(column_name, data_area_id)
 
         if len(check) >= 1:
             flash('Колонка с таким именем уже существует. Придумайте, пожалуйста новое', 'danger')
@@ -199,50 +185,16 @@ def add_measure(data_area_id, type):
 
                 # Сохранение данных
                 try:
-                    cursor.execute(
-                        '''
-                        INSERT INTO measures (
-                            column_name, 
-                            description, 
-                            data_area_id, 
-                            type, 
-                            status,
-                            ref_id) 
-                        VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}') RETURNING id;
-                        '''.format(
-                            column_name,
-                            description,
-                            data_area_id,
-                            type,
-                            status,
-                            ref
-                        )
-                    )
-                    conn.commit()
-                    meg_id = cursor.fetchall()
+                    meg_id = db_app.insetr_measure(column_name, description, data_area_id, type, status, ref)
 
                 except:
                     flash('Колонка с таким именем уже существует', 'success')
                     return redirect(url_for('data_areas.data_area', id=data_area_id))
 
-                cursor.execute('''SELECT data FROM refs WHERE id = '{0}';'''.format(ref))
-                ref_name = cursor.fetchall()[0][0]
+                ref_name = db_app.ref_name(ref)
 
                 # Сооздание колонки
-                data_cursor.execute(
-                    '''
-                    ALTER TABLE 
-                    {0} 
-                    ADD COLUMN 
-                    {1} {2} {3}(code);
-                    '''.format(
-                        data_area[0][5],
-                        column_name,
-                        constants.TYPE_OF_MEASURE[int(type)],
-                        ref_name
-                    )
-                )
-                data_conn.commit()
+                db_data.add_ref_column(data_area[0][5], column_name, constants.TYPE_OF_MEASURE[int(type)], ref_name)
 
             else:
                 # Сохранение данных
@@ -436,8 +388,8 @@ def delete_data_measure(id, data_area_id):
     cursor.execute(
         '''
         DELETE FROM measures WHERE id = '{0}';
-        DELETE FROM math_models WHERE area_description_2 = '{0}' OR area_description_1 = '{0}'
-        DELETE FROM complex_model_measures WHERE measure_id = '{0}'
+        DELETE FROM math_models WHERE area_description_2 = '{0}' OR area_description_1 = '{0}';
+        DELETE FROM complex_model_measures WHERE measure_id = '{0}';
         '''.format(id)
     )
     conn.commit()
