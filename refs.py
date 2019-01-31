@@ -4,9 +4,7 @@ import xlrd
 import os
 from decorators import is_logged_in
 from datetime import datetime
-
-# Мои модули
-from foo import allowed_file, looking, sqllist, sqlvar
+from tools import allowed_file, looking, sqllist, sqlvar
 from forms import *
 import constants
 import databases.db_app as db_app

@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, session, request
 from decorators import is_logged_in
 import constants
-import foo
+import tools
 import json
 import numpy as np
 import statistic_math as sm

@@ -29,7 +29,7 @@ conn = DBConnect.inst().conn
 cursor = conn.cursor()
 
 # Создание очереди
-def create_queue(self):
+def create_queue():
     # Создание таблицы
     cursor.execute(
         '''
@@ -51,7 +51,7 @@ def create_queue(self):
     conn.commit()
 
 # Создание задачи
-def create_task(self, data_area_id, data, type, user_id, log_id):
+def create_task(data_area_id, data, type, user_id, log_id):
     status = 1
     cursor.execute(
         '''
@@ -76,10 +76,19 @@ def create_task(self, data_area_id, data, type, user_id, log_id):
     return task_id
 
 # Список задач
-def tasks(self):
+def tasks():
     cursor.execute(
         '''
         SELECT * FROM data_queue;
         ''')
     result = cursor.fetchall()
     return result
+
+# Удаление задачи
+def delete_task(id):
+    cursor.execute(
+        '''
+        DELETE FROM data_queue WHERE data_log_id = '{0}';
+        '''.format(id)
+    )
+    conn.commit()
