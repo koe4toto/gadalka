@@ -87,3 +87,21 @@ def delete_from_table(table_name):
         DELETE FROM '{0}';
         '''.format(table_name))
     conn.commit()
+
+# Данные для графика распределения
+def distribution(column_name, olap_nmae, ui_limit):
+    cursor.execute(
+        '''
+        SELECT {0}
+            FROM (
+                SELECT 
+                    row_number() over (order by {0}) as num,
+                    count(*) over () as count,
+                    {0}  
+                FROM {1}
+                WHERE {0} IS NOT NULL
+                ) selected
+        WHERE (case when count > {2} then num %(count/{2}) = 0 else 1 = 1 end);
+        '''.format(column_name, olap_nmae, ui_limit))
+    result = cursor.fetchall()
+    return result

@@ -169,15 +169,32 @@ def select_measures(user):
         '''
         SELECT 
             measures.id, 
+            measures.column_name,
             measures.description, 
-            measures.type, 
-            measures.status
+            measures.data_area_id,
+            measures.type,
+            data_area.name
         FROM 
             measures 
         LEFT JOIN data_area ON measures.data_area_id = data_area.id
-        WHERE data_area_id.user_id='{0}'
-        ORDER BY data_area.register_date DESC;
+        WHERE data_area.user_id='{0}' AND measures.status='6'
+        ORDER BY measures.id DESC;
         '''.format(user)
+    )
+    result = cursor.fetchall()
+    return result
+
+# Получение данных о мере
+def select_measure(id):
+    cursor.execute(
+        '''
+        SELECT 
+            *
+        FROM 
+            measures 
+        LEFT JOIN data_area ON measures.data_area_id = data_area.id
+        WHERE measures.id='{0}';
+        '''.format(id)
     )
     result = cursor.fetchall()
     return result
@@ -276,7 +293,7 @@ def user_search(username):
     result = cursor.fetchall()
     return result
 
-
+# Список всхе моделей
 def get_models(limit):
     cursor.execute(
         '''SELECT *
@@ -315,6 +332,44 @@ def get_models(limit):
             '''.format(limit))
     list = cursor.fetchall()
     return list
+
+# Список моделей измерения
+def get_measure_models(id):
+    cursor.execute(
+        '''SELECT *
+            FROM (
+                SELECT
+                    h.name, 
+                    ml.r_value,
+                    a1.description,
+                    a2.description,
+                    ml.area_description_1, 
+                    ml.area_description_2,
+                    ml.id, 
+                    ml.hypothesis,
+                    row_number() 
+                    OVER (
+                        PARTITION BY area_description_1::text || area_description_2::text 
+                        ORDER BY abs(to_number(r_value, '9.999999999999')) DESC)  
+                        AS rating_in_section
+                FROM 
+                    math_models ml
+                INNER JOIN 
+                    measures a1 on ml.area_description_1 = a1.id
+                INNER JOIN 
+                    measures a2 on ml.area_description_2 = a2.id
+                INNER JOIN 
+                    hypotheses h on ml.hypothesis = h.id
+                WHERE 
+                    r_value != 'None' AND (ml.area_description_1 = '{0}' or ml.area_description_2 = '{0}')
+                ORDER BY 
+                    rating_in_section
+            ) counted_news
+            WHERE rating_in_section <= 1
+            ORDER BY abs(to_number(r_value, '9.999999999999')) DESC;
+            '''.format(id))
+    result = cursor.fetchall()
+    return result
 
 # Список правлчников
 def ref_list():

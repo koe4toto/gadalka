@@ -1,10 +1,10 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-    <a class="text-secondary" href="/data_area/{{ data_area[0][0] }}">{{ data_area[0][1] }}</a><br>
+    <a class="text-secondary" href="/data_area/{{ measure[0][3] }}">{{ measure[0][22] }}</a><br>
     &#8595;
-    <h1>{{ the_measure[0][2] }}</h1>
-    <p>{{ the_measure[0][1] }}, Количественные данные</p>
+    <h1>{{ measure[0][2] }}</h1>
+    <p>{{ measure[0][1] }}, Количественные данные</p>
     {% if data %}
     <div class="row">
 
@@ -82,72 +82,72 @@
             <tr>
               <th scope="row">1</th>
               <td>Размер выборки</td>
-              <td>{{ the_measure[0][7] }}</td>
+              <td>{{ measure[0][7] }}</td>
             </tr>
             <tr>
               <th scope="row">2</th>
               <td>Сумма</td>
-              <td>{{ the_measure[0][8] }}</td>
+              <td>{{ measure[0][8] }}</td>
             </tr>
             <tr>
               <th scope="row">3</th>
               <td>Минимум</td>
-              <td>{{ the_measure[0][9] }}</td>
+              <td>{{ measure[0][9] }}</td>
             </tr>
           <tr>
               <th scope="row">4</th>
               <td>Максимум</td>
-              <td>{{ the_measure[0][10] }}</td>
+              <td>{{ measure[0][10] }}</td>
             </tr>
           <tr>
               <th scope="row">5</th>
               <td>Максимальная частота</td>
-              <td>{{ the_measure[0][11] }}</td>
+              <td>{{ measure[0][11] }}</td>
             </tr>
           <tr>
               <th scope="row">6</th>
               <td>Размах</td>
-              <td>{{ the_measure[0][12] }}</td>
+              <td>{{ measure[0][12] }}</td>
             </tr>
           <tr>
               <th scope="row">7</th>
               <td>Среднее</td>
-              <td>{{ the_measure[0][13] }}</td>
+              <td>{{ measure[0][13] }}</td>
             </tr>
           <tr>
               <th scope="row">8</th>
               <td>Медиана</td>
-              <td>{{ the_measure[0][14] }}</td>
+              <td>{{ measure[0][14] }}</td>
             </tr>
           <tr>
               <th scope="row">9</th>
               <td>Мода</td>
-              <td>{{ the_measure[0][15] }}</td>
+              <td>{{ measure[0][15] }}</td>
             </tr>
           <tr>
               <th scope="row">10</th>
               <td>Средневзвешенное</td>
-              <td>{{ the_measure[0][16] }}</td>
+              <td>{{ measure[0][16] }}</td>
             </tr>
           <tr>
               <th scope="row">11</th>
               <td>Стандартное отклонение</td>
-              <td>{{ the_measure[0][17] }}</td>
+              <td>{{ measure[0][17] }}</td>
             </tr>
           <tr>
               <th scope="row">12</th>
               <td>Дисперсия</td>
-              <td>{{ the_measure[0][18] }}</td>
+              <td>{{ measure[0][18] }}</td>
             </tr>
           <tr>
               <th scope="row">13</th>
               <td>Стандартная ошибка средней</td>
-              <td>{{ the_measure[0][19] }}</td>
+              <td>{{ measure[0][19] }}</td>
             </tr>
           <tr>
               <th scope="row">14</th>
               <td>Межквартильный размах</td>
-              <td>{{ the_measure[0][20] }}</td>
+              <td>{{ measure[0][20] }}</td>
             </tr>
           </tbody>
         </table>

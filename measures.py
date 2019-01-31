@@ -1,18 +1,15 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, session, request
 from decorators import is_logged_in
-import constants
-import tools
 import json
-import numpy as np
 import statistic_math as sm
 import database as db
 import itertools
 import datetime
 from model_calculation import multiple_models_auto_calc
-
-# Мои модули
+import constants
 from forms import *
-from statistic_math import Series
+import databases.db_app as db_app
+import databases.db_data as db_data
 
 mod = Blueprint('measures', __name__)
 
@@ -30,12 +27,11 @@ data_cursor = db.data_cursor
 @mod.route("/measures")
 @is_logged_in
 def measures():
-    # Список справочников
-    cursor.execute(
-        '''SELECT * FROM measures WHERE status='6' ORDER BY id DESC''')
-    measures_list = cursor.fetchall()
-    return render_template('measures.html', list = measures_list)
-
+    user = str(session['user_id'])
+    return render_template(
+        'measures.html',
+        list = db_app.select_measures(user)
+    )
 
 # Продготовка данных времени к отображению
 def time_to_num(measure):
@@ -76,82 +72,34 @@ def time_to_num(measure):
 @is_logged_in
 def measure_quantitative(data_asrea_id, id):
     # Получение данных о мере
-    cursor.execute('''SELECT * FROM measures WHERE id = '{0}';'''.format(id))
-    measure = cursor.fetchall()
-
-    # Получение данных о предметной области
-    cursor.execute('''SELECT * FROM data_area WHERE id = '{0}';'''.format(data_asrea_id))
-    data_area = cursor.fetchall()
+    measure = db_app.select_measure(id)
 
     # Список пар
-    cursor.execute(
-        '''SELECT *
-            FROM (
-                SELECT
-                    h.name, 
-                    ml.r_value,
-                    a1.description,
-                    a2.description,
-                    ml.area_description_1, 
-                    ml.area_description_2,
-                    ml.id, 
-                    ml.hypothesis,
-                    row_number() 
-                    OVER (
-                        PARTITION BY area_description_1::text || area_description_2::text 
-                        ORDER BY abs(to_number(r_value, '9.999999999999')) DESC)  
-                        AS rating_in_section
-                FROM 
-                    math_models ml
-                INNER JOIN 
-                    measures a1 on ml.area_description_1 = a1.id
-                INNER JOIN 
-                    measures a2 on ml.area_description_2 = a2.id
-                INNER JOIN 
-                    hypotheses h on ml.hypothesis = h.id
-                WHERE 
-                    r_value != 'None' AND (ml.area_description_1 = '{0}' or ml.area_description_2 = '{0}')
-                ORDER BY 
-                    rating_in_section
-            ) counted_news
-            WHERE rating_in_section <= 1
-            ORDER BY abs(to_number(r_value, '9.999999999999')) DESC;
-            
-            '''.format(id))
-    list = cursor.fetchall()
+    pairs = db_app.get_measure_models(id)
 
-    # Получение данных о мере
+    # График распределеления
+    # Объем выброки
     ui_limit = 500
 
-    # Настройка для измерений времени
-    data_column, measure2 = time_to_num(measure[0])
+    # Название таблицы с данными
+    olap_nmae = measure[0][26]
 
-    data_cursor.execute(
-        '''
-        SELECT {0}
-            FROM (
-                SELECT 
-                    row_number() over (order by {0}) as num,
-                    count(*) over () as count,
-                    {0}  
-                FROM {1}
-                WHERE {0} IS NOT NULL
-                ) selected
-        WHERE (case when count > {2} then num %(count/{2}) = 0 else 1 = 1 end);
-        '''.format(data_column, data_area[0][5], ui_limit))
-    d = data_cursor.fetchall()
+    # Название колонки с данными
+    column_name = measure[0][1]
 
-    # Получение данных для графика распределения
+    # Данные для графика распределения
+    d = db_data.distribution(column_name, olap_nmae, ui_limit)
+
+    # Формирование графика распределения
     da = [i[0] for i in d]
     data = sm.Series(da).freq_line_view()
     return render_template(
         'measure_quantitative.html',
         data_asrea_id=data_asrea_id,
         id=id,
-        the_measure=[measure2],
-        data_area=data_area,
+        measure=measure,
         data=data,
-        pairs=list
+        pairs=pairs
     )
 
 # Карточка параметра времени
@@ -543,7 +491,7 @@ def edit_measure(id, measure_id):
 
     return render_template('edit_measure.html', form=form, data_area=data_area[0])
 
-# Удаление измерения
+# Удаление параметра
 @mod.route('/delete_data_measure/<string:id>?data_area_id=<string:data_area_id>', methods=['POST'])
 @is_logged_in
 def delete_data_measure(id, data_area_id):
