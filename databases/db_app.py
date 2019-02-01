@@ -596,7 +596,7 @@ def measures_for_check(column_name, data_area_id):
     result = cursor.fetchall()
     return result
 
-# Добавление записи об измерении
+# Добавление записи об измерении по справочнику
 def insetr_measure(
         column_name,
         description,
@@ -636,3 +636,59 @@ def ref_name(ref):
     )
     ref_name = cursor.fetchall()[0][0]
     return ref_name
+
+# Добавление записи об измерении
+def insetr_measure_ref(column_name, description, data_area_id, type, status):
+    cursor.execute(
+        '''
+        INSERT INTO measures (
+            column_name, 
+            description, 
+            data_area_id, 
+            type, 
+            status) 
+        VALUES ('{0}', '{1}', '{2}', '{3}', '{4}') RETURNING id;
+        '''.format(
+            column_name,
+            description,
+            data_area_id,
+            type,
+            status
+        )
+    )
+    conn.commit()
+    meg_id = cursor.fetchall()
+    return meg_id
+
+
+# Измерения для форимрования пар с новым параметром
+def select_measures_for_models(new_meg_id, data_area_id):
+    cursor.execute(
+        '''
+        SELECT id 
+        FROM measures 
+        WHERE (type = '1' OR type = '4' OR type = '5' OR type = '6') 
+            AND id != '{0}' 
+            AND data_area_id = '{1}';
+        '''.format(new_meg_id, data_area_id)
+    )
+    result = cursor.fetchall()
+    return result
+
+# Получить список идентификаторов гипотез
+def select_id_from_hypotheses():
+    cursor.execute(
+        '''
+        SELECT id FROM hypotheses;
+        ''')
+    result = cursor.fetchall()
+    return result
+
+
+# Записать модели
+def insert_math_models(args_str):
+    cursor.execute(
+        '''
+        INSERT INTO math_models (hypothesis, area_description_1, area_description_2, data_area_id) VALUES {0};
+        '''.format(args_str))
+    conn.commit()

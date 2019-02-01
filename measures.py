@@ -198,59 +198,20 @@ def add_measure(data_area_id, type):
 
             else:
                 # Сохранение данных
-                cursor.execute(
-                    '''
-                    INSERT INTO measures (
-                        column_name, 
-                        description, 
-                        data_area_id, 
-                        type, 
-                        status) 
-                    VALUES ('{0}', '{1}', '{2}', '{3}', '{4}') RETURNING id;
-                    '''.format(
-                        column_name,
-                        description,
-                        data_area_id,
-                        type,
-                        status
-                    )
-                )
-                conn.commit()
-                meg_id = cursor.fetchall()
+                meg_id = db_app.insetr_measure_ref(column_name, description, data_area_id, type, status)
 
                 # Сооздание колонки
-                data_cursor.execute(
-                    '''
-                    ALTER TABLE 
-                    {0} 
-                    ADD COLUMN 
-                    {1} {2};
-                    '''.format(
-                        data_area[0][5],
-                        column_name,
-                        constants.TYPE_OF_MEASURE[int(type)]
-                    )
-                )
-                data_conn.commit()
+                db_data.add_column(data_area[0][5], column_name, constants.TYPE_OF_MEASURE[int(type)])
 
-            cursor.execute(
-                '''
-                SELECT id 
-                FROM measures 
-                WHERE (type = '1' OR type = '4' OR type = '5' OR type = '6') 
-                    AND id != '{0}' 
-                    AND data_area_id = '{1}';
-                '''.format(str(meg_id[0][0]), data_area_id)
-            )
-            megs_a = cursor.fetchall()
+            # Измерения для форимрования пар с новым параметром
+            megs_a = db_app.select_measures_for_models(str(meg_id[0][0]), data_area_id)
             megs = [i[0] for i in megs_a]
 
             types = ['1', '4', '5', '6']
 
             if type in types and len(megs) != 0:
                 # Получить список идентификаторов гипотез
-                cursor.execute("SELECT id FROM hypotheses;")
-                hypotheses_id_a = cursor.fetchall()
+                hypotheses_id_a = db_app.select_id_from_hypotheses()
                 hypotheses_id = [i[0] for i in hypotheses_id_a]
 
                 # Создать записи для каждой новой пары и каждой гипотезы)
@@ -259,8 +220,7 @@ def add_measure(data_area_id, type):
                 args_str = str(tup).strip('[]')
 
                 # Записать данные
-                cursor.execute("INSERT INTO math_models (hypothesis, area_description_1, area_description_2, data_area_id) VALUES " + args_str)
-                conn.commit()
+                db_app.insert_math_models(args_str)
 
             flash('Параметр добавлен', 'success')
             return redirect(url_for('data_areas.data_area', id=data_area_id))
