@@ -368,12 +368,52 @@ def get_measure_models(id):
     result = cursor.fetchall()
     return result
 
-# Список правлчников
+# Обновление параметра по справочнику
+def update_measure_with_ref(description, column_name, refiii, measure_id):
+    cursor.execute(
+        '''
+        UPDATE measures SET description='{0}', column_name='{1}', ref_id='{2}' WHERE id='{3}';
+        '''.format(description, column_name, refiii, measure_id)
+    )
+    conn.commit()
+
+# Обновление параметра
+def update_measure(description, column_name, measure_id):
+    cursor.execute(
+        '''
+        UPDATE measures SET description='{0}', column_name='{1}' WHERE id='{2}';
+        '''.format(description, column_name, measure_id)
+    )
+    conn.commit()
+
+
+# Удаление измерения и моделей
+def delete_measure(measure_id):
+    cursor.execute(
+        '''
+        DELETE FROM measures WHERE id = '{0}';
+        DELETE FROM math_models WHERE area_description_2 = '{0}' OR area_description_1 = '{0}';
+        DELETE FROM complex_model_measures WHERE measure_id = '{0}';
+        '''.format(measure_id)
+    )
+    conn.commit()
+
+# Список справочников
 def ref_list():
     cursor.execute(
         '''
         SELECT * FROM refs ORDER BY register_date DESC;
         '''
+    )
+    result = cursor.fetchall()
+    return result
+
+# Список справочников
+def user_ref_list(user_id):
+    cursor.execute(
+        '''
+        SELECT id, name FROM refs WHERE user_id = '{0}';
+        '''.format(user_id)
     )
     result = cursor.fetchall()
     return result

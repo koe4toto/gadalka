@@ -157,3 +157,28 @@ def add_column(olap_name, column_name, type_of_measure):
         )
     )
     conn.commit()
+
+# Сооздание колонки
+def update_column(olap_name, old_column_name, new_column_name):
+    cursor.execute(
+        '''
+        ALTER TABLE {0} RENAME COLUMN {1} TO {2};
+        '''.format(
+            olap_name,
+            old_column_name,
+            new_column_name
+        )
+    )
+    conn.commit()
+
+# Удаление колонки
+def delete_column(olap_name, column_name):
+    cursor.execute(
+        '''
+        ALTER TABLE {0} DROP COLUMN {1};
+        '''.format(
+            olap_name,
+            column_name
+        )
+    )
+    conn.commit()

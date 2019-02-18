@@ -246,8 +246,8 @@ def edit_measure(data_area_id, measure_id):
     # Форма заполняется данными из базы
     if type == '3':
         # Список справочников пользователя
-        cursor.execute("SELECT id, name FROM refs WHERE user_id = '{0}'".format(str(session['user_id'])))
-        ref_list = cursor.fetchall()
+        user_id = str(session['user_id'])
+        ref_list = db_app.user_ref_list(user_id)
         dif = [(str(i[0]), str(i[1])) for i in ref_list]
         form = RefMeasureForm(request.form)
         form.ref.choices = dif
@@ -276,43 +276,22 @@ def edit_measure(data_area_id, measure_id):
             if type == '3':
                 refiii = str(request.form['ref'])
                 # Обновление базе данных
-                cursor.execute('UPDATE measures SET description=%s, column_name=%s, ref_id=%s WHERE id=%s;',
-                               (description, column_name, refiii, measure_id))
-                conn.commit()
+                db_app.update_measure_with_ref(description, column_name, refiii, measure_id)
 
                 if column_name != result[1]:
                     # Переименование колонки
-                    data_cursor.execute(
-                        '''
-                        ALTER TABLE {0} RENAME COLUMN {1} TO {2};
-                        '''.format(
-                            olap_name,
-                            result[1],
-                            column_name
-                        )
-                    )
-                    data_conn.commit()
+                    db_data.update_column(olap_name, result[1], column_name)
 
                 flash('Данные обновлены', 'success')
                 return redirect(url_for('data_areas.data_area', id=data_area_id))
             else:
                 # Обновление базе данных
-                cursor.execute('UPDATE measures SET description=%s, column_name=%s WHERE id=%s;',
-                               (description, column_name, measure_id))
-                conn.commit()
+                print(description, column_name, measure_id)
+                db_app.update_measure(description, column_name, measure_id)
 
                 # Переименование колонки
                 if column_name != result[1]:
-                    data_cursor.execute(
-                        '''
-                        ALTER TABLE {0} RENAME COLUMN {1} TO {2};
-                        '''.format(
-                            olap_name,
-                            result[1],
-                            column_name
-                        )
-                    )
-                    data_conn.commit()
+                    db_data.update_column(olap_name, result[1], column_name)
 
                 flash('Данные обновлены', 'success')
                 return redirect(url_for('data_areas.data_area', id=data_area_id))
@@ -320,38 +299,15 @@ def edit_measure(data_area_id, measure_id):
     return render_template('edit_measure.html', form=form, data_area_id=data_area_id, data_area_name=data_area_name)
 
 # Удаление параметра
-@mod.route('/delete_data_measure/<string:id>?data_area_id=<string:data_area_id>', methods=['POST'])
+@mod.route('/delete_data_measure/<string:measure_id>?data_area_id=<string:data_area_id>?olap_name=<string:olap_name>?column_name=<string:column_name>', methods=['POST'])
 @is_logged_in
-def delete_data_measure(id, data_area_id):
-
-    # Получение данных о мере
-    cursor.execute("SELECT column_name FROM measures WHERE id = '{0}'".format(id))
-    the_measure = cursor.fetchall()
-
-    # Получение данных о мере
-    cursor.execute("SELECT database_table FROM data_area WHERE id = '{0}'".format(data_area_id))
-    data_area = cursor.fetchall()
+def delete_data_measure(measure_id, data_area_id, olap_name, column_name):
 
     # Удаление измерения и моделей
-    cursor.execute(
-        '''
-        DELETE FROM measures WHERE id = '{0}';
-        DELETE FROM math_models WHERE area_description_2 = '{0}' OR area_description_1 = '{0}';
-        DELETE FROM complex_model_measures WHERE measure_id = '{0}';
-        '''.format(id)
-    )
-    conn.commit()
+    db_app.delete_measure(measure_id)
 
     # Удаление колонки
-    data_cursor.execute(
-        '''
-        ALTER TABLE {0} DROP COLUMN {1};
-        '''.format(
-            data_area[0][0],
-            the_measure[0][0]
-        )
-    )
-    data_conn.commit()
+    db_data.delete_column(olap_name, column_name)
 
     # Запуск расчета сложных связей
     multiple_models_auto_calc()
