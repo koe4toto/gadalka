@@ -233,7 +233,6 @@ def primal_calc(data_area_id, log_id):
         )
         conn.commit()
 
-
 # Запись сложной модели в базу
 def multiple_models_safe(koef):
 
