@@ -4,6 +4,7 @@ from decorators import is_logged_in
 from model_calculation import multiple_models_auto_calc
 from forms import *
 import databases.db_app as db_app
+import databases.db_data as db_data
 import databases.db_queue as db_queue
 import constants
 from tools import allowed_file, looking, sqllist, sqlvar
@@ -64,7 +65,13 @@ def add_data_area():
         description = form.description.data
 
         # Запись в базу данных
-        db_app.create_data_area(title, description, session['user_id'], '1')
+        olap_name, data_base_id = db_app.create_data_area(title, description, session['user_id'], '1')
+
+        # Создание таблицы с данными
+        db_data.create_olap(olap_name)
+
+        # Сохранение имени куба в для ПО
+        db_app.update_data_area_olap_name(olap_name, data_base_id[0][0])
 
         flash('Предметная область добавлена', 'success')
         return redirect(url_for('data_areas.data_areas'))
@@ -103,7 +110,10 @@ def edit_data_area(id):
 @is_logged_in
 def delete_data_area(id):
     filename = 'olap_'+ id + '.xls'
-    db_app.delete_data_area(id)
+    database_table = db_app.delete_data_area(id)
+
+    # Удаление таблицы с данными
+    db_data.delete_olap(database_table)
 
     # Удаление загруженного файла
     try:

@@ -109,7 +109,10 @@ def add_ref():
 def delete_ref(id):
 
     # Удаление записи о справочнике
-    db_app.delete_ref(id)
+    ref_name = db_app.delete_ref(id)
+
+    # Удаление таблицы с данными
+    db_data.delete_table(ref_name)
 
     flash('Справочник удалён', 'success')
 

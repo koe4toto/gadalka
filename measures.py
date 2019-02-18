@@ -2,7 +2,6 @@ from flask import Blueprint, render_template, flash, redirect, url_for, session,
 from decorators import is_logged_in
 import json
 import statistic_math as sm
-import database as db
 import itertools
 import datetime
 from model_calculation import multiple_models_auto_calc
@@ -13,15 +12,6 @@ import databases.db_data as db_data
 
 mod = Blueprint('measures', __name__)
 
-# работа с базой данных
-db_measures = db.measures()
-db_data_area = db.data_area()
-
-conn = db.conn
-cursor = db.cursor
-
-data_conn = db.data_conn
-data_cursor = db.data_cursor
 
 # Параметры
 @mod.route("/measures")
@@ -154,7 +144,7 @@ def measure_qualitative(data_asrea_id, id):
 @is_logged_in
 def add_measure(data_area_id, type):
 
-    data_area = db_data_area.data_area(data_area_id)
+    data_area = db_app.data_area(data_area_id)
 
     if type == '3':
         # Список справочников пользователя
@@ -224,7 +214,7 @@ def add_measure(data_area_id, type):
 
             flash('Параметр добавлен', 'success')
             return redirect(url_for('data_areas.data_area', id=data_area_id))
-    return render_template('add_measure.html', form=form, data_area=data_area[0], title = db_measures.types[int(type)])
+    return render_template('add_measure.html', form=form, data_area=data_area[0], title = db_app.types[int(type)])
 
 # Редактирование параметра
 @mod.route("/data_area/<string:data_area_id>/edit_measure_<string:measure_id>", methods =['GET', 'POST'] )

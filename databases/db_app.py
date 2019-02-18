@@ -1,7 +1,6 @@
 import psycopg2
 import constants
-import databases.db_data as dbdata
-# TODO работу с базой хранения исходныъ данных нужно перенести в слой работы с юизнес логикой
+
 # Подключение к базам данных
 class DBConnect(object):
     __instance = None
@@ -93,19 +92,20 @@ def create_data_area(name, description, user_id, status):
 
     olap_name = 'olap_' + str(data_base_id[0][0]) + '_' + str(user_id)
 
-    # Создание таблицы с данными
-    dbdata.create_olap(olap_name)
+    return olap_name, data_base_id
 
+# Редактирование предметной области
+def update_data_area_olap_name(olap_name, data_base_id):
     cursor.execute(
-        '''
-        UPDATE data_area SET
-            database_table=%s
-        WHERE id=%s;
-        ''',
-        (
-            olap_name,
-            data_base_id[0][0]
-        ))
+            '''
+            UPDATE data_area SET
+                database_table=%s
+            WHERE id=%s;
+            ''',
+            (
+                olap_name,
+                data_base_id
+            ))
     conn.commit()
 
 # Редактирование предметной области
@@ -153,7 +153,7 @@ def update_data_log_stats(errrors, done, log_id):
 def delete_data_area(id):
     # Получение свдений о предметной области
     cursor.execute("SELECT database_table FROM data_area WHERE id = '{0}'".format(id))
-    data_a = cursor.fetchall()
+    database_table = cursor.fetchall()
 
     # Удаление данных из таблиц
     cursor.execute(
@@ -166,8 +166,7 @@ def delete_data_area(id):
     )
     conn.commit()
 
-    # Удаление таблицы с данными
-    dbdata.delete_olap(data_a[0][0])
+    return database_table[0][0]
 
 # Типы параметров
 types = {
@@ -472,9 +471,6 @@ def delete_ref(id):
     cursor.execute('''DELETE FROM refs WHERE id = '{0}';'''.format(id))
     conn.commit()
 
-    # Удаление таблицы с данными
-    dbdata.delete_table(ref_name)
-
     return ref_name
 
 # Обновление описания справочника
@@ -776,3 +772,193 @@ def insert_math_models(args_str):
         INSERT INTO math_models (hypothesis, area_description_1, area_description_2, data_area_id) VALUES {0};
         '''.format(args_str))
     conn.commit()
+
+# Сохранение модели
+def insert_complex_models(model_name, model_type, model_kind, ti):
+    cursor.execute(
+        '''
+        INSERT INTO complex_models (
+            name,
+            type, 
+            kind, 
+            pairs
+        ) VALUES ('{0}', '{1}', '{2}', '{3}') RETURNING id;
+        '''.format(model_name, model_type, model_kind, ti)
+    )
+    conn.commit()
+    model_id = cursor.fetchall()
+    return model_id
+
+# Сохранение измерений модели
+def insert_complex_model_measures(model_id, measure_id, measure_data_area_id, model_type):
+    cursor.execute(
+        '''
+        INSERT INTO complex_model_measures (
+            complex_model_id, 
+            measure_id, 
+            data_area_id,
+            model_type
+        ) VALUES ('{0}', '{1}', '{2}', '{3}');
+        '''.format(model_id, measure_id, measure_data_area_id, model_type)
+    )
+    conn.commit()
+
+# Сохранение измерений модели
+def insert_complex_model_pairs(model_id, pair, model_type):
+    cursor.execute(
+        '''
+        INSERT INTO complex_model_pairs (
+            complex_model_id, 
+            pair_id,
+            model_type
+        ) VALUES ('{0}', '{1}', '{2}');
+        '''.format(model_id, pair, model_type)
+    )
+    conn.commit()
+
+# Удаление пар сложных связей
+def delete_complex_model(tipe_of_model):
+    cursor.execute(
+        '''
+        DELETE FROM complex_models WHERE type = '{0}';
+        DELETE FROM complex_model_measures WHERE model_type = '{0}';
+        DELETE FROM complex_model_pairs WHERE model_type = '{0}';
+        '''.format(tipe_of_model)
+    )
+    conn.commit()
+
+# Изменить статус предметной области, измерений
+def update_measures_status(database_id, line_id_1, line_id_2, status):
+    cursor.execute(
+        '''
+        UPDATE measures 
+        SET 
+            status='{3}'
+        WHERE id = '{1}' OR id = '{2}';
+        '''.format(database_id, line_id_1, line_id_2, status)
+    )
+    conn.commit()
+
+# Список моделей по прежметной области
+def select_math_models_by_data_area(data_area_id):
+    cursor.execute('''SELECT * FROM math_models WHERE data_area_id = '{0}';'''.format(data_area_id))
+    result = cursor.fetchall()
+    return result
+
+# Сохранение результатов в базу данных. Записываются данные по модели.
+def upgate_math_models(
+        slope,
+        intercept,
+        r_value,
+        p_value,
+        std_err,
+        pairs_xstat_div,
+        pairs_ystat_div,
+        adid1,
+        adid2,
+        hypothesis
+):
+    cursor.execute(
+        '''
+        UPDATE 
+            math_models 
+        SET 
+            slope='{0}', 
+            intercept='{1}', 
+            r_value='{2}', 
+            p_value='{3}', 
+            std_err='{4}', 
+            xstat_div='{5}',
+            ystat_div='{6}'
+        WHERE area_description_1 = '{7}' AND area_description_2 = '{8}' AND hypothesis = '{9}';
+        '''.format(
+            slope,
+            intercept,
+            r_value,
+            p_value,
+            std_err,
+            pairs_xstat_div,
+            pairs_ystat_div,
+            adid1,
+            adid2,
+            hypothesis
+
+        )
+    )
+    conn.commit()
+
+# Сохранение результатов в базу данных. Записываются данные по модели.
+def upgate_math_models_stats(
+        measure_id,
+        len,
+        sum,
+        min,
+        max,
+        max_freq,
+        ptp,
+        mean,
+        median,
+        mode,
+        average,
+        std,
+        var,
+        sem,
+        iqr
+):
+    cursor.execute(
+        '''
+        UPDATE 
+            measures 
+        SET 
+            len='{1}',
+            sum='{2}',
+            min='{3}',
+            max='{4}',
+            max_freq='{5}',
+            ptp='{6}',
+            mean='{7}',
+            median='{8}',
+            mode='{9}',
+            average='{10}',
+            std='{11}',
+            var='{12}',
+            sem='{13}',
+            iqr='{14}'
+        WHERE 
+            id = '{0}';
+        '''.format(
+            measure_id,
+            len,
+            sum,
+            min,
+            max,
+            max_freq,
+            ptp,
+            mean,
+            median,
+            mode,
+            average,
+            std,
+            var,
+            sem,
+            iqr
+        )
+    )
+    conn.commit()
+
+# Сохранение результатов в базу данных. Записываются данные по модели.
+def select_measures_to_lines(line1, line2):
+    cursor.execute(
+        '''
+        SELECT 
+            measures.column_name, 
+            data_area.database_table,
+            data_area.id,
+            measures.type
+        FROM 
+            measures 
+        LEFT JOIN data_area ON measures.data_area_id = data_area.id
+        WHERE measures.id = '{0}' OR measures.id = '{1}';
+        '''.format(line1, line2))
+    measures = cursor.fetchall()
+    return measures

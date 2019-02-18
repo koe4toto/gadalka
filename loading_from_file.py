@@ -1,6 +1,5 @@
 import constants
 import xlrd
-import database as db
 import datetime
 import xlwt
 import os
@@ -65,7 +64,7 @@ def start(id, data_area_id, log_id, filename, type):
     ws = wb.add_sheet('Main')
 
     # Название таблицы, в которую записывать данные
-    db_da = db.data_area()
+    db_da = db_app.data_area()
     table_name = db_da.data_area(data_area_id)[0][5]
 
     # Удаление данных из таблицы, если идет операция обновления данных

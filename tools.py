@@ -1,5 +1,4 @@
 import constants
-from database import data_conn, data_cursor, cursor, conn
 
 # Проверка формата загружаемого файлв
 def allowed_file(filename):

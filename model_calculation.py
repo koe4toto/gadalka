@@ -1,12 +1,8 @@
 import statistic_math as sm
 import numpy as np
-import database as db
 import constants
-
-cursor = db.cursor
-conn = db.conn
-data_cursor = db.data_cursor
-data_conn = db.data_conn
+import databases.db_app as db_app
+import databases.db_data as db_data
 
 # Определение типа измерения и вывод строчки для соответствуующего запроса
 def time_to_num(measure):
@@ -21,19 +17,7 @@ def take_lines (line1, line2, limit=None):
 
     # Измерения
     try:
-        cursor.execute(
-            '''
-            SELECT 
-                measures.column_name, 
-                data_area.database_table,
-                data_area.id,
-                measures.type
-            FROM 
-                measures 
-            LEFT JOIN data_area ON measures.data_area_id = data_area.id
-            WHERE measures.id = '{0}' OR measures.id = '{1}';
-            '''.format(line1, line2))
-        measures = cursor.fetchall()
+        measures = db_app.select_measures_to_lines(line1, line2)
     except:
         return None, False, None
 
@@ -46,72 +30,30 @@ def take_lines (line1, line2, limit=None):
 
     # Данные
     # Выборка всех данных
-    if limit == None:
-        data_cursor.execute(
-            '''
-            SELECT {0} as A, {1} as B  
-            FROM {2} WHERE {0} IS NOT NULL OR {1} IS NOT NULL;
-            '''.format(me1_alt, me2_alt, database_table)
-        )
-        measure_data = data_cursor.fetchall()
-    else:
-        data_cursor.execute(
-            '''
-            SELECT B1, B2 
-            from (
-                select row_number() 
-                over (order by {0}) num, count(*) over () as count, {0} as B1, {1} as B2   
-                from {2} p WHERE {0} IS NOT NULL OR {1} IS NOT NULL)A 
-            where case when count > {3} then num %(count/{3}) = 0 else 1 = 1 end; 
-            '''.format(me1_alt, me2_alt, database_table, limit)
-        )
-        measure_data = data_cursor.fetchall()
+    measure_data = db_data.select_data_from_olap(me1_alt, me2_alt, database_table, limit)
     return measure_data, database_table, database_id
 
 def measure_stats(x, id):
     x_stats = sm.Series(x).stats_line()
 
     # Сохранение результатов в базу данных. Записываются данные по модели.
-    cursor.execute(
-        '''
-        UPDATE 
-            measures 
-        SET 
-            len='{1}',
-            sum='{2}',
-            min='{3}',
-            max='{4}',
-            max_freq='{5}',
-            ptp='{6}',
-            mean='{7}',
-            median='{8}',
-            mode='{9}',
-            average='{10}',
-            std='{11}',
-            var='{12}',
-            sem='{13}',
-            iqr='{14}'
-        WHERE 
-            id = '{0}';
-        '''.format(
-            id,
-            x_stats['Размер выборки'],
-            x_stats['Сумма'],
-            x_stats['Минимум'],
-            x_stats['Максимум'],
-            x_stats['Максимальная частота'],
-            x_stats['Размах'],
-            x_stats['Среднее'],
-            x_stats['Медиана'],
-            x_stats['Мода'],
-            x_stats['Средневзвешенное'],
-            x_stats['Стандартное отклонение'],
-            x_stats['Дисперсия'],
-            x_stats['Стандартная ошибка средней'],
-            x_stats['Межквартильный размах']
-        )
+    db_app.upgate_math_models_stats(
+        id,
+        x_stats['Размер выборки'],
+        x_stats['Сумма'],
+        x_stats['Минимум'],
+        x_stats['Максимум'],
+        x_stats['Максимальная частота'],
+        x_stats['Размах'],
+        x_stats['Среднее'],
+        x_stats['Медиана'],
+        x_stats['Мода'],
+        x_stats['Средневзвешенное'],
+        x_stats['Стандартное отклонение'],
+        x_stats['Дисперсия'],
+        x_stats['Стандартная ошибка средней'],
+        x_stats['Межквартильный размах']
     )
-    conn.commit()
 
 # Рассчета свойств модели и запись результатов в базу данных
 def search_model(hypothesis, x, y, adid1, adid2):
@@ -136,52 +78,28 @@ def search_model(hypothesis, x, y, adid1, adid2):
     print(slope, intercept, r_value, p_value, std_err, pairs.xstat_div, pairs.ystat_div)
 
     # Сохранение результатов в базу данных. Записываются данные по модели.
-    cursor.execute(
-        '''
-        UPDATE 
-            math_models 
-        SET 
-            slope='{0}', 
-            intercept='{1}', 
-            r_value='{2}', 
-            p_value='{3}', 
-            std_err='{4}', 
-            xstat_div='{5}',
-            ystat_div='{6}'
-        WHERE area_description_1 = '{7}' AND area_description_2 = '{8}' AND hypothesis = '{9}';'''.format(
-            slope,
-            intercept,
-            r_value,
-            p_value,
-            std_err,
-            pairs.xstat_div,
-            pairs.ystat_div,
-            adid1,
-            adid2,
-            hypothesis
-
-        )
+    db_app.upgate_math_models(
+        slope,
+        intercept,
+        r_value,
+        p_value,
+        std_err,
+        pairs.xstat_div,
+        pairs.ystat_div,
+        adid1,
+        adid2,
+        hypothesis
     )
-    conn.commit()
 
 # Расчте моделей моделей предметной области
 def primal_calc(data_area_id, log_id):
 
     # Список моделей
-    cursor.execute('''SELECT * FROM math_models WHERE data_area_id = '{0}';'''.format(data_area_id))
-    model = cursor.fetchall()
+    model = db_app.select_math_models_by_data_area(data_area_id)
 
     if len(model) <= 1:
         # Изменить статус предметной области, измерений
-        cursor.execute(
-            '''
-            UPDATE data_log 
-            SET 
-                status='{1}' 
-            WHERE id = '{0}';
-            '''.format(log_id, '6')
-        )
-        conn.commit()
+        db_app.update_data_area_status('6', log_id)
         return True
 
     for i in model:
@@ -209,35 +127,20 @@ def primal_calc(data_area_id, log_id):
                 status = '6'
 
                 # Изменить статус предметной области, измерений
-                cursor.execute(
-                    '''
-                    UPDATE measures 
-                    SET 
-                        status='{3}'
-                    WHERE id = '{1}' OR id = '{2}';
-                    '''.format(database_id, line_id_1, line_id_2, status)
-                )
-                conn.commit()
+                db_app.update_measures_status(database_id, line_id_1, line_id_2, status)
+
         except:
             status = '6'
             pass
 
         # Изменить статус предметной области, измерений
-        cursor.execute(
-            '''
-            UPDATE data_log 
-            SET 
-                status='{1}' 
-            WHERE id = '{0}';
-            '''.format(log_id, status)
-        )
-        conn.commit()
+        db_app.update_data_area_status(status, log_id)
 
 # Запись сложной модели в базу
 def multiple_models_safe(koef):
 
     # Выбираются модели по силе связи
-    g = db.get_models(koef)
+    g = db_app.get_models(koef)
 
     # Поиск сложных связей
     models = sm.agreg(g)
@@ -253,18 +156,7 @@ def multiple_models_safe(koef):
             ti = ','.join(str(e) for e in mod[1])
 
             # Сохранение модели
-            cursor.execute(
-                '''
-                INSERT INTO complex_models (
-                    name,
-                    type, 
-                    kind, 
-                    pairs
-                ) VALUES ('{0}', '{1}', '{2}', '{3}') RETURNING id;
-                '''.format(model_name, model_type, model_kind, ti)
-            )
-            conn.commit()
-            model_id = cursor.fetchall()
+            model_id = db_app.insert_complex_models(model_name, model_type, model_kind, ti)
 
             for measure in mod[0]:
                 # Характеристики измерений модели
@@ -272,31 +164,12 @@ def multiple_models_safe(koef):
                 measure_data_area_id = measure[3]
 
                 # Сохранение измерений модели
-                cursor.execute(
-                    '''
-                    INSERT INTO complex_model_measures (
-                        complex_model_id, 
-                        measure_id, 
-                        data_area_id,
-                        model_type
-                    ) VALUES ('{0}', '{1}', '{2}', '{3}');
-                    '''.format(model_id[0][0], measure_id, measure_data_area_id, model_type)
-                )
-                conn.commit()
+                db_app.insert_complex_model_measures(model_id[0][0], measure_id, measure_data_area_id, model_type)
 
             for pair in mod[1]:
-
                 # Сохранение измерений модели
-                cursor.execute(
-                    '''
-                    INSERT INTO complex_model_pairs (
-                        complex_model_id, 
-                        pair_id,
-                        model_type
-                    ) VALUES ('{0}', '{1}', '{2}');
-                    '''.format(model_id[0][0], int(pair), model_type)
-                )
-                conn.commit()
+                db_app.insert_complex_model_pairs(model_id[0][0], int(pair), model_type)
+
         return True
     else:
         return False
@@ -306,14 +179,7 @@ def multiple_models_auto_calc():
 
     # Удаление старых связей
     try:
-        cursor.execute(
-            '''
-            DELETE FROM complex_models WHERE type = '{0}';
-            DELETE FROM complex_model_measures WHERE model_type = '{0}';
-            DELETE FROM complex_model_pairs WHERE model_type = '{0}';
-            '''.format(constants.TYPE_OF_MODEL['Автоматически расчитанный'])
-        )
-        conn.commit()
+        db_app.delete_complex_model(constants.TYPE_OF_MODEL['Автоматически расчитанный'])
     except:
         pass
 
