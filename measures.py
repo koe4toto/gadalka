@@ -227,15 +227,18 @@ def add_measure(data_area_id, type):
     return render_template('add_measure.html', form=form, data_area=data_area[0], title = db_measures.types[int(type)])
 
 # Редактирование параметра
-@mod.route("/data_area/<string:id>/edit_measure_<string:measure_id>", methods =['GET', 'POST'] )
+@mod.route("/data_area/<string:data_area_id>/edit_measure_<string:measure_id>", methods =['GET', 'POST'] )
 @is_logged_in
-def edit_measure(id, measure_id):
-
-    data_area = db_data_area.data_area(id)
+def edit_measure(data_area_id, measure_id):
 
     # Достаётся предметная область из базы по идентификатору
-    cursor.execute("SELECT * FROM measures WHERE id = %s", [measure_id])
-    result = cursor.fetchone()
+    result = db_app.select_measure(measure_id)[0]
+
+    # Имя предметной области для хлебной крошки
+    data_area_name = result[22]
+
+    # Имя таблицы хранения данных предметной области
+    olap_name = result[26]
 
     # Тип измерения
     type = str(result[4])
@@ -264,20 +267,7 @@ def edit_measure(id, measure_id):
         column_name = request.form['column_name']
 
         # Проверка уникальности имени колонки
-        cursor.execute(
-            '''
-            SELECT 
-                * 
-            FROM  
-                measures
-            WHERE
-                column_name = '{0}' AND data_area_id = '{1}';
-            '''.format(
-                column_name,
-                id
-            )
-        )
-        check = cursor.fetchall()
+        check = db_app.measures_for_check(column_name, data_area_id)
 
         if column_name != result[1] and len(check) >= 1:
             flash('Колонка с таким именем уже существует. Придумайте, пожалуйста новое', 'danger')
@@ -296,7 +286,7 @@ def edit_measure(id, measure_id):
                         '''
                         ALTER TABLE {0} RENAME COLUMN {1} TO {2};
                         '''.format(
-                            data_area[0][5],
+                            olap_name,
                             result[1],
                             column_name
                         )
@@ -304,7 +294,7 @@ def edit_measure(id, measure_id):
                     data_conn.commit()
 
                 flash('Данные обновлены', 'success')
-                return redirect(url_for('data_areas.data_area', id=id))
+                return redirect(url_for('data_areas.data_area', id=data_area_id))
             else:
                 # Обновление базе данных
                 cursor.execute('UPDATE measures SET description=%s, column_name=%s WHERE id=%s;',
@@ -317,7 +307,7 @@ def edit_measure(id, measure_id):
                         '''
                         ALTER TABLE {0} RENAME COLUMN {1} TO {2};
                         '''.format(
-                            data_area[0][5],
+                            olap_name,
                             result[1],
                             column_name
                         )
@@ -325,11 +315,9 @@ def edit_measure(id, measure_id):
                     data_conn.commit()
 
                 flash('Данные обновлены', 'success')
-                return redirect(url_for('data_areas.data_area', id=id))
+                return redirect(url_for('data_areas.data_area', id=data_area_id))
 
-
-
-    return render_template('edit_measure.html', form=form, data_area=data_area[0])
+    return render_template('edit_measure.html', form=form, data_area_id=data_area_id, data_area_name=data_area_name)
 
 # Удаление параметра
 @mod.route('/delete_data_measure/<string:id>?data_area_id=<string:data_area_id>', methods=['POST'])
