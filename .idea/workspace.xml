@@ -361,7 +361,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.loading_queue">
+  <component name="RunManager" selected="Python.to_try">
     <configuration name="loading_queue" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="gadalka" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -432,8 +432,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.loading_queue" />
         <item itemvalue="Python.to_try" />
+        <item itemvalue="Python.loading_queue" />
         <item itemvalue="Python.model_calculation" />
       </list>
     </recent_temporary>
