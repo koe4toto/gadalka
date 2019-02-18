@@ -5,23 +5,9 @@ import datetime
 import xlwt
 import os
 import psycopg2
+import databases.db_app as db_app
+import databases.db_data as db_data
 
-cursor = db.cursor
-conn = db.conn
-data_cursor = db.data_cursor
-data_conn = db.data_conn
-
-
-# Обновление статуса предметной области
-def update_data_area_status(status, log_id):
-    cursor.execute(
-        '''
-        UPDATE data_log SET 
-            status='{0}'
-        WHERE id='{1}';
-        '''.format(status, log_id)
-        )
-    conn.commit()
 
 # Првоерка наличия ожидаемых колонок
 # Функция возвращает либо ошибку с неверным значением, либо набор значений, которые можно записать в базу
@@ -43,7 +29,7 @@ def head_check(in_base, in_file):
 def start(id, data_area_id, log_id, filename, type):
     # Обновление статуса предметной области и измерений
     status = '3'
-    update_data_area_status(status, log_id)
+    db_app.update_data_area_status(status, log_id)
 
     # Открывается сохраненный файл
     rb = xlrd.open_workbook(constants.UPLOAD_FOLDER + filename)
@@ -56,24 +42,20 @@ def start(id, data_area_id, log_id, filename, type):
     row = sheet.row_values(in_table[0])
 
     # Набор колонок из базы
-    cursor.execute(
-        "SELECT id, column_name, type, ref_id FROM measures WHERE data_area_id = '{0}'".format(data_area_id))
-    measures = cursor.fetchall()
+    measures = db_app.select_columns_from_measures(data_area_id)
 
     # Проверка структуры в файле
     headcheck = head_check(measures, row)
     if headcheck[0] != True:
         status = '4'
-        update_data_area_status(status, log_id)
+        db_app.update_data_area_status(status, log_id)
         return status
 
     # Набор справочников требуемых для проверки
     ref_names = {}
     for i in measures:
         if i[3] != None:
-            cursor.execute(
-                "SELECT data FROM refs WHERE id = '{0}'".format(i[3]))
-            ref_name = cursor.fetchall()[0][0]
+            ref_name = db_app.select_ref_name(i[3])
             ref_names.update({i[0]: ref_name})
 
     # Создание файла для записи ошибок
@@ -88,12 +70,7 @@ def start(id, data_area_id, log_id, filename, type):
 
     # Удаление данных из таблицы, если идет операция обновления данных
     if type == '1':
-        data_cursor.execute(
-            '''
-            DELETE FROM {0};
-            '''.format(table_name)
-        )
-        data_conn.commit()
+        db_data.delete_data_from_olap(table_name)
 
     count = 1
     errrors = 0
@@ -133,17 +110,10 @@ def start(id, data_area_id, log_id, filename, type):
             names_to_record = ', '.join(str(e[1]) for e in measures)
             data_to_record = ', '.join("'" + str(e) + "'" for e in result)
             try:
-                data_cursor.execute(
-                    '''
-                    INSERT INTO {0} (
-                        {1}
-                    ) VALUES ({2});
-                    '''.format(table_name, names_to_record, data_to_record)
-                    )
-                data_conn.commit()
+                db_data.insret_data_to_olap(table_name, names_to_record, data_to_record)
                 done += 1
             except psycopg2.Error as er:
-                data_conn.rollback()
+                db_data.conn.rollback()
                 ws.write(count, 0, rownum + 1, style1)
                 ws.write(count, 1, str(er.diag.message_primary), style1)
                 errrors += 1
@@ -158,18 +128,10 @@ def start(id, data_area_id, log_id, filename, type):
 
     # Обновление статуса предметной области и измерений
     status = '5'
-    update_data_area_status(status, log_id)
+    db_app.update_data_area_status(status, log_id)
 
     # Сохранение статистики по результатам обработки данных
-    cursor.execute(
-        '''
-        UPDATE data_log SET 
-            errors='{0}',
-            downloads='{1}'
-        WHERE id='{2}';
-        '''.format(errrors, done, log_id)
-    )
-    conn.commit()
+    db_app.update_data_log_stats(errrors, done, log_id)
 
     return status
 

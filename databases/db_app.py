@@ -126,6 +126,29 @@ def update_data_area(name, username, status, id):
         ))
     conn.commit()
 
+# Обновление статуса предметной области
+def update_data_area_status(status, log_id):
+    cursor.execute(
+        '''
+        UPDATE data_log SET 
+            status='{0}'
+        WHERE id='{1}';
+        '''.format(status, log_id)
+        )
+    conn.commit()
+
+# Сохранение статистики по результатам обработки данных
+def update_data_log_stats(errrors, done, log_id):
+    cursor.execute(
+        '''
+        UPDATE data_log SET 
+            errors='{0}',
+            downloads='{1}'
+        WHERE id='{2}';
+        '''.format(errrors, done, log_id)
+    )
+    conn.commit()
+
 # Удаление предметной области
 def delete_data_area(id):
     # Получение свдений о предметной области
@@ -617,6 +640,27 @@ def user_ref_list(user_id):
         '''.format(user_id))
     result = cursor.fetchall()
     return result
+
+# Имя справочника по его идентификатору
+def select_ref_name(ref_id):
+    cursor.execute(
+        '''
+        SELECT data FROM refs WHERE id = '{0}';
+        '''.format(ref_id)
+    )
+    ref_name = cursor.fetchall()[0][0]
+    return ref_name
+
+# Набор колонок из базы
+def select_columns_from_measures(data_area_id):
+    cursor.execute(
+        '''
+        SELECT id, column_name, type, ref_id FROM measures WHERE data_area_id = '{0}';
+        '''.format(data_area_id))
+    result = cursor.fetchall()
+    return result
+
+
 
 # Проверка уникальности имени колонки
 def measures_for_check(column_name, data_area_id):

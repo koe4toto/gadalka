@@ -182,3 +182,23 @@ def delete_column(olap_name, column_name):
         )
     )
     conn.commit()
+
+# Запись данных в куб
+def insret_data_to_olap(table_name, names_to_record, data_to_record):
+    cursor.execute(
+        '''
+        INSERT INTO {0} (
+            {1}
+        ) VALUES ({2});
+        '''.format(table_name, names_to_record, data_to_record)
+    )
+    conn.commit()
+
+# Удаление данных из таблицы
+def delete_data_from_olap(table_name):
+    cursor.execute(
+            '''
+            DELETE FROM {0};
+            '''.format(table_name)
+        )
+    conn.commit()
