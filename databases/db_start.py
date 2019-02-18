@@ -282,3 +282,18 @@ def start_app():
         '''
     )
     conn.commit()
+
+    # Ассоциации
+    cursor.execute(
+        '''
+        CREATE SEQUENCE auto_id_association;
+
+        CREATE TABLE association 
+        (
+            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_association'), 
+            "measure_id_1" integer, 
+            "measure_id_2" integer
+        );
+        '''
+    )
+    conn.commit()
