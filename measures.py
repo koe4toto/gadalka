@@ -9,6 +9,8 @@ import constants
 from forms import *
 import databases.db_app as db_app
 import databases.db_data as db_data
+from itertools import groupby
+
 
 mod = Blueprint('measures', __name__)
 
@@ -306,3 +308,37 @@ def delete_data_measure(measure_id, data_area_id, olap_name, column_name):
 
     return redirect(url_for('data_areas.data_area', id=data_area_id))
 
+# Ассоциации параметра
+@mod.route("/associations/<string:measure_id>", methods =['GET', 'POST'] )
+@is_logged_in
+def assosiations(measure_id):
+    # Получение данных о мере
+    measure = db_app.select_measure(measure_id)
+
+    # Список измерений пользователя
+    measures = [
+        (1, 'Струлья', 'first', 'Первая', 4),
+        (4, 'Люди', 'second', 'Вторая', 7),
+        (2, 'Время', 'first', 'Первая', 4),
+        (5, 'njnj', 'first', 'Первая', 4)
+    ]
+
+    n = len(measures)
+
+    sorted_vehicles = sorted(measures, key=lambda x: x[2])
+    fin = []
+
+    for key, group in groupby(sorted_vehicles, lambda x: x[2]):
+        choices = []
+        for thing in group:
+            choices.append((thing[0], thing[1]))
+        item = [key, 'SelectField', thing[3], choices]
+        fin.append(item)
+
+    # Форма
+    form = FormGenerator(request.form)
+    form = add_form()
+
+    #form = AssosiationsForm(n, *fin, request.form)
+
+    return render_template('associations.html', form=form, measure=measure)

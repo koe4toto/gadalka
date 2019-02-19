@@ -1,6 +1,16 @@
 from wtforms import *
 import constants
 
+# Классы полей ввода
+forrms = {
+    'TextAreaField': TextAreaField,
+    'StringField': StringField,
+    'PasswordField': PasswordField,
+    'RadioField': RadioField,
+    'SelectField': SelectField
+
+}
+
 # Форма создания преметной области
 class DataAreaForm(Form):
     title = StringField('Название',[validators.required(message='Обязательное поле'), validators.Length(min=3, max=200, message='Поле должно содержать не менее 3 и не более 200 знаков')])
@@ -65,3 +75,19 @@ class ProbabilityForm(Form):
 class MeFilterForm(Form):
     test1 = StringField('тест1', [validators.required(message='Обязательное поле')])
     test2 = StringField('тест1', [validators.required(message='Обязательное поле')])
+
+class FormGenerator(Form):
+    pass
+
+# Генератор формы принимает количество полей и список параметров для отображения
+def AssosiationsForm(n, *args):
+
+    for i in range(n):
+        setattr(FormGenerator, args[i][0], RadioField(args[i][2], choices=args[i][3]))
+
+    return FormGenerator()
+
+
+def add_form():
+    setattr(FormGenerator, 'asd', RadioField('asdasd', choices=[('v1', 'd1'), ('v2', 'd2')]))
+    return FormGenerator()
