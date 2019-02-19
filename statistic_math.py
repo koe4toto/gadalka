@@ -339,6 +339,7 @@ def agreg(m):
     measures = []
 
     # Поиск сложных свзяей в списке
+    # TODO переписать с помощью itertools
     for i in models:
         model = [n for n in models if i[0] in n or i[1] in n]
         for i in model:
@@ -357,6 +358,7 @@ def agreg(m):
     remod = []
 
     # Формирование списка идентификаторов парных моделей для каждой многомерной модели
+    # TODO переписать с помощью itertools
     for i in result:
         ids = []
         mea = []
