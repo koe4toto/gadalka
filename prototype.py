@@ -65,7 +65,8 @@ for key, group in groupby(sorted_vehicles, lambda x: x[2]):
     fin.append(item)
 
 # Список полей для формы и их значений
-print(fin)
+for i in fin:
+    print(i)
 print('')
 
 # Форма

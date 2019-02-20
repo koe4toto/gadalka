@@ -2,12 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1719e8ec-808e-4103-a063-fff281569a44" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/templates/associations.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/forms.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/measures.py" beforeDir="false" afterPath="$PROJECT_DIR$/measures.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/measure_quantitative.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/measure_quantitative.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/measure_time.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/measure_time.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prototype.py" beforeDir="false" afterPath="$PROJECT_DIR$/prototype.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -31,7 +28,7 @@
         <counts>
           <entry key="gitignore" value="2" />
           <entry key="html" value="61" />
-          <entry key="py" value="205" />
+          <entry key="py" value="206" />
           <entry key="txt" value="3" />
         </counts>
       </usages-collector>
@@ -40,7 +37,7 @@
           <entry key="HTML" value="61" />
           <entry key="Hoi4 file" value="3" />
           <entry key="PLAIN_TEXT" value="2" />
-          <entry key="Python" value="205" />
+          <entry key="Python" value="206" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.vcs.git.usages" />
@@ -48,14 +45,14 @@
         <counts>
           <entry key="HTML" value="1982" />
           <entry key="PLAIN_TEXT" value="24" />
-          <entry key="Python" value="27533" />
+          <entry key="Python" value="28099" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="24" />
           <entry key="html" value="1982" />
-          <entry key="py" value="27533" />
+          <entry key="py" value="28099" />
         </counts>
       </usages-collector>
     </session>
@@ -65,11 +62,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/measures.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="197">
-              <caret line="339" column="28" selection-start-line="339" selection-start-column="28" selection-end-line="339" selection-end-column="28" />
+            <state relative-caret-position="149">
+              <caret line="332" column="32" selection-start-line="332" selection-start-column="32" selection-end-line="332" selection-end-column="32" />
               <folding>
                 <element signature="e#0#88#0" expanded="true" />
-                <marker date="1550590846796" expanded="true" signature="637:638" ph="..." />
+                <marker date="1550665781744" expanded="true" signature="637:638" ph="..." />
               </folding>
             </state>
           </provider>
@@ -99,24 +96,12 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/prototype.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="68">
-              <caret line="37" column="22" lean-forward="true" selection-start-line="37" selection-start-column="22" selection-end-line="37" selection-end-column="22" />
+            <state relative-caret-position="194">
+              <caret line="67" column="13" lean-forward="true" selection-start-line="67" selection-start-column="13" selection-end-line="67" selection-end-column="13" />
               <folding>
                 <element signature="e#0#16#0" expanded="true" />
-                <marker date="1550583359386" expanded="true" signature="307:309" ph="..." />
-                <marker date="1550583359386" expanded="true" signature="723:729" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/data_areas.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="109">
-              <caret line="184" column="27" selection-start-line="184" selection-start-column="27" selection-end-line="184" selection-end-column="39" />
-              <folding>
-                <element signature="e#0#88#0" expanded="true" />
+                <marker date="1550655005044" expanded="true" signature="307:309" ph="..." />
+                <marker date="1550655005044" expanded="true" signature="723:729" ph="..." />
               </folding>
             </state>
           </provider>
@@ -161,11 +146,23 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/forms.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="248">
-              <caret line="92" column="73" selection-start-line="92" selection-start-column="63" selection-end-line="92" selection-end-column="73" />
+            <state relative-caret-position="163">
+              <caret line="88" column="26" selection-start-line="88" selection-start-column="26" selection-end-line="88" selection-end-column="26" />
               <folding>
                 <element signature="e#0#21#0" expanded="true" />
-                <marker date="1550591114819" expanded="true" signature="3736:3737" ph="..." />
+                <marker date="1550666790727" expanded="true" signature="3817:3818" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/statistic_math.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="259">
+              <caret line="360" column="41" selection-start-line="360" selection-start-column="41" selection-end-line="360" selection-end-column="41" />
+              <folding>
+                <element signature="e#0#38#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -183,7 +180,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>model</find>
       <find>Series</find>
       <find>foo</find>
       <find>cre</find>
@@ -213,6 +209,7 @@
       <find>SELECT * FROM math_models</find>
       <find>data_area</find>
       <find>dbdata</find>
+      <find>defa</find>
     </findStrings>
     <dirStrings>
       <dir>C:\Users\user\Documents\GitHub\gadalka\error_files</dir>
@@ -262,8 +259,8 @@
         <option value="$PROJECT_DIR$/templates/associations.html" />
         <option value="$PROJECT_DIR$/templates/measure_time.html" />
         <option value="$PROJECT_DIR$/templates/measure_quantitative.html" />
-        <option value="$PROJECT_DIR$/measures.py" />
         <option value="$PROJECT_DIR$/prototype.py" />
+        <option value="$PROJECT_DIR$/measures.py" />
         <option value="$PROJECT_DIR$/forms.py" />
       </list>
     </option>
@@ -317,7 +314,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.to_try">
+  <component name="RunManager" selected="Python.prototype">
     <configuration name="loading_queue" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="gadalka" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -360,6 +357,27 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="prototype" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="gadalka" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/prototype.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="to_try" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="gadalka" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -385,9 +403,11 @@
       <item itemvalue="Python.to_try" />
       <item itemvalue="Python.loading_queue" />
       <item itemvalue="Python.model_calculation" />
+      <item itemvalue="Python.prototype" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.prototype" />
         <item itemvalue="Python.to_try" />
         <item itemvalue="Python.loading_queue" />
         <item itemvalue="Python.model_calculation" />
@@ -411,12 +431,12 @@
     <frame x="-7" y="0" width="1378" height="735" extended-state="0" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3294509" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.31447586" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.31447586" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.4" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -748,16 +768,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/statistic_math.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="259">
-          <caret line="360" column="41" selection-start-line="360" selection-start-column="41" selection-end-line="360" selection-end-column="41" />
-          <folding>
-            <element signature="e#0#38#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/templates/measure_qualitative.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="136">
@@ -837,36 +847,46 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/measures.py">
+    <entry file="file://$PROJECT_DIR$/statistic_math.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="197">
-          <caret line="339" column="28" selection-start-line="339" selection-start-column="28" selection-end-line="339" selection-end-column="28" />
+        <state relative-caret-position="259">
+          <caret line="360" column="41" selection-start-line="360" selection-start-column="41" selection-end-line="360" selection-end-column="41" />
           <folding>
-            <element signature="e#0#88#0" expanded="true" />
-            <marker date="1550590846796" expanded="true" signature="637:638" ph="..." />
+            <element signature="e#0#38#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/prototype.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="68">
-          <caret line="37" column="22" lean-forward="true" selection-start-line="37" selection-start-column="22" selection-end-line="37" selection-end-column="22" />
+        <state relative-caret-position="194">
+          <caret line="67" column="13" lean-forward="true" selection-start-line="67" selection-start-column="13" selection-end-line="67" selection-end-column="13" />
           <folding>
             <element signature="e#0#16#0" expanded="true" />
-            <marker date="1550583359386" expanded="true" signature="307:309" ph="..." />
-            <marker date="1550583359386" expanded="true" signature="723:729" ph="..." />
+            <marker date="1550655005044" expanded="true" signature="307:309" ph="..." />
+            <marker date="1550655005044" expanded="true" signature="723:729" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/measures.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="149">
+          <caret line="332" column="32" selection-start-line="332" selection-start-column="32" selection-end-line="332" selection-end-column="32" />
+          <folding>
+            <element signature="e#0#88#0" expanded="true" />
+            <marker date="1550665781744" expanded="true" signature="637:638" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/forms.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="248">
-          <caret line="92" column="73" selection-start-line="92" selection-start-column="63" selection-end-line="92" selection-end-column="73" />
+        <state relative-caret-position="163">
+          <caret line="88" column="26" selection-start-line="88" selection-start-column="26" selection-end-line="88" selection-end-column="26" />
           <folding>
             <element signature="e#0#21#0" expanded="true" />
-            <marker date="1550591114819" expanded="true" signature="3736:3737" ph="..." />
+            <marker date="1550666790727" expanded="true" signature="3817:3818" ph="..." />
           </folding>
         </state>
       </provider>

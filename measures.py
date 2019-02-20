@@ -323,8 +323,6 @@ def assosiations(measure_id):
         (5, 'njnj', 'first', 'Первая', 4)
     ]
 
-    n = len(measures)
-
     sorted_vehicles = sorted(measures, key=lambda x: x[2])
     fin = []
 
@@ -332,13 +330,10 @@ def assosiations(measure_id):
         choices = []
         for thing in group:
             choices.append((thing[0], thing[1]))
-        item = [key, 'SelectField', thing[3], choices]
+        item = [key, 'RadioField', thing[3], choices]
         fin.append(item)
 
     # Форма
-    form = FormGenerator(request.form)
-    form = add_form()
-
-    #form = AssosiationsForm(n, *fin, request.form)
+    form = AssosiationsForm(request.form, fin)
 
     return render_template('associations.html', form=form, measure=measure)

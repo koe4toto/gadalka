@@ -7,7 +7,9 @@ forrms = {
     'StringField': StringField,
     'PasswordField': PasswordField,
     'RadioField': RadioField,
-    'SelectField': SelectField
+    'SelectField': SelectField,
+    'SelectMultipleField': SelectMultipleField,
+    'BooleanField': BooleanField
 
 }
 
@@ -77,17 +79,24 @@ class MeFilterForm(Form):
     test2 = StringField('тест1', [validators.required(message='Обязательное поле')])
 
 class FormGenerator(Form):
+    favor = core.SelectMultipleField(
+        label="По умолчанию",
+        choices=(
+            (1, 'Ап-ап'),
+            (2, 'Два'),
+            (3, 'Три')
+        ),
+        default=2
+    )
     pass
 
 # Генератор формы принимает количество полей и список параметров для отображения
-def AssosiationsForm(n, *args):
+def AssosiationsForm(request, args):
+    value = 2
+    for i in args:
+        setattr(FormGenerator, i[0], forrms[i[1]](i[2], choices=i[3], default=value))
+        print(i[0])
+    FormGenerator.first.default = [(2, 'Время')]
+    return FormGenerator(request)
 
-    for i in range(n):
-        setattr(FormGenerator, args[i][0], RadioField(args[i][2], choices=args[i][3]))
 
-    return FormGenerator()
-
-
-def add_form():
-    setattr(FormGenerator, 'asd', RadioField('asdasd', choices=[('v1', 'd1'), ('v2', 'd2')]))
-    return FormGenerator()
