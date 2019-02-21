@@ -316,12 +316,7 @@ def assosiations(measure_id):
     measure = db_app.select_measure(measure_id)
 
     # Список измерений пользователя
-    measures = [
-        (1, 'Струлья', 'first', 'Первая', 4),
-        (1, 'Люди', 'second', 'Вторая', 7),
-        (4, 'Время', 'first', 'Первая', 4),
-        (5, 'njnj', 'first', 'Первая', 4)
-    ]
+    measures = db_app.select_measures_to_associations(measure_id)
 
     checked = [
         ('first', [1, 5]),
@@ -331,6 +326,7 @@ def assosiations(measure_id):
     sorted_vehicles = sorted(measures, key=lambda x: x[2])
     fin = []
 
+    # Получение списка поле
     for key, group in groupby(sorted_vehicles, lambda x: x[2]):
         choices = []
         for thing in group:
@@ -338,6 +334,7 @@ def assosiations(measure_id):
         item = [key, 'SelectMultipleField', thing[3], choices]
         fin.append(item)
 
+    # Добавление полей в форму
     for i in fin:
         atrname = str(i[0])
         setattr(AssosiationsForm, atrname, forrms[i[1]](i[2], choices=i[3]))
@@ -345,9 +342,20 @@ def assosiations(measure_id):
     # Форма
     form = AssosiationsForm(request.form)
 
-    for i in checked:
-        pole = getattr(form, i[0])
-        pole.process_data(i[1])
+    # Заполнение формы текущими значениями
+    # TODO реализовать запрос в БД за списком ассоциированных параметров и сгрупировать их по ПО
+    #for i in checked:
+        #getattr(form, i[0]).process_data(i[1])
 
+    if request.method == 'POST':
+        # Получение данных из формы
+        result = []
+        for i in fin:
+            dsae = getattr(form, i[0]).data
+            if len(dsae) > 0:
+                result.append([i[0], dsae])
+
+        flash(result, 'success')
+        return redirect(request.url)
 
     return render_template('associations.html', form=form, measure=measure)

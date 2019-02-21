@@ -962,3 +962,22 @@ def select_measures_to_lines(line1, line2):
         '''.format(line1, line2))
     measures = cursor.fetchall()
     return measures
+
+# Сохранение результатов в базу данных. Записываются данные по модели.
+def select_measures_to_associations(measure_id):
+    cursor.execute(
+        '''
+        SELECT 
+            measures.id, 
+            measures.description,
+            data_area.database_table,
+            data_area.name
+        FROM 
+            measures 
+        LEFT JOIN data_area ON measures.data_area_id = data_area.id
+        WHERE measures.id != '{0}'
+        ORDER BY measures.id DESC;
+        '''.format(measure_id)
+    )
+    measures = cursor.fetchall()
+    return measures
