@@ -330,10 +330,14 @@ def assosiations(measure_id):
         choices = []
         for thing in group:
             choices.append((thing[0], thing[1]))
-        item = [key, 'RadioField', thing[3], choices]
+        item = [key, 'SelectMultipleField', thing[3], choices]
         fin.append(item)
 
     # Форма
-    form = AssosiationsForm(request.form, fin)
+    form = AssosiationsForm(request.form)
+    form.chi.process_data(['1', '3'])
+    for i in fin:
+        setattr(AssosiationsForm, i[0], forrms[i[1]](i[2], choices=i[3]))
+
 
     return render_template('associations.html', form=form, measure=measure)

@@ -34,6 +34,15 @@
           </div>
         {% endfor %}
 
+      {% elif field.type == 'SelectMultipleField' %}
+        {{ field.label }}
+        {{ field(class='js-example-basic-multiple form-control') }}
+
+      {% elif field.type == 'SelectField' %}
+        {{ field.label }}
+        {{ field(class='js-example-basic-multiple form-control') }}
+
+
       {% elif field.type == 'FileField' %}
         {{ field.label }}
         {{ field }}

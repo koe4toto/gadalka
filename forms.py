@@ -78,28 +78,12 @@ class MeFilterForm(Form):
     test1 = StringField('тест1', [validators.required(message='Обязательное поле')])
     test2 = StringField('тест1', [validators.required(message='Обязательное поле')])
 
-# TODO беда с выводом чекнутых чекбоксов. Они не выводятся ((( Как быть с мультиселектами не понятно.
-# Использовать мультиселект на фронте.
-class FormGenerator(Form):
-    favor = core.SelectField(
-        label="По умолчанию",
-        choices=(
-            (1, 'Ап-ап'),
-            (2, 'Два'),
-            (3, 'Три')
-        ),
-        default=2
-    )
-    tom = core.BooleanField(label='Вот он', default="checked")
+
+# Аввоциации параметра
+class AssosiationsForm(Form):
+    my_choices = [('1', 'Choice1'), ('2', 'Choice2'), ('3', 'Choice3')]
+    chi = SelectMultipleField(label="ай", choices=my_choices)
     pass
 
-# Генератор формы принимает количество полей и список параметров для отображения
-def AssosiationsForm(request, args):
-    value = 2
-    for i in args:
-        setattr(FormGenerator, i[0], forrms[i[1]](i[2], choices=i[3], default=value))
-        print(i[0])
-    FormGenerator.first.default = [(2, 'Время')]
-    return FormGenerator(request)
 
 
