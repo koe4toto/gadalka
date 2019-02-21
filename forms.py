@@ -78,11 +78,8 @@ class MeFilterForm(Form):
     test1 = StringField('тест1', [validators.required(message='Обязательное поле')])
     test2 = StringField('тест1', [validators.required(message='Обязательное поле')])
 
-
 # Аввоциации параметра
 class AssosiationsForm(Form):
-    my_choices = [('1', 'Choice1'), ('2', 'Choice2'), ('3', 'Choice3')]
-    chi = SelectMultipleField(label="ай", choices=my_choices)
     pass
 
 

@@ -318,9 +318,14 @@ def assosiations(measure_id):
     # Список измерений пользователя
     measures = [
         (1, 'Струлья', 'first', 'Первая', 4),
-        (4, 'Люди', 'second', 'Вторая', 7),
-        (2, 'Время', 'first', 'Первая', 4),
+        (1, 'Люди', 'second', 'Вторая', 7),
+        (4, 'Время', 'first', 'Первая', 4),
         (5, 'njnj', 'first', 'Первая', 4)
+    ]
+
+    checked = [
+        ('first', [1, 5]),
+        ('second', [1])
     ]
 
     sorted_vehicles = sorted(measures, key=lambda x: x[2])
@@ -333,11 +338,16 @@ def assosiations(measure_id):
         item = [key, 'SelectMultipleField', thing[3], choices]
         fin.append(item)
 
+    for i in fin:
+        atrname = str(i[0])
+        setattr(AssosiationsForm, atrname, forrms[i[1]](i[2], choices=i[3]))
+
     # Форма
     form = AssosiationsForm(request.form)
-    form.chi.process_data(['1', '3'])
-    for i in fin:
-        setattr(AssosiationsForm, i[0], forrms[i[1]](i[2], choices=i[3]))
+
+    for i in checked:
+        pole = getattr(form, i[0])
+        pole.process_data(i[1])
 
 
     return render_template('associations.html', form=form, measure=measure)
