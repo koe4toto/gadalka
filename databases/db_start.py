@@ -35,9 +35,100 @@ status = {
             6: 'Обработано'
         }
 
-# Создание таблицы
-def create_table():
-    # Создание таблицы
+# Заполнение справочника
+def update_ref(ref, name):
+    for i in ref:
+        cursor.execute(
+            '''
+            INSERT 
+            INTO ''' + name + ''' (
+                code, 
+                name
+                ) 
+            VALUES (%s, %s);''', (
+                str(i),
+                ref[i]
+            )
+        )
+    conn.commit()
+
+
+# Удаление табицы
+def delate_table(name):
+    cursor.execute(
+        '''
+        DROP TABLE %s;
+        DROP SEQUENCE auto_id_%s;
+        ''', (name, name)
+    )
+    conn.commit()
+
+
+# Удаление данных из таблицы
+def delate_data(name):
+    cursor.execute(
+        '''
+        DELETE FROM {0};
+        '''.format(name)
+    )
+    conn.commit()
+
+
+# Создание таблиц
+def start_app():
+
+    # Ассоциации
+    cursor.execute(
+        '''
+        CREATE SEQUENCE auto_id_association;
+
+        CREATE TABLE association 
+        (
+            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_association'), 
+            "measure_id_1" integer, 
+            "measure_id_2" integer
+        );
+        '''
+    )
+
+    # Сложные связи
+    cursor.execute(
+        '''
+        CREATE SEQUENCE auto_id_complex_models;
+        CREATE SEQUENCE auto_id_complex_model_measures;
+        CREATE SEQUENCE auto_id_complex_model_pairs;
+
+        CREATE TABLE complex_models 
+        (
+            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_complex_models'), 
+            "name" varchar(300), 
+            "description" varchar(600), 
+            "pairs" varchar,
+            "type" integer, 
+            "kind" integer,
+            "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+
+        CREATE TABLE complex_model_measures 
+        (
+            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_complex_model_measures'), 
+            "complex_model_id" integer, 
+            "measure_id" integer, 
+            "data_area_id" integer,
+            "model_type" integer 
+        );
+
+        CREATE TABLE complex_model_pairs 
+        (
+            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_complex_model_pairs'), 
+            "complex_model_id" integer, 
+            "pair_id" integer,
+            "model_type" integer 
+        );
+        '''
+    )
+
+    # Предметные области
     cursor.execute(
         '''
         CREATE SEQUENCE auto_id_data_area;
@@ -61,11 +152,60 @@ def create_table():
         '''
     )
 
-    conn.commit()
+    # История загрузки данных
+    cursor.execute(
+        '''
+        CREATE SEQUENCE auto_id_data_log;
 
-# Создание таблицы
-def create_table_measures():
-    # Создание таблицы
+        CREATE TABLE data_log 
+        (
+            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_data_log'), 
+            "data_area_id" integer, 
+            "errors" varchar(300), 
+            "downloads" varchar(300), 
+            "result" varchar(300), 
+            "status" varchar(300),
+            "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        '''
+    )
+
+    # Справочник гипотез моделей (заполняется разработчиком)
+    cursor.execute(
+        '''
+        CREATE TABLE hypotheses 
+        (
+            "id" integer PRIMARY KEY NOT NULL, 
+            "name" varchar(300), 
+            "description" varchar(300)
+        );
+        '''
+    )
+
+    # Модели
+    cursor.execute(
+        '''
+        CREATE SEQUENCE auto_id_math_models;
+    
+        CREATE TABLE math_models 
+        (
+            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_math_models'), 
+            "hypothesis" integer, 
+            "slope" varchar(300), 
+            "intercept" varchar(300), 
+            "r_value" varchar(300), 
+            "p_value" varchar(300), 
+            "std_err" varchar(300),
+            "xstat_div" varchar(300),
+            "ystat_div" varchar(300),
+            "data_area_id" integer,
+            "area_description_1" integer, 
+            "area_description_2" integer
+        );
+        '''
+    )
+
+    # Параметры
     cursor.execute(
         '''
         CREATE SEQUENCE auto_id_measures;
@@ -111,49 +251,24 @@ def create_table_measures():
         '''
     )
 
-    conn.commit()
-
-# Заполнение справочника
-def update_ref(ref, name):
-    for i in ref:
-        cursor.execute(
-            '''
-            INSERT 
-            INTO ''' + name + ''' (
-                code, 
-                name
-                ) 
-            VALUES (%s, %s);''', (
-                str(i),
-                ref[i]
-            )
-        )
-    conn.commit()
-
-
-# Удаление табицы
-def delate_table(name):
+    # Справочники
     cursor.execute(
         '''
-        DROP TABLE %s;
-        DROP SEQUENCE auto_id_%s;
-        ''', (name, name)
-    )
-    conn.commit()
+        CREATE SEQUENCE auto_id_refs;
 
-
-# Удаление данных из таблицы
-def delate_data(name):
-    cursor.execute(
+        CREATE TABLE refs 
+        (
+            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_refs'), 
+            "name" varchar(100), 
+            "description" varchar(600), 
+            "user_id" varchar(30), 
+            "data" varchar, 
+            "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
         '''
-        DELETE FROM {0};
-        '''.format(name)
     )
-    conn.commit()
 
-# Создание таблицы пользователей
-def create_table_users():
-    # Создание таблицы
+    # Пользователи
     cursor.execute(
         '''
         CREATE SEQUENCE auto_id_users;
@@ -168,132 +283,21 @@ def create_table_users():
         );
         '''
     )
-    conn.commit()
 
-
-# Справочники
-def start_app():
+    # Единицы измерений
     cursor.execute(
         '''
-        CREATE SEQUENCE auto_id_refs;
-    
-        CREATE TABLE refs 
-        (
-            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_refs'), 
+        CREATE SEQUENCE auto_id_unit_of_measurement;
+
+        CREATE TABLE unit_of_measurement (
+            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_unit_of_measurement'), 
             "name" varchar(100), 
-            "description" varchar(600), 
-            "user_id" varchar(30), 
-            "data" varchar, 
+            "short_name" varchar(100), 
+            "type" int, 
             "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
         '''
     )
 
-    # Справочник гипотез моделей (заполняется разработчиком)
-    cursor.execute(
-        '''
-        CREATE TABLE hypotheses 
-        (
-            "id" integer PRIMARY KEY NOT NULL, 
-            "name" varchar(300), 
-            "description" varchar(300)
-        );
-        '''
-    )
-
-    # Модели
-    cursor.execute(
-        '''
-        CREATE SEQUENCE auto_id_math_models;
-    
-        CREATE TABLE math_models 
-        (
-            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_math_models'), 
-            "hypothesis" integer, 
-            "slope" varchar(300), 
-            "intercept" varchar(300), 
-            "r_value" varchar(300), 
-            "p_value" varchar(300), 
-            "std_err" varchar(300),
-            "xstat_div" varchar(300),
-            "ystat_div" varchar(300),
-            "data_area_id" integer,
-            "area_description_1" integer, 
-            "area_description_2" integer
-        );
-        '''
-    )
-    conn.commit()
-
-    # Сложные связи
-    cursor.execute(
-        '''
-        CREATE SEQUENCE auto_id_complex_models;
-        CREATE SEQUENCE auto_id_complex_model_measures;
-        CREATE SEQUENCE auto_id_complex_model_pairs;
-    
-        CREATE TABLE complex_models 
-        (
-            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_complex_models'), 
-            "name" varchar(300), 
-            "description" varchar(600), 
-            "pairs" varchar,
-            "type" integer, 
-            "kind" integer,
-            "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
-    
-        CREATE TABLE complex_model_measures 
-        (
-            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_complex_model_measures'), 
-            "complex_model_id" integer, 
-            "measure_id" integer, 
-            "data_area_id" integer,
-            "model_type" integer 
-        );
-    
-        CREATE TABLE complex_model_pairs 
-        (
-            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_complex_model_pairs'), 
-            "complex_model_id" integer, 
-            "pair_id" integer,
-            "model_type" integer 
-        );
-        '''
-    )
-    conn.commit()
-
-
-    # История загрузки данных
-    cursor.execute(
-        '''
-        CREATE SEQUENCE auto_id_data_log;
-    
-        CREATE TABLE data_log 
-        (
-            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_data_log'), 
-            "data_area_id" integer, 
-            "errors" varchar(300), 
-            "downloads" varchar(300), 
-            "result" varchar(300), 
-            "status" varchar(300),
-            "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
-        '''
-    )
-    conn.commit()
-
-    # Ассоциации
-    cursor.execute(
-        '''
-        CREATE SEQUENCE auto_id_association;
-
-        CREATE TABLE association 
-        (
-            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_association'), 
-            "measure_id_1" integer, 
-            "measure_id_2" integer
-        );
-        '''
-    )
+    # Подтверждение
     conn.commit()
