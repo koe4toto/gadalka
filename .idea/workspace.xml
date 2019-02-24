@@ -2,10 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1719e8ec-808e-4103-a063-fff281569a44" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/databases/db_app.py" beforeDir="false" afterPath="$PROJECT_DIR$/databases/db_app.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/loading_from_file.py" beforeDir="false" afterPath="$PROJECT_DIR$/loading_from_file.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/measures.py" beforeDir="false" afterPath="$PROJECT_DIR$/measures.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/associations.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/associations.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/prototype.py" beforeDir="false" afterPath="$PROJECT_DIR$/prototype.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/measure_quantitative.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/measure_quantitative.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/templates/measure_time.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/measure_time.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -19,42 +22,43 @@
         <counts>
           <entry key="project.closed" value="1" />
           <entry key="project.open.time.10" value="2" />
+          <entry key="project.open.time.11" value="1" />
           <entry key="project.open.time.12" value="2" />
           <entry key="project.open.time.13" value="1" />
           <entry key="project.open.time.16" value="1" />
           <entry key="project.open.time.5" value="1" />
-          <entry key="project.opened" value="7" />
+          <entry key="project.opened" value="8" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="gitignore" value="2" />
-          <entry key="html" value="68" />
-          <entry key="py" value="218" />
+          <entry key="html" value="72" />
+          <entry key="py" value="223" />
           <entry key="txt" value="3" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="HTML" value="68" />
+          <entry key="HTML" value="72" />
           <entry key="Hoi4 file" value="3" />
           <entry key="PLAIN_TEXT" value="2" />
-          <entry key="Python" value="218" />
+          <entry key="Python" value="223" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.vcs.git.usages" />
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="HTML" value="2131" />
+          <entry key="HTML" value="2177" />
           <entry key="PLAIN_TEXT" value="24" />
-          <entry key="Python" value="29315" />
+          <entry key="Python" value="30453" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="24" />
-          <entry key="html" value="2131" />
-          <entry key="py" value="29315" />
+          <entry key="html" value="2177" />
+          <entry key="py" value="30453" />
         </counts>
       </usages-collector>
     </session>
@@ -64,24 +68,31 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/measures.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="64">
-              <caret line="345" column="4" selection-start-line="345" selection-start-column="4" selection-end-line="345" selection-end-column="96" />
+            <state relative-caret-position="231">
+              <caret line="97" column="20" selection-start-line="97" selection-start-column="8" selection-end-line="97" selection-end-column="20" />
               <folding>
                 <element signature="e#0#88#0" expanded="true" />
-                <marker date="1550763109604" expanded="true" signature="637:638" ph="..." />
+                <marker date="1551020173148" expanded="true" signature="637:638" ph="..." />
+                <marker date="1551020173148" expanded="true" signature="10275:10644" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/loading_from_file.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/templates/measure_quantitative.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="255">
-              <caret line="36" column="32" lean-forward="true" selection-start-line="36" selection-start-column="32" selection-end-line="36" selection-end-column="32" />
-              <folding>
-                <element signature="e#0#16#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="77">
+              <caret line="175" column="28" selection-start-line="175" selection-start-column="28" selection-end-line="175" selection-end-column="28" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/templates/data_area.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="170">
+              <caret line="103" column="16" selection-start-line="103" selection-start-column="16" selection-end-line="103" selection-end-column="48" />
             </state>
           </provider>
         </entry>
@@ -89,12 +100,33 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/prototype.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="136">
-              <caret line="53" column="37" lean-forward="true" selection-start-line="53" selection-start-column="37" selection-end-line="53" selection-end-column="37" />
+            <state relative-caret-position="415">
+              <caret line="89" column="42" selection-start-line="89" selection-start-column="42" selection-end-line="89" selection-end-column="42" />
               <folding>
                 <element signature="e#0#16#0" expanded="true" />
-                <marker date="1550655005044" expanded="true" signature="307:309" ph="..." />
-                <marker date="1550655005044" expanded="true" signature="723:729" ph="..." />
+                <marker date="1550961393041" expanded="true" signature="307:309" ph="..." />
+                <marker date="1550961393041" expanded="true" signature="723:729" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/templates/measure_time.html">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="358">
+              <caret line="179" column="8" lean-forward="true" selection-start-line="179" selection-start-column="8" selection-end-line="179" selection-end-column="8" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/loading_from_file.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-1368">
+              <caret line="26" column="18" selection-start-line="26" selection-start-column="18" selection-end-line="26" selection-end-column="18" />
+              <folding>
+                <element signature="e#0#16#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -103,71 +135,41 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/databases/db_app.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="978" column="34" selection-start-line="978" selection-start-column="34" selection-end-line="978" selection-end-column="34" />
+            <state relative-caret-position="217">
+              <caret line="1009" column="4" selection-start-line="1009" selection-start-column="4" selection-end-line="1009" selection-end-column="35" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
-                <marker date="1550756802130" expanded="true" signature="3168:3173" ph="..." />
-                <marker date="1550756802130" expanded="true" signature="3969:3970" ph="..." />
-                <marker date="1550756802130" expanded="true" signature="4833:4838" ph="..." />
-                <marker date="1550756802130" expanded="true" signature="7005:7010" ph="..." />
-                <marker date="1550756802130" expanded="true" signature="7180:7181" ph="..." />
-                <marker date="1550756802130" expanded="true" signature="9376:9381" ph="..." />
-                <marker date="1550756802130" expanded="true" signature="13041:14461" ph="..." />
-                <marker date="1550756802130" expanded="true" signature="14912:14917" ph="..." />
-                <marker date="1550756802130" expanded="true" signature="15148:15153" ph="..." />
-                <marker date="1550756802130" expanded="true" signature="15400:15405" ph="..." />
-                <marker date="1550756802130" expanded="true" signature="15662:15667" ph="..." />
-                <marker date="1550756802130" expanded="true" signature="16302:16307" ph="..." />
-                <marker date="1550756802130" expanded="true" signature="16577:16582" ph="..." />
-                <marker date="1550756802130" expanded="true" signature="16895:16900" ph="..." />
-                <marker date="1550756802130" expanded="true" signature="17567:17572" ph="..." />
-                <marker date="1550756802130" expanded="true" signature="21494:21499" ph="..." />
-                <marker date="1550756802130" expanded="true" signature="21826:21831" ph="..." />
-                <marker date="1550756802130" expanded="true" signature="22538:22543" ph="..." />
-                <marker date="1550756802130" expanded="true" signature="22971:22976" ph="..." />
-                <marker date="1550756802130" expanded="true" signature="23949:23954" ph="..." />
-                <marker date="1550756802130" expanded="true" signature="24856:24861" ph="..." />
+                <marker date="1550961238059" expanded="true" signature="3168:3173" ph="..." />
+                <marker date="1550961238059" expanded="true" signature="3969:3970" ph="..." />
+                <marker date="1550961238059" expanded="true" signature="4833:4838" ph="..." />
+                <marker date="1550961238059" expanded="true" signature="7005:7010" ph="..." />
+                <marker date="1550961238059" expanded="true" signature="7180:7181" ph="..." />
+                <marker date="1550961238059" expanded="true" signature="9376:9381" ph="..." />
+                <marker date="1550961238059" expanded="true" signature="13041:14461" ph="..." />
+                <marker date="1550961238059" expanded="true" signature="14912:14917" ph="..." />
+                <marker date="1550961238059" expanded="true" signature="15148:15153" ph="..." />
+                <marker date="1550961238059" expanded="true" signature="15400:15405" ph="..." />
+                <marker date="1550961238059" expanded="true" signature="15662:15667" ph="..." />
+                <marker date="1550961238059" expanded="true" signature="16302:16307" ph="..." />
+                <marker date="1550961238059" expanded="true" signature="16577:16582" ph="..." />
+                <marker date="1550961238059" expanded="true" signature="16895:16900" ph="..." />
+                <marker date="1550961238059" expanded="true" signature="17567:17572" ph="..." />
+                <marker date="1550961238059" expanded="true" signature="21494:21499" ph="..." />
+                <marker date="1550961238059" expanded="true" signature="21826:21831" ph="..." />
+                <marker date="1550961238059" expanded="true" signature="22538:22543" ph="..." />
+                <marker date="1550961238059" expanded="true" signature="22971:22976" ph="..." />
+                <marker date="1550961238059" expanded="true" signature="23949:23954" ph="..." />
+                <marker date="1550961238059" expanded="true" signature="24856:24861" ph="..." />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/templates/edit_measure.html">
+        <entry file="file://$PROJECT_DIR$/databases/db_queue.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="51">
-              <caret line="3" column="4" selection-start-line="3" selection-start-column="4" selection-end-line="4" selection-end-column="11" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/templates/measures.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="41">
-              <caret line="7" column="4" lean-forward="true" selection-start-line="7" selection-start-column="4" selection-end-line="7" selection-end-column="23" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/databases/db_start.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2248">
-              <caret line="83" column="26" lean-forward="true" selection-start-line="83" selection-start-column="26" selection-end-line="83" selection-end-column="26" />
-              <folding>
-                <element signature="e#0#15#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/templates/associations.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="41">
-              <caret line="23" column="23" selection-start-line="23" selection-start-column="23" selection-end-line="23" selection-end-column="23" />
+            <state relative-caret-position="267">
+              <caret line="118" column="9" selection-start-line="118" selection-start-column="8" selection-end-line="118" selection-end-column="9" />
             </state>
           </provider>
         </entry>
@@ -184,7 +186,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/forms.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state>
+            <state relative-caret-position="-1214">
               <caret column="12" selection-start-column="5" selection-end-column="12" />
             </state>
           </provider>
@@ -202,10 +204,6 @@
   </component>
   <component name="FindInProjectRecents">
     <findStrings>
-      <find>task</find>
-      <find>constants</find>
-      <find>xlrd</find>
-      <find>allowed_file</find>
       <find>sqlvar</find>
       <find>sqllist</find>
       <find>numline</find>
@@ -232,6 +230,10 @@
       <find>default</find>
       <find>&lt;string:id&gt;/</find>
       <find>process</find>
+      <find>upd</find>
+      <find>try:</find>
+      <find>try</find>
+      <find>left</find>
     </findStrings>
     <dirStrings>
       <dir>C:\Users\user\Documents\GitHub\gadalka\error_files</dir>
@@ -276,16 +278,16 @@
         <option value="$PROJECT_DIR$/data_areas.py" />
         <option value="$PROJECT_DIR$/databases/db_start.py" />
         <option value="$PROJECT_DIR$/statistic_math.py" />
-        <option value="$PROJECT_DIR$/templates/measure_time.html" />
-        <option value="$PROJECT_DIR$/templates/measure_quantitative.html" />
-        <option value="$PROJECT_DIR$/prototype.py" />
         <option value="$PROJECT_DIR$/templates/layout.html" />
         <option value="$PROJECT_DIR$/templates/includes/_formtamplate.html" />
         <option value="$PROJECT_DIR$/forms.py" />
-        <option value="$PROJECT_DIR$/databases/db_app.py" />
         <option value="$PROJECT_DIR$/templates/associations.html" />
-        <option value="$PROJECT_DIR$/measures.py" />
         <option value="$PROJECT_DIR$/loading_from_file.py" />
+        <option value="$PROJECT_DIR$/templates/measure_time.html" />
+        <option value="$PROJECT_DIR$/databases/db_app.py" />
+        <option value="$PROJECT_DIR$/prototype.py" />
+        <option value="$PROJECT_DIR$/measures.py" />
+        <option value="$PROJECT_DIR$/templates/measure_quantitative.html" />
       </list>
     </option>
   </component>
@@ -591,20 +593,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/databases/db_data.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1819">
-          <caret line="206" column="4" lean-forward="true" selection-start-line="206" selection-start-column="4" selection-end-line="206" selection-end-column="66" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/databases/db_queue.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2006">
-          <caret line="118" column="4" selection-start-line="118" selection-start-column="4" selection-end-line="118" selection-end-column="25" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/app.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="238">
@@ -619,24 +607,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/loading_queue.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-520">
-          <caret line="10" column="12" selection-start-line="10" selection-start-column="12" selection-end-line="10" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/model_calculation.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-809">
           <caret line="90" column="18" lean-forward="true" selection-start-line="90" selection-start-column="18" selection-end-line="90" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/data_area.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1679">
-          <caret line="133" lean-forward="true" selection-start-line="133" selection-end-line="133" />
         </state>
       </provider>
     </entry>
@@ -675,23 +649,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="174">
           <caret line="828" column="122" selection-start-line="828" selection-start-column="115" selection-end-line="828" selection-end-column="122" />
-          <folding>
-            <element signature="e#0#39#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/measure_time.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="248">
-          <caret line="173" column="61" selection-start-line="173" selection-start-column="61" selection-end-line="173" selection-end-column="61" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/measure_quantitative.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="289">
-          <caret line="17" column="12" lean-forward="true" selection-start-line="17" selection-start-column="12" selection-end-line="17" selection-end-column="43" />
         </state>
       </provider>
     </entry>
@@ -720,9 +677,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="542">
           <caret line="81" column="4" selection-start-line="81" selection-start-column="4" selection-end-line="81" selection-end-column="4" />
-          <folding>
-            <element signature="e#0#88#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -730,9 +684,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="174">
           <caret line="184" column="39" selection-start-line="184" selection-start-column="27" selection-end-line="184" selection-end-column="39" />
-          <folding>
-            <element signature="e#0#88#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -740,9 +691,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-65">
           <caret line="41" column="4" selection-start-line="41" selection-start-column="4" selection-end-line="41" selection-end-column="32" />
-          <folding>
-            <element signature="e#0#88#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -750,51 +698,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="237">
           <caret line="40" column="40" selection-start-line="40" selection-start-column="40" selection-end-line="40" selection-end-column="40" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/forms.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret column="12" selection-start-column="5" selection-end-column="12" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/databases/db_app.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="978" column="34" selection-start-line="978" selection-start-column="34" selection-end-line="978" selection-end-column="34" />
-          <folding>
-            <element signature="e#0#15#0" expanded="true" />
-            <marker date="1550756802130" expanded="true" signature="3168:3173" ph="..." />
-            <marker date="1550756802130" expanded="true" signature="3969:3970" ph="..." />
-            <marker date="1550756802130" expanded="true" signature="4833:4838" ph="..." />
-            <marker date="1550756802130" expanded="true" signature="7005:7010" ph="..." />
-            <marker date="1550756802130" expanded="true" signature="7180:7181" ph="..." />
-            <marker date="1550756802130" expanded="true" signature="9376:9381" ph="..." />
-            <marker date="1550756802130" expanded="true" signature="13041:14461" ph="..." />
-            <marker date="1550756802130" expanded="true" signature="14912:14917" ph="..." />
-            <marker date="1550756802130" expanded="true" signature="15148:15153" ph="..." />
-            <marker date="1550756802130" expanded="true" signature="15400:15405" ph="..." />
-            <marker date="1550756802130" expanded="true" signature="15662:15667" ph="..." />
-            <marker date="1550756802130" expanded="true" signature="16302:16307" ph="..." />
-            <marker date="1550756802130" expanded="true" signature="16577:16582" ph="..." />
-            <marker date="1550756802130" expanded="true" signature="16895:16900" ph="..." />
-            <marker date="1550756802130" expanded="true" signature="17567:17572" ph="..." />
-            <marker date="1550756802130" expanded="true" signature="21494:21499" ph="..." />
-            <marker date="1550756802130" expanded="true" signature="21826:21831" ph="..." />
-            <marker date="1550756802130" expanded="true" signature="22538:22543" ph="..." />
-            <marker date="1550756802130" expanded="true" signature="22971:22976" ph="..." />
-            <marker date="1550756802130" expanded="true" signature="23949:23954" ph="..." />
-            <marker date="1550756802130" expanded="true" signature="24856:24861" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/templates/measure_qualitative.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="51">
-          <caret line="3" column="4" lean-forward="true" selection-start-line="3" selection-start-column="4" selection-end-line="4" selection-end-column="11" />
         </state>
       </provider>
     </entry>
@@ -807,58 +710,146 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/templates/measures.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="41">
-          <caret line="7" column="4" lean-forward="true" selection-start-line="7" selection-start-column="4" selection-end-line="7" selection-end-column="23" />
+        <state relative-caret-position="119">
+          <caret line="7" column="4" selection-start-line="7" selection-start-column="4" selection-end-line="7" selection-end-column="23" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/prototype.py">
+    <entry file="file://$PROJECT_DIR$/templates/associations.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="136">
-          <caret line="53" column="37" lean-forward="true" selection-start-line="53" selection-start-column="37" selection-end-line="53" selection-end-column="37" />
-          <folding>
-            <element signature="e#0#16#0" expanded="true" />
-            <marker date="1550655005044" expanded="true" signature="307:309" ph="..." />
-            <marker date="1550655005044" expanded="true" signature="723:729" ph="..." />
-          </folding>
+        <state relative-caret-position="391">
+          <caret line="23" column="23" selection-start-line="23" selection-start-column="23" selection-end-line="23" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/loading_queue.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="10" column="12" selection-start-line="10" selection-start-column="12" selection-end-line="10" selection-end-column="12" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/databases/db_start.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2248">
-          <caret line="83" column="26" lean-forward="true" selection-start-line="83" selection-start-column="26" selection-end-line="83" selection-end-column="26" />
+        <state relative-caret-position="366">
+          <caret line="293" column="13" lean-forward="true" selection-start-line="293" selection-start-column="13" selection-end-line="293" selection-end-column="25" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/associations.html">
+    <entry file="file://$PROJECT_DIR$/databases/db_data.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="41">
-          <caret line="23" column="23" selection-start-line="23" selection-start-column="23" selection-end-line="23" selection-end-column="23" />
+        <state relative-caret-position="174">
+          <caret line="91" column="9" selection-start-line="91" selection-start-column="7" selection-end-line="91" selection-end-column="9" />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/measures.py">
+    <entry file="file://$PROJECT_DIR$/databases/db_queue.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="64">
-          <caret line="345" column="4" selection-start-line="345" selection-start-column="4" selection-end-line="345" selection-end-column="96" />
-          <folding>
-            <element signature="e#0#88#0" expanded="true" />
-            <marker date="1550763109604" expanded="true" signature="637:638" ph="..." />
-          </folding>
+        <state relative-caret-position="267">
+          <caret line="118" column="9" selection-start-line="118" selection-start-column="8" selection-end-line="118" selection-end-column="9" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/measure_qualitative.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="51">
+          <caret line="3" column="4" lean-forward="true" selection-start-line="3" selection-start-column="4" selection-end-line="4" selection-end-column="11" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/measure_time.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="358">
+          <caret line="179" column="8" lean-forward="true" selection-start-line="179" selection-start-column="8" selection-end-line="179" selection-end-column="8" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/loading_from_file.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="255">
-          <caret line="36" column="32" lean-forward="true" selection-start-line="36" selection-start-column="32" selection-end-line="36" selection-end-column="32" />
+        <state relative-caret-position="-1368">
+          <caret line="26" column="18" selection-start-line="26" selection-start-column="18" selection-end-line="26" selection-end-column="18" />
           <folding>
             <element signature="e#0#16#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/databases/db_app.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="217">
+          <caret line="1009" column="4" selection-start-line="1009" selection-start-column="4" selection-end-line="1009" selection-end-column="35" />
+          <folding>
+            <element signature="e#0#15#0" expanded="true" />
+            <marker date="1550961238059" expanded="true" signature="3168:3173" ph="..." />
+            <marker date="1550961238059" expanded="true" signature="3969:3970" ph="..." />
+            <marker date="1550961238059" expanded="true" signature="4833:4838" ph="..." />
+            <marker date="1550961238059" expanded="true" signature="7005:7010" ph="..." />
+            <marker date="1550961238059" expanded="true" signature="7180:7181" ph="..." />
+            <marker date="1550961238059" expanded="true" signature="9376:9381" ph="..." />
+            <marker date="1550961238059" expanded="true" signature="13041:14461" ph="..." />
+            <marker date="1550961238059" expanded="true" signature="14912:14917" ph="..." />
+            <marker date="1550961238059" expanded="true" signature="15148:15153" ph="..." />
+            <marker date="1550961238059" expanded="true" signature="15400:15405" ph="..." />
+            <marker date="1550961238059" expanded="true" signature="15662:15667" ph="..." />
+            <marker date="1550961238059" expanded="true" signature="16302:16307" ph="..." />
+            <marker date="1550961238059" expanded="true" signature="16577:16582" ph="..." />
+            <marker date="1550961238059" expanded="true" signature="16895:16900" ph="..." />
+            <marker date="1550961238059" expanded="true" signature="17567:17572" ph="..." />
+            <marker date="1550961238059" expanded="true" signature="21494:21499" ph="..." />
+            <marker date="1550961238059" expanded="true" signature="21826:21831" ph="..." />
+            <marker date="1550961238059" expanded="true" signature="22538:22543" ph="..." />
+            <marker date="1550961238059" expanded="true" signature="22971:22976" ph="..." />
+            <marker date="1550961238059" expanded="true" signature="23949:23954" ph="..." />
+            <marker date="1550961238059" expanded="true" signature="24856:24861" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/prototype.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="415">
+          <caret line="89" column="42" selection-start-line="89" selection-start-column="42" selection-end-line="89" selection-end-column="42" />
+          <folding>
+            <element signature="e#0#16#0" expanded="true" />
+            <marker date="1550961393041" expanded="true" signature="307:309" ph="..." />
+            <marker date="1550961393041" expanded="true" signature="723:729" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/forms.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1214">
+          <caret column="12" selection-start-column="5" selection-end-column="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/measures.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="231">
+          <caret line="97" column="20" selection-start-line="97" selection-start-column="8" selection-end-line="97" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#88#0" expanded="true" />
+            <marker date="1551020173148" expanded="true" signature="637:638" ph="..." />
+            <marker date="1551020173148" expanded="true" signature="10275:10644" ph="..." />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/measure_quantitative.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="77">
+          <caret line="175" column="28" selection-start-line="175" selection-start-column="28" selection-end-line="175" selection-end-column="28" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/data_area.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="170">
+          <caret line="103" column="16" selection-start-line="103" selection-start-column="16" selection-end-line="103" selection-end-column="48" />
         </state>
       </provider>
     </entry>

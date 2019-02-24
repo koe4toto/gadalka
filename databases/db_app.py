@@ -981,3 +981,45 @@ def select_measures_to_associations(measure_id):
     )
     measures = cursor.fetchall()
     return measures
+
+
+# Сохранение ассоциаций
+def insert_associations(measure_id, associations):
+    try:
+        cursor.execute(
+            '''
+            DELETE FROM association WHERE measure_id_1 = '{0}' OR measure_id_2 = '{0}';
+            '''.format(measure_id)
+        )
+        conn.commit()
+    except:
+        pass
+
+    for i in associations:
+        cursor.execute(
+                '''
+                INSERT INTO association (
+                    measure_id_1, 
+                    measure_id_2
+                ) VALUES ('{0}', '{1}');
+                '''.format(i, measure_id)
+        )
+        conn.commit()
+
+# Сохранение ассоциаций
+def select_associations(measure_id):
+    cursor.execute(
+        '''
+        WITH first_associations AS (
+            SELECT (measure_id_1 + measure_id_2 - {0}) as my_list
+            FROM association
+            WHERE association.measure_id_1 = '{0}' OR association.measure_id_2 ='{0}'
+            )
+        SELECT measures.id, measures.description, data_area.database_table, data_area.name, measures.data_area_id 
+        FROM first_associations
+        LEFT JOIN measures ON first_associations.my_list = measures.id
+        LEFT JOIN data_area ON measures.data_area_id = data_area.id;
+        '''.format(measure_id)
+    )
+    result = cursor.fetchall()
+    return result

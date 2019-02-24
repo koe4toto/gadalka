@@ -82,6 +82,9 @@ def measure_quantitative(data_asrea_id, id):
     # Данные для графика распределения
     d = db_data.distribution(column_name, olap_name, ui_limit)
 
+    # Список ассоциированных параметров
+    now_associations = db_app.select_associations(id)
+
     # Формирование графика распределения
     da = [i[0] for i in d]
     data = sm.Series(da).freq_line_view()
@@ -91,7 +94,8 @@ def measure_quantitative(data_asrea_id, id):
         id=id,
         measure=measure,
         data=data,
-        pairs=pairs
+        pairs=pairs,
+        associations=now_associations
     )
 
 # Карточка параметра времени
@@ -308,21 +312,7 @@ def delete_data_measure(measure_id, data_area_id, olap_name, column_name):
 
     return redirect(url_for('data_areas.data_area', id=data_area_id))
 
-# Ассоциации параметра
-@mod.route("/associations/<string:measure_id>", methods =['GET', 'POST'] )
-@is_logged_in
-def assosiations(measure_id):
-    # Получение данных о мере
-    measure = db_app.select_measure(measure_id)
-
-    # Список измерений пользователя
-    measures = db_app.select_measures_to_associations(measure_id)
-
-    checked = [
-        ('first', [1, 5]),
-        ('second', [1])
-    ]
-
+def dassosiations_group(measures):
     sorted_vehicles = sorted(measures, key=lambda x: x[2])
     fin = []
 
@@ -334,6 +324,20 @@ def assosiations(measure_id):
         item = [key, 'SelectMultipleField', thing[3], choices]
         fin.append(item)
 
+    return fin
+
+# Ассоциации параметра
+@mod.route("/associations/<string:measure_id>", methods =['GET', 'POST'] )
+@is_logged_in
+def assosiations(measure_id):
+    # Получение данных о мере
+    measure = db_app.select_measure(measure_id)
+
+    # Список измерений пользователя
+    measures = db_app.select_measures_to_associations(measure_id)
+
+    fin = dassosiations_group(measures)
+
     # Добавление полей в форму
     for i in fin:
         atrname = str(i[0])
@@ -342,20 +346,40 @@ def assosiations(measure_id):
     # Форма
     form = AssosiationsForm(request.form)
 
-    # Заполнение формы текущими значениями
-    # TODO реализовать запрос в БД за списком ассоциированных параметров и сгрупировать их по ПО
-    #for i in checked:
-        #getattr(form, i[0]).process_data(i[1])
+    # Текущий набор ассоциаций
+    now_associations = db_app.select_associations(measure_id)
+    checked = dassosiations_group(now_associations)
 
+    # Заполнение формы текущими значениями
+    for i in checked:
+        n = [m[0] for m in i[3]]
+        getattr(form, i[0]).default = n
+    form.process()
+
+    # Обработка данных из формы
     if request.method == 'POST':
         # Получение данных из формы
+        form.process(request.form)
+
+        # Перечень идентификаторов ассоциированных параметров
         result = []
         for i in fin:
-            dsae = getattr(form, i[0]).data
-            if len(dsae) > 0:
-                result.append([i[0], dsae])
+            me_ids = getattr(form, i[0]).data
+            if len(me_ids) > 0:
+                for ids in me_ids:
+                    result.append(ids)
 
-        flash(result, 'success')
-        return redirect(request.url)
+        # Сохранние данных об ассоциациях
+        db_app.insert_associations(measure_id, result)
+
+        # Запуск расчета сложных связей
+        multiple_models_auto_calc()
+
+        if measure[0][4] == 1:
+            return redirect(url_for('measures.measure_quantitative', data_asrea_id = measure[0][3], id=measure[0][0]))
+        elif measure[0][4] == 2 or measure[0][4] == 3:
+            return redirect(url_for('measures.measure_qualitative', data_asrea_id=measure[0][3], id=measure[0][0]))
+        else:
+            return redirect(url_for('measures.measure_time', data_asrea_id=measure[0][3], id=measure[0][0]))
 
     return render_template('associations.html', form=form, measure=measure)

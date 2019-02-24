@@ -54,6 +54,19 @@ measures = [
     (5, 'njnj', 'first', 'Первая', 4)
 ]
 
+'''
+WITH first_associations AS (
+    SELECT (measure_id_1 + measure_id_2 - 48) as my_list
+    FROM association
+    WHERE association.measure_id_1 = '48' OR association.measure_id_2 ='48'
+    )
+SELECT measures.id, measures.description, data_area.database_table, data_area.name, measures.data_area_id 
+FROM first_associations
+LEFT JOIN measures ON first_associations.my_list = measures.id
+LEFT JOIN data_area ON measures.data_area_id = data_area.id
+;
+'''
+
 sorted_vehicles = sorted(measures, key=lambda x:x[2])
 fin = []
 
@@ -64,10 +77,16 @@ for key, group in groupby(sorted_vehicles, lambda x: x[2]):
     item = [key, 'StringField', thing[3], choices]
     fin.append(item)
 
-# Список полей для формы и их значений
-for i in fin:
-    print(i)
-print('')
-
 # Форма
 Form(2, *fin)
+measures = db_app.select_associations(48)
+
+sorted_vehicles = sorted(measures, key=lambda x:x[2])
+fin = []
+
+for key, group in groupby(sorted_vehicles, lambda x: x[2]):
+    choices = []
+    for thing in group:
+        choices.append((thing[0], thing[1]))
+    item = [key, 'StringField', thing[3], choices]
+    fin.append(item)
