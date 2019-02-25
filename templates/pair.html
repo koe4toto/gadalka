@@ -1,10 +1,11 @@
 {% extends 'layout.html' %}
 
 {% block body %}
+
 <h1>{{ maesures[0][2] }} и {{ maesures[1][2] }}</h1>
 <br>
 <div class="row">
-    <div class="col-md-9">
+    <div class="col-md-9 content">
       <br>
       <h4>График модели</h4>
 
@@ -166,8 +167,9 @@
     </table>
 
   </div>
-    <div class="col-md-3 ml-auto">
+        <div class="col-md-3 ml-auto">
           <br>
+        <div class="sticky-top" style="top:80px;">
           <h4>Модели</h4>
         <ul class="list-group list-group-flush">
         {% for i in list_models %}
@@ -180,8 +182,8 @@
           </a>
         {% endfor %}
         </ul>
-        </nav>
+        </div>
       </div>
-    </div>
+  </div>
 <br>
 {% endblock %}
