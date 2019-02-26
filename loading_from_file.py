@@ -64,8 +64,8 @@ def start(id, data_area_id, log_id, filename, type):
     ws = wb.add_sheet('Main')
 
     # Название таблицы, в которую записывать данные
-    db_da = db_app.data_area()
-    table_name = db_da.data_area(data_area_id)[0][5]
+    db_da = db_app.data_area(data_area_id)
+    table_name = db_da[0][5]
 
     # Удаление данных из таблицы, если идет операция обновления данных
     if type == '1':
