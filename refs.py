@@ -201,3 +201,12 @@ def update_ref(id):
 
 
     return render_template('update_ref.html', form=form)
+
+
+# Справочник единиц измерений
+@mod.route("/unit_of_measurement/")
+@is_logged_in
+def unit_of_measurement():
+    # Список справочников
+    ref_list = db_app.ref_list()
+    return render_template('unit_of_measurement.html', list = ref_list)
