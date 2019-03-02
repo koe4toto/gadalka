@@ -204,9 +204,87 @@ def update_ref(id):
 
 
 # Справочник единиц измерений
-@mod.route("/unit_of_measurement/")
+@mod.route("/units_of_measurement/")
 @is_logged_in
-def unit_of_measurement():
+def units_of_measurement():
     # Список справочников
-    ref_list = db_app.ref_list()
-    return render_template('unit_of_measurement.html', list = ref_list)
+    ref_list = db_app.unit_of_measurement_list()
+    return render_template('units_of_measurement.html', list = ref_list)
+
+# Справочник единиц измерений
+@mod.route("/unit_of_measurement/<string:id>")
+@is_logged_in
+def unit_of_measurement(id):
+    # Единица измерения
+    unit_of_measurement_item = db_app.unit_of_measurement_item(id)
+
+    # Список параметров с таким единицами измерения
+    columns = []
+
+    # ПРоверка на возможность удалять единицу
+    if len(columns) > 0:
+        is_delete = False
+    else:
+        is_delete = True
+    return render_template(
+        'unit_of_measurement.html',
+        list = unit_of_measurement_item,
+        columns=columns,
+        is_delete=is_delete
+    )
+
+
+@mod.route("/add_unit_of_measurement", methods =['GET', 'POST'] )
+@is_logged_in
+def add_unit_of_measurement():
+    form = UnitOfMeasurement(request.form)
+    if request.method == 'POST' and form.validate():
+        name = form.name.data
+        short_name = form.short_name.data
+
+        # Запись в базу данных
+        id = db_app.create_unit_of_measurement(name, short_name, 1)[0][0]
+
+        flash('Единица измерения добавлена ', 'success')
+        return redirect(url_for('refs.unit_of_measurement', id=id))
+    return render_template('add_unit_of_measurement.html', form=form)
+
+# Редактироваение справочника
+@mod.route("/edit_unit_of_measurement/<string:id>", methods =['GET', 'POST'] )
+@is_logged_in
+def edit_unit_of_measurement(id):
+    # Данные об измерении
+    result = db_app.unit_of_measurement_item(id)
+
+    # Форма заполняется данными из базы
+    form = UnitOfMeasurement(request.form)
+    form.name.data = result[0][1]
+    form.short_name.data = result[0][2]
+
+    if request.method == 'POST':
+        # Получение данных из формы
+        form.name.data = request.form['name']
+        form.short_name.data = request.form['short_name']
+
+        # Если данные из формы валидные
+        if form.validate():
+
+            # Обновление базе данных
+            db_app.update_unit_of_measurement(form.name.data, form.short_name.data, id)
+
+            flash('Данные обновлены', 'success')
+            return redirect(url_for('refs.unit_of_measurement', id=id))
+
+    return render_template('edit_unit_of_measurement.html', form=form, unit=result[0])
+
+# Удаление измерения
+@mod.route('/delete_unit_of_measurement/<string:id>', methods=['POST'])
+@is_logged_in
+def delete_unit_of_measurement(id):
+
+    # Удаление записи о справочнике
+    db_app.delete_unit_of_measurement(id)
+
+    flash('Единица измерения удалена', 'success')
+
+    return redirect(url_for('refs.units_of_measurement'))

@@ -94,6 +94,22 @@ def create_data_area(name, description, user_id, status):
 
     return olap_name, data_base_id
 
+
+def create_unit_of_measurement(name, short_name, type):
+    cursor.execute(
+        '''
+        INSERT INTO unit_of_measurement(
+            name, 
+            short_name, 
+            type
+        ) VALUES ('{0}', '{1}', '{2}')
+        RETURNING id;
+        '''.format(name, short_name, type)
+    )
+    conn.commit()
+    result = cursor.fetchall()
+    return result
+
 # Редактирование предметной области
 def update_data_area_olap_name(olap_name, data_base_id):
     cursor.execute(
@@ -440,6 +456,26 @@ def user_ref_list(user_id):
     result = cursor.fetchall()
     return result
 
+# Список единиц измерений
+def unit_of_measurement_list():
+    cursor.execute(
+        '''
+        SELECT * FROM unit_of_measurement;
+        '''
+    )
+    result = cursor.fetchall()
+    return result
+
+# Еадиниц измерения
+def unit_of_measurement_item(id):
+    cursor.execute(
+        '''
+        SELECT * FROM unit_of_measurement WHERE id = '{0}';
+        '''.format(id)
+    )
+    result = cursor.fetchall()
+    return result
+
 # Справочник
 def ref_data(id):
     cursor.execute(
@@ -457,6 +493,12 @@ def insert_ref(name, description, user, table_name):
         INSERT INTO refs (name, description, user_id, data) VALUES ('{0}', '{1}', '{2}', '{3}');
         '''.format(name, description, user, table_name)
     )
+    conn.commit()
+
+# Удаление единицы измерения
+def delete_unit_of_measurement(id):
+    # Удаление записи о справочнике
+    cursor.execute('''DELETE FROM unit_of_measurement WHERE id = '{0}';'''.format(id))
     conn.commit()
 
 # Удаление справочника
@@ -479,6 +521,15 @@ def update_ref(name, description, id):
         '''
         UPDATE refs SET name='{0}', description='{1}' WHERE id='{2}';
         '''.format(name, description, id)
+    )
+    conn.commit()
+
+# Обновление единицы измерения
+def update_unit_of_measurement(name, short_name, id):
+    cursor.execute(
+        '''
+        UPDATE unit_of_measurement SET name='{0}', short_name='{1}' WHERE id='{2}';
+        '''.format(name, short_name, id)
     )
     conn.commit()
 

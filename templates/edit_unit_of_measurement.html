@@ -1,0 +1,22 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <a class="text-secondary" href="/units_of_measurement">Единицы измерений</a><br>
+    &#8595;<br>
+    <a class="text-secondary" href="/unit_of_measurement/{{ unit[0] }}">{{ unit[1] }}</a><br>
+    &#8595;
+    <h1>Редактированиеи единицы измерения</h1>
+    {% from "includes/_formtamplate.html" import form_render %}
+    <div class="row">
+        <div class="col-6">
+            <form method="POST" action="">
+                {{ form_render(form) }}
+                <p>
+                    <input type="submit" class="btn btn-primary" value="Сохранить">
+                    <a class="btn btn-link" onclick="javascript:history.back(-2); return false;">Отменить</a>
+                </p>
+
+            </form>
+        </div>
+    </div>
+{% endblock %}

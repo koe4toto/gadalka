@@ -10,7 +10,6 @@ forrms = {
     'SelectField': SelectField,
     'SelectMultipleField': SelectMultipleField,
     'BooleanField': BooleanField
-
 }
 
 # Форма создания преметной области
@@ -83,4 +82,7 @@ class AssosiationsForm(Form):
     pass
 
 
-
+# Форма единицы измерения
+class UnitOfMeasurement(Form):
+    name = StringField('Название', [validators.required(message='Обязательное поле')])
+    short_name = StringField('Сокращенное название', [validators.required(message='Обязательное поле')])

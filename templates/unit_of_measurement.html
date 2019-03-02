@@ -1,17 +1,49 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-    <h1>Справочник единиц измерений <a class="btn btn-outline-primary" href="/add_ref"><i class="fas fa-plus"></i> Добавить запись</a></h1>
-    <br>
-    <div class="list-group ">
-    {% for i in list %}
-      <a href="ref/{{ i[0] }}" class="list-group-item list-group-item-action flex-column align-items-start">
-        <div class="d-flex w-100 justify-content-between">
-          <h5 class="mb-1 text-primary">{{ i[1] }}</h5>
+    <a class="text-secondary" href="/units_of_measurement">Единицы измерений</a><br>
+    &#8595;
+    <div class="row">
+      <div class="col-10">
+          <h1>{{ list[0][1] }}</h1>
+      </div>
+        {% if is_delete == True %}
+        <div class="col-2">
+          <form action="{{url_for('refs.delete_unit_of_measurement', id=list[0][0])}}" method="post">
+              <input type="hidden" name="_method" value="DELETE">
+              <input type="submit" value=" Удалить" class="btn btn-link float-right text-danger">
+          </form>
         </div>
-          <p class="mb-1">{{ i[2] }}</p>
-      </a>
-    {% endfor %}
+        {% endif %}
     </div>
+
+<p  class="lead">Сокращенное название: <b>{{ list[0][2] }}</b></p>
+    <a class="btn btn-outline-primary" href="/edit_unit_of_measurement/{{ list[0][0] }}"><i class="fas fa-pencil-alt"></i> Редактировать</a>
+
+    <hr>
+    <br>
+    <h2>Используется</h2>
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">Код</th>
+          <th scope="col">Значение</th>
+          <th scope="col">Родительcкий элемент</th>
+        </tr>
+      </thead>
+      <tbody>
+      {% for i in columns %}
+        <tr>
+          <td>{{ i[0] }}</td>
+          <td>{{ i[1] }}</td>
+          <td>{{ i[2] }}</td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+
+
+
+
 
 {% endblock %}
