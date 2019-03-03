@@ -728,7 +728,7 @@ def measures_for_check(column_name, data_area_id):
     return result
 
 # Добавление записи об измерении по справочнику
-def insetr_measure(
+def insetr_measure_ref(
         column_name,
         description,
         data_area_id,
@@ -769,7 +769,32 @@ def ref_name(ref):
     return ref_name
 
 # Добавление записи об измерении
-def insetr_measure_ref(column_name, description, data_area_id, type, status):
+def insetr_measure_qualitative(column_name, description, data_area_id, type, status, uom):
+    cursor.execute(
+        '''
+        INSERT INTO measures (
+            column_name, 
+            description, 
+            data_area_id, 
+            type, 
+            status,
+            unit_of_measurement) 
+        VALUES ('{0}', '{1}', '{2}', '{3}', '{4}', '{5}') RETURNING id;
+        '''.format(
+            column_name,
+            description,
+            data_area_id,
+            type,
+            status,
+            uom
+        )
+    )
+    conn.commit()
+    meg_id = cursor.fetchall()
+    return meg_id
+
+# Добавление записи об измерении
+def insetr_measure(column_name, description, data_area_id, type, status):
     cursor.execute(
         '''
         INSERT INTO measures (

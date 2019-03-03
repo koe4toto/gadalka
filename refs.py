@@ -207,7 +207,7 @@ def update_ref(id):
 @mod.route("/units_of_measurement/")
 @is_logged_in
 def units_of_measurement():
-    # Список справочников
+    # Список единиц измерений
     ref_list = db_app.unit_of_measurement_list()
     return render_template('units_of_measurement.html', list = ref_list)
 

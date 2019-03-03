@@ -74,7 +74,7 @@ def measure_quantitative(data_asrea_id, id):
     ui_limit = 500
 
     # Название таблицы с данными
-    olap_name = measure[0][26]
+    olap_name = measure[0][27]
 
     # Название колонки с данными
     column_name = measure[0][1]
@@ -152,6 +152,8 @@ def add_measure(data_area_id, type):
 
     data_area = db_app.data_area(data_area_id)
 
+    unit_list = db_app.unit_of_measurement_list()
+
     if type == '3':
         # Список справочников пользователя
         user_id = str(session['user_id'])
@@ -159,6 +161,10 @@ def add_measure(data_area_id, type):
         dif = [(str(i[0]), str(i[1])) for i in result]
         form = RefMeasureForm(request.form)
         form.ref.choices = dif
+    elif type == '1':
+        form = QualMeasureForm(request.form)
+        unit = [(str(i[0]), str(i[1])) for i in unit_list]
+        form.unit_of_measurement.choices = unit
     else:
         form = MeasureForm(request.form)
 
@@ -180,24 +186,28 @@ def add_measure(data_area_id, type):
                 ref = form.ref.data
 
                 # Сохранение данных
-                try:
-                    meg_id = db_app.insetr_measure(column_name, description, data_area_id, type, status, ref)
-
-                except:
-                    flash('Колонка с таким именем уже существует', 'success')
-                    return redirect(url_for('data_areas.data_area', id=data_area_id))
+                meg_id = db_app.insetr_measure_ref(column_name, description, data_area_id, type, status, ref)
 
                 ref_name = db_app.ref_name(ref)
 
                 # Сооздание колонки
                 db_data.add_ref_column(data_area[0][5], column_name, constants.TYPE_OF_MEASURE[int(type)], ref_name)
 
-            else:
+            elif type == '1':
+                uom = form.unit_of_measurement.data
+
                 # Сохранение данных
-                meg_id = db_app.insetr_measure_ref(column_name, description, data_area_id, type, status)
+                meg_id = db_app.insetr_measure_qualitative(column_name, description, data_area_id, type, status, uom)
 
                 # Сооздание колонки
                 db_data.add_column(data_area[0][5], column_name, constants.TYPE_OF_MEASURE[int(type)])
+            else:
+                # Сохранение данных
+                meg_id = db_app.insetr_measure(column_name, description, data_area_id, type, status)
+
+                # Сооздание колонки
+                db_data.add_column(data_area[0][5], column_name, constants.TYPE_OF_MEASURE[int(type)])
+
 
             # Измерения для форимрования пар с новым параметром
             megs_a = db_app.select_measures_for_models(str(meg_id[0][0]), data_area_id)
@@ -231,10 +241,10 @@ def edit_measure(data_area_id, measure_id):
     result = db_app.select_measure(measure_id)[0]
 
     # Имя предметной области для хлебной крошки
-    data_area_name = result[22]
+    data_area_name = result[23]
 
     # Имя таблицы хранения данных предметной области
-    olap_name = result[26]
+    olap_name = result[27]
 
     # Тип измерения
     type = str(result[4])
@@ -258,6 +268,7 @@ def edit_measure(data_area_id, measure_id):
 
 
     if request.method == 'POST':
+        form.process(request.form)
         # Получение данных из формы
         description = request.form['description']
         column_name = request.form['column_name']

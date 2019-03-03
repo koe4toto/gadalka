@@ -2,27 +2,24 @@
 
 {% block body %}
   <h1>Сводка </h1>
+  <a class="btn btn-outline-primary" href="/add_data_area"><i class="fas fa-plus"></i> Добавить новую предметную область</a>
   <div class="btn-group" role="group" aria-label="Basic example">
     <a class="btn btn-secondary" href="/refs">Справочники</a>
     <a class="btn btn-secondary" href="/units_of_measurement">Единицы измерений</a>
-    <a class="btn btn-secondary" href="/data_areas">Загрузки</a>
+    <a class="btn btn-secondary" href="/data_log">Загрузки</a>
   </div>
   <hr>
 <div class="row">
   <div class="col-sm-4">
   <div class="card bg-light">
   <div class="card-body">
-    <h5 class="card-title">Предметные области</h5>
+    <a href="/data_areas" class="card-link"><h5 class="card-title">Предметные области</h5></a>
   </div>
   <ul class="list-group list-group-flush">
     {% for i in data_areas %}
       <li class="list-group-item bg-light"><a href="data_area/{{ i[0] }}" class="card-link text-dark">{{ i[1] }}</a></li>
     {% endfor %}
   </ul>
-  <div class="card-body">
-    <a href="/add_data_area" class="btn btn-outline-primary"><i class="fas fa-plus-square"></i> Добавить</a>
-    <a href="/data_areas" class="btn btn-link">Смотреть все</a>
-  </div>
 </div>
   </div>
   <div class="col-sm-4">

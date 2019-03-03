@@ -233,7 +233,8 @@ def start_app():
             "std" varchar,
             "var" varchar,
             "sem" varchar,
-            "iqr" varchar
+            "iqr" varchar,
+            "unit_of_measurement" int
 
         );
 

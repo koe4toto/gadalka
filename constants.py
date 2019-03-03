@@ -15,7 +15,7 @@ AREA_DESCRIPTION_TYPE = {'Мера': '1', 'Время': '2', 'Справочни
 KIND_OF_METERING = [('1', 'Дискретная'), ('2', 'Непрерывная')]
 TYPE_OF_MEASURE = {
     1: 'REAL',
-    2: 'VARCHAR NOT NULL',
+    2: 'VARCHAR',
     3: 'VARCHAR references',
     4: 'TIME',
     5: 'DATE',

@@ -42,6 +42,12 @@ class MeasureForm(Form):
     column_name = StringField('Название колонки в таблице', [validators.required(message='Обязательное поле')])
     description = StringField('Название парамтера', [validators.required(message='Обязательное поле')])
 
+# Форма создания меры
+class QualMeasureForm(Form):
+    column_name = StringField('Название колонки в таблице', [validators.required(message='Обязательное поле')])
+    description = StringField('Название парамтера', [validators.required(message='Обязательное поле')])
+    unit_of_measurement = SelectField('Единицы измерения')
+
 # Форма создания измерения-справочника
 class RefMeasureForm(Form):
     column_name = StringField('Название колонки в таблице', [validators.required(message='Обязательное поле')])
