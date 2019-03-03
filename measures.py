@@ -152,6 +152,7 @@ def add_measure(data_area_id, type):
 
     data_area = db_app.data_area(data_area_id)
 
+    # Список единиц измерений
     unit_list = db_app.unit_of_measurement_list()
 
     if type == '3':
@@ -249,6 +250,9 @@ def edit_measure(data_area_id, measure_id):
     # Тип измерения
     type = str(result[4])
 
+    # Список единиц измерений
+    unit_list = db_app.unit_of_measurement_list()
+
     # Форма заполняется данными из базы
     if type == '3':
         # Список справочников пользователя
@@ -258,6 +262,11 @@ def edit_measure(data_area_id, measure_id):
         form = RefMeasureForm(request.form)
         form.ref.choices = dif
         form.ref.default = result[6]
+    elif type == '1':
+        form = QualMeasureForm(request.form)
+        unit = [(str(i[0]), str(i[1])) for i in unit_list]
+        form.unit_of_measurement.choices = unit
+        form.unit_of_measurement.default = result[21]
     else:
         form = MeasureForm(request.form)
 
@@ -282,26 +291,26 @@ def edit_measure(data_area_id, measure_id):
         else:
             if type == '3':
                 refiii = str(request.form['ref'])
+
                 # Обновление базе данных
                 db_app.update_measure_with_ref(description, column_name, refiii, measure_id)
 
-                if column_name != result[1]:
-                    # Переименование колонки
-                    db_data.update_column(olap_name, result[1], column_name)
+            elif type == '1':
+                uom = str(request.form['unit_of_measurement'])
 
-                flash('Данные обновлены', 'success')
-                return redirect(url_for('data_areas.data_area', id=data_area_id))
+                # Обновление базе данных
+                db_app.update_measure_quantitative(description, column_name, uom, measure_id)
+
             else:
                 # Обновление базе данных
-                print(description, column_name, measure_id)
                 db_app.update_measure(description, column_name, measure_id)
 
-                # Переименование колонки
-                if column_name != result[1]:
-                    db_data.update_column(olap_name, result[1], column_name)
+            # Переименование колонки
+            if column_name != result[1]:
+                db_data.update_column(olap_name, result[1], column_name)
 
-                flash('Данные обновлены', 'success')
-                return redirect(url_for('data_areas.data_area', id=data_area_id))
+            flash('Данные обновлены', 'success')
+            return redirect(url_for('data_areas.data_area', id=data_area_id))
 
     return render_template('edit_measure.html', form=form, data_area_id=data_area_id, data_area_name=data_area_name)
 

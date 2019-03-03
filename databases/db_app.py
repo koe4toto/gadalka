@@ -415,6 +415,15 @@ def update_measure_with_ref(description, column_name, refiii, measure_id):
     )
     conn.commit()
 
+# Обновление количественного параметра
+def update_measure_quantitative(description, column_name, unit, measure_id):
+    cursor.execute(
+        '''
+        UPDATE measures SET description='{0}', column_name='{1}', unit_of_measurement='{2}' WHERE id='{3}';
+        '''.format(description, column_name, unit, measure_id)
+    )
+    conn.commit()
+
 # Обновление параметра
 def update_measure(description, column_name, measure_id):
     cursor.execute(
