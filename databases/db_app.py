@@ -441,6 +441,7 @@ def delete_measure(measure_id):
         DELETE FROM measures WHERE id = '{0}';
         DELETE FROM math_models WHERE area_description_2 = '{0}' OR area_description_1 = '{0}';
         DELETE FROM complex_model_measures WHERE measure_id = '{0}';
+        DELETE FROM association WHERE measure_id_1 = '{0}' OR measure_id_2 = '{0}';
         '''.format(measure_id)
     )
     conn.commit()
@@ -1048,8 +1049,8 @@ def select_measures_to_lines(line1, line2):
     measures = cursor.fetchall()
     return measures
 
-# Сохранение результатов в базу данных. Записываются данные по модели.
-def select_measures_to_associations(measure_id):
+# Выбор ассоциаций
+def select_measures_to_associations(measure_id, unit):
     cursor.execute(
         '''
         SELECT 
@@ -1060,9 +1061,9 @@ def select_measures_to_associations(measure_id):
         FROM 
             measures 
         LEFT JOIN data_area ON measures.data_area_id = data_area.id
-        WHERE measures.id != '{0}'
+        WHERE measures.id != '{0}' AND measures.unit_of_measurement = '{1}'
         ORDER BY measures.id DESC;
-        '''.format(measure_id)
+        '''.format(measure_id, unit)
     )
     measures = cursor.fetchall()
     return measures
@@ -1100,7 +1101,13 @@ def select_associations(measure_id):
             FROM association
             WHERE association.measure_id_1 = '{0}' OR association.measure_id_2 ='{0}'
             )
-        SELECT measures.id, measures.description, data_area.database_table, data_area.name, measures.data_area_id 
+        SELECT 
+            measures.id, 
+            measures.description, 
+            data_area.database_table,
+            data_area.name, 
+            measures.data_area_id, 
+            measures.unit_of_measurement
         FROM first_associations
         LEFT JOIN measures ON first_associations.my_list = measures.id
         LEFT JOIN data_area ON measures.data_area_id = data_area.id;

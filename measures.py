@@ -109,10 +109,11 @@ def measure_time(data_asrea_id, id):
     pairs = db_app.get_measure_models(id)
 
     # Получение данных о мере
+    # Объем выброки
     ui_limit = 500
 
     # Название таблицы с данными
-    olap_name = measure[0][26]
+    olap_name = measure[0][27]
 
     # Настройка для измерений времени
     data_column, measure2 = time_to_num(measure[0])
@@ -354,9 +355,16 @@ def assosiations(measure_id):
     measure = db_app.select_measure(measure_id)
 
     # Список измерений пользователя
-    measures = db_app.select_measures_to_associations(measure_id)
+    measures = db_app.select_measures_to_associations(measure_id, measure[0][21])
 
     fin = dassosiations_group(measures)
+
+    # Форма отчищается от лишних полей
+    atrr = AssosiationsForm.__dict__.keys()
+    mix = [i for i in atrr]
+    for i in mix:
+        if mix.index(i) > 3:
+            delattr(AssosiationsForm, i)
 
     # Добавление полей в форму
     for i in fin:
@@ -388,6 +396,8 @@ def assosiations(measure_id):
             if len(me_ids) > 0:
                 for ids in me_ids:
                     result.append(ids)
+
+
 
         # Сохранние данных об ассоциациях
         db_app.insert_associations(measure_id, result)
