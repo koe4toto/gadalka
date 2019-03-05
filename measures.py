@@ -27,6 +27,7 @@ def measures():
 
 # Продготовка данных времени к отображению
 def time_to_num(measure):
+
     # Формат предствления статистик
     format = {
         4: '%H:%M:%S',
@@ -46,7 +47,7 @@ def time_to_num(measure):
     if type in time_types:
         result = 'EXTRACT(EPOCH FROM {0} )'.format(measure[1])
         for p, i in enumerate(measure):
-            if p >= 8 and p <= 21:
+            if p >= 8 and p <= 20:
                 m = float(i)
                 try:
                     statistics.append(datetime.datetime.utcfromtimestamp(m).strftime(format[type]))
@@ -59,12 +60,16 @@ def time_to_num(measure):
         statistics = measure
     return result, statistics
 
+
+
 # Карточка параметра количественных данных
-@mod.route("/data_area/<string:data_asrea_id>/measure_quantitative/<string:id>/", methods =['GET', 'POST'])
-@is_logged_in
-def measure_quantitative(data_asrea_id, id):
-    # Получение данных о мере
-    measure = db_app.select_measure(id)
+def measure_quantitative(measure):
+
+    # Идентификатор предметной области
+    data_asrea_id = measure[0][22]
+
+    # Идентификатор измерения
+    id = measure[0][0]
 
     # Список пар
     pairs = db_app.get_measure_models(id)
@@ -88,22 +93,17 @@ def measure_quantitative(data_asrea_id, id):
     # Формирование графика распределения
     da = [i[0] for i in d]
     data = sm.Series(da).freq_line_view()
-    return render_template(
-        'measure_quantitative.html',
-        data_asrea_id=data_asrea_id,
-        id=id,
-        measure=measure,
-        data=data,
-        pairs=pairs,
-        associations=now_associations
-    )
+
+    return data_asrea_id, id, measure, data, pairs, now_associations
 
 # Карточка параметра времени
-@mod.route("/data_area/<string:data_asrea_id>/measure_time/<string:id>/", methods=['GET', 'POST'])
-@is_logged_in
-def measure_time(data_asrea_id, id):
-    # Получение данных о мере
-    measure = db_app.select_measure(id)
+def measure_time(measure):
+
+    # Идентификатор предметной области
+    data_asrea_id = measure[0][22]
+
+    # Идентификатор измерения
+    id = measure[0][0]
 
     # Список пар
     pairs = db_app.get_measure_models(id)
@@ -124,27 +124,58 @@ def measure_time(data_asrea_id, id):
     # Получение данных для графика распределения
     da = [i[0] for i in d]
     data = sm.Series(da).freq_line_view()
-    return render_template(
-        'measure_time.html',
-        data_asrea_id=data_asrea_id,
-        id=id,
-        measure=measure2,
-        data=data,
-        pairs=pairs
-    )
+    return data_asrea_id, id, measure2, data, pairs
 
 # Карточка параметра качественных данных
-@mod.route("/data_area/<string:data_asrea_id>/measure_qualitative/<string:id>/", methods=['GET', 'POST'])
+def measure_qualitative(measure):
+
+    # Идентификатор предметной области
+    data_asrea_id = measure[0][22]
+
+    # Идентификатор измерения
+    id = measure[0][0]
+
+    return data_asrea_id, id
+
+
+# Карточка измерения
+@mod.route("/measure/<string:measure_id>/")
 @is_logged_in
-def measure_qualitative(data_asrea_id, id):
+def measure(measure_id):
     # Получение данных о мере
-    measure = db_app.select_measure(id)
-    return render_template(
-        'measure_qualitative.html',
-        data_asrea_id=data_asrea_id,
-        id=id,
-        the_measure=measure
-    )
+    measure = db_app.select_measure(measure_id)
+
+    if measure[0][4] == 1:
+        data_asrea_id, id, measure, data, pairs, now_associations = measure_quantitative(measure)
+        return render_template(
+            'measure_quantitative.html',
+            data_asrea_id=data_asrea_id,
+            id=id,
+            measure=measure,
+            data=data,
+            pairs=pairs,
+            now_associations=now_associations
+        )
+    elif measure[0][4] == 2 or measure[0][4] == 3:
+        data_asrea_id, id = measure_qualitative(measure)
+        return render_template(
+            'measure_qualitative.html',
+            data_asrea_id=data_asrea_id,
+            id=id,
+            measure=measure
+        )
+    elif measure[0][4] == 4 or measure[0][4] == 5 or measure[0][4] == 6:
+        data_asrea_id, id, measure2, data, pairs = measure_time(measure)
+        return render_template(
+            'measure_time.html',
+            data_asrea_id=data_asrea_id,
+            id=id,
+            measure=measure2,
+            data=data,
+            pairs=pairs
+        )
+
+
 
 # Добавление параметра
 @mod.route("/data_area/<string:data_area_id>/add_measure_type_<string:type>", methods =['GET', 'POST'] )
