@@ -37,28 +37,71 @@ pairs = [
     [9, 5, 9]
 ]
 
-# Поиск многомерной модели среди ряда пар
-def group_associations(associations):
-    pairs = [[i[1], i[2]] for i in associations]
-
+def multiple(models):
     hash = {}
+
+    mms = {}
+    for num, i in enumerate(models):
+        if i[1] not in hash:
+            hash.setdefault(i[1], num)
+            mms.setdefault(num, [i[1], i[2]])
+        else:
+            mms[hash[i[1]]].append(i[2])
+
+        if i[2] not in hash:
+            hash.setdefault(i[2], num)
+        else:
+            hash[i[1]] = hash[i[2]]
+            mms[hash[i[2]]].append(i[1])
+
+    result = [mms[i] for i in mms if len(mms[i])>2]
+
+    return result
+
+mms = multiple(pairs)
+print('Сложные связи: ', mms)
+
+# Поиск рядов ассоциированных измерений
+def group_associations(associats, mod):
+    pairs = [[i[1], i[2]] for i in associats]
+
+    # Временнный словарь уникальных измерений
+    hash = {}
+    hash2 = {}
+
+    # Временнный словарь ассоциированных измерений. Содержит списки без пар.
     result = {}
     for num, i in enumerate(pairs):
         if i[0] not in hash:
             hash.setdefault(i[0], num)
             result.setdefault(num, [i[0], i[1]])
+            hash2.setdefault(i[0], num)
+            hash2.setdefault(i[1], num)
         else:
             result[hash[i[0]]].append(i[1])
+            hash2.setdefault(i[1], hash[i[0]])
 
         if i[1] not in hash:
             hash.setdefault(i[1], num)
             result.setdefault(num, [i[1]])
+            hash2.setdefault(i[1], num)
         else:
             result[hash[i[0]]].append(i[0])
+            hash2.setdefault(i[0], hash[i[0]])
 
+    # Итоговая матрица наборов ассоциаций
     final = [result[i] for i in result if len(result[i])>1]
 
-    return final
+    # Подстановка ассоциаций вместо измерений. Теперь они станут ключём для сбора множественной модели
+    # с учетом дополнительных связей
+    for num, i in enumerate(mod):
+        if i[1] in hash2:
+            mod[num][1] = result[hash2[i[1]]]
+
+        if i[2] in hash2:
+            mod[num][2] = result[hash2[i[2]]]
+
+    return mod
 
 
 # Поиск многомерной модели среди ряда пар
@@ -115,11 +158,11 @@ def agreg(m):
         measures.append(mea)
         remod.append([mea, ids])
     return result
+print('Пары: ', pairs)
+multiple_models_si = agreg(pairs)
+mod = group_associations(associations, pairs)
 
-
-def start(associations, pairs):
-    return associations
-
-multiple_models = agreg(pairs)
-
-print(group_associations(associations))
+#multiple_models = agreg(mod)
+print('Ассоциированные пары: ', mod)
+print('')
+#print('Сложные модели: ', multiple_models_si)
