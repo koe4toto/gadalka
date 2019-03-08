@@ -46,7 +46,10 @@ def multiple(models):
             hash.setdefault(i[1], num)
             mms.setdefault(num, [i[1], i[2]])
         else:
-            mms[hash[i[1]]].append(i[2])
+            try:
+                mms[hash[i[1]]].append(i[2])
+            except:
+                pass
 
         if i[2] not in hash:
             hash.setdefault(i[2], num)
@@ -58,12 +61,9 @@ def multiple(models):
 
     return result
 
-mms = multiple(pairs)
-print('Сложные связи: ', mms)
-
 # Поиск рядов ассоциированных измерений
 def group_associations(associats, mod):
-    pairs = [[i[1], i[2]] for i in associats]
+    pair = [[i[1], i[2]] for i in associats]
 
     # Временнный словарь уникальных измерений
     hash = {}
@@ -71,7 +71,7 @@ def group_associations(associats, mod):
 
     # Временнный словарь ассоциированных измерений. Содержит списки без пар.
     result = {}
-    for num, i in enumerate(pairs):
+    for num, i in enumerate(pair):
         if i[0] not in hash:
             hash.setdefault(i[0], num)
             result.setdefault(num, [i[0], i[1]])
@@ -83,86 +83,30 @@ def group_associations(associats, mod):
 
         if i[1] not in hash:
             hash.setdefault(i[1], num)
-            result.setdefault(num, [i[1]])
             hash2.setdefault(i[1], num)
         else:
-            result[hash[i[0]]].append(i[0])
+            hash[i[0]] = hash[i[1]]
+            result[hash[i[1]]].append(i[0])
             hash2.setdefault(i[0], hash[i[0]])
-
-    # Итоговая матрица наборов ассоциаций
-    final = [result[i] for i in result if len(result[i])>1]
 
     # Подстановка ассоциаций вместо измерений. Теперь они станут ключём для сбора множественной модели
     # с учетом дополнительных связей
-    for num, i in enumerate(mod):
+    komp = [i for i in mod]
+    for num, i in enumerate(komp):
         if i[1] in hash2:
-            mod[num][1] = result[hash2[i[1]]]
+            list1 = result[hash2[i[1]]]
+            str1 = ','.join(str(e) for e in list1)
+            komp[num][1] = str1
 
         if i[2] in hash2:
-            mod[num][2] = result[hash2[i[2]]]
+            list1 = result[hash2[i[2]]]
+            str1 = ','.join(str(e) for e in list1)
+            komp[num][2] = str1
 
-    return mod
+    return komp
 
 
-# Поиск многомерной модели среди ряда пар
-def agreg(m):
-    # Список пар
-    models = [[i[1], i[2]] for i in m]
-
-    # Список сложных моделей
-    result = []
-
-    # Список идентицикатором парных моделей в многомерной модели
-    ides = []
-
-    # Список коэфициентов корреляции моделей
-    measures = []
-
-    # Поиск сложных свзяей в списке
-    # TODO переписать с помощью itertools
-    for i in models:
-        model = [n for n in models if i[0] in n or i[1] in n]
-        for i in model:
-            for o in i:
-                for p in models:
-                    if o in p and p not in model:
-                        model.append(p)
-        # Из списка пар исключаются те, что собрались в модель
-        models = [t for t in models if t not in model]
-
-        # Добавляем слождую модель в итоговый список
-        if len(model) >=2:
-            result.append(model)
-
-    # Формирование списка
-    remod = []
-
-    # Формирование списка идентификаторов парных моделей для каждой многомерной модели
-    # TODO переписать с помощью itertools
-    for i in result:
-        ids = []
-        mea = []
-        for k in i:
-            for p in m:
-                p2 = [p[1], p[2]]
-                if k == p2:
-                    ids.append(p[0])
-                    next1 = [p[0], p[1], p[2]]
-                    if next1 not in mea:
-                        mea.append(next1)
-                    next2 = [p[0], p[1], p[2]]
-                    if next2 not in mea:
-                        mea.append(next2)
-
-        ides.append(ids)
-        measures.append(mea)
-        remod.append([mea, ids])
-    return result
 print('Пары: ', pairs)
-multiple_models_si = agreg(pairs)
-mod = group_associations(associations, pairs)
-
-#multiple_models = agreg(mod)
-print('Ассоциированные пары: ', mod)
-print('')
-#print('Сложные модели: ', multiple_models_si)
+print('Сложные связи без ассоциаций: ', multiple(pairs))
+print('Ассоциированные пары: ', group_associations(associations, pairs))
+print('Сложные модели: ', multiple(group_associations(associations, pairs)))
