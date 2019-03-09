@@ -41,6 +41,8 @@ def multiple(models):
     hash = {}
 
     mms = {}
+
+    model_list = {}
     for num, i in enumerate(models):
         if i[1] not in hash:
             hash.setdefault(i[1], num)
@@ -61,7 +63,7 @@ def multiple(models):
 
     return result
 
-# Поиск рядов ассоциированных измерений
+# Поиск рядов ассоциированных измерений и подстановка их в список моделей
 def group_associations(associats, mod):
     pair = [[i[1], i[2]] for i in associats]
 
@@ -91,22 +93,36 @@ def group_associations(associats, mod):
 
     # Подстановка ассоциаций вместо измерений. Теперь они станут ключём для сбора множественной модели
     # с учетом дополнительных связей
-    komp = [i for i in mod]
-    for num, i in enumerate(komp):
+    for num, i in enumerate(mod):
         if i[1] in hash2:
             list1 = result[hash2[i[1]]]
             str1 = ','.join(str(e) for e in list1)
-            komp[num][1] = str1
+            mod[num][1] = str1
 
         if i[2] in hash2:
             list1 = result[hash2[i[2]]]
             str1 = ','.join(str(e) for e in list1)
-            komp[num][2] = str1
+            mod[num][2] = str1
 
-    return komp
+    return mod
 
+# Итоговое получение сложных моделей выраженых в измерениях и простых связях
+def count_measures(associations, pairs):
+    complex_models = multiple(group_associations(associations, pairs))
+    result = []
+    for model in complex_models:
+        new_model = []
+        for i in model:
+            item = str(i)
+            list = item.split(',')
+            for measure in list:
+                if int(measure) not in new_model:
+                    new_model.append(int(measure))
+        result.append(new_model)
+    return result
 
 print('Пары: ', pairs)
 print('Сложные связи без ассоциаций: ', multiple(pairs))
 print('Ассоциированные пары: ', group_associations(associations, pairs))
 print('Сложные модели: ', multiple(group_associations(associations, pairs)))
+print('Сложные модели (измерениями): ', count_measures(associations, pairs))
