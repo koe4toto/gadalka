@@ -16,13 +16,7 @@ from itertools import groupby
 
 
 associations = [
-    [1, 2, 6],
-    [2, 5, 21],
-    [3, 8, 25],
-    [4, 2, 22],
-    [5, 6, 7],
-    [6, 21, 9],
-    [7, 23, 24]
+    [1, 4, 21]
 ]
 
 pairs = [
@@ -47,20 +41,29 @@ def multiple(models):
         if i[1] not in hash:
             hash.setdefault(i[1], num)
             mms.setdefault(num, [i[1], i[2]])
+            model_list.setdefault(num, [i[0]])
         else:
             try:
                 mms[hash[i[1]]].append(i[2])
+                if i[0] not in model_list[hash[i[1]]]:
+                    model_list[hash[i[1]]].append(i[0])
             except:
                 pass
 
         if i[2] not in hash:
             hash.setdefault(i[2], num)
+            if num not in model_list:
+                model_list.setdefault(num, [i[0]])
         else:
             hash[i[1]] = hash[i[2]]
             mms[hash[i[2]]].append(i[1])
+            if i[0] not in model_list[hash[i[1]]]:
+                model_list[hash[i[1]]].append(i[0])
 
     result = [mms[i] for i in mms if len(mms[i])>2]
-
+    models_id = [model_list[i] for i in model_list if len(model_list[i]) > 1]
+    print('mms: ', mms)
+    print('model_list: ', models_id)
     return result
 
 # Поиск рядов ассоциированных измерений и подстановка их в список моделей
@@ -119,6 +122,8 @@ def count_measures(associations, pairs):
                 if int(measure) not in new_model:
                     new_model.append(int(measure))
         result.append(new_model)
+
+
     return result
 
 print('Пары: ', pairs)
@@ -126,3 +131,4 @@ print('Сложные связи без ассоциаций: ', multiple(pairs)
 print('Ассоциированные пары: ', group_associations(associations, pairs))
 print('Сложные модели: ', multiple(group_associations(associations, pairs)))
 print('Сложные модели (измерениями): ', count_measures(associations, pairs))
+print('Пары: ', pairs)
