@@ -140,10 +140,12 @@ def primal_calc(data_area_id, log_id):
 def multiple_models_safe(koef):
 
     # Выбираются модели по силе связи
-    g = db_app.get_models(koef)
+    mods = db_app.get_models(koef)
+    asss = db_app.select_all_associations()
 
     # Поиск сложных связей
-    models = sm.agreg(g)
+    models = sm.agreg(mods)
+
 
     # Имя модели
     if len(models) > 0:

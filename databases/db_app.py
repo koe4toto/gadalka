@@ -1115,3 +1115,13 @@ def select_associations(measure_id):
     )
     result = cursor.fetchall()
     return result
+
+# Список справочников
+def select_all_associations():
+    cursor.execute(
+        '''
+        SELECT * FROM association;
+        '''
+    )
+    result = cursor.fetchall()
+    return result

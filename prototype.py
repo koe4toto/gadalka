@@ -15,22 +15,10 @@ import databases.db_queue as db_queue
 from itertools import groupby
 
 
-associations = [
-    [1, 4, 21]
-]
+associations = [(157, 46, 44), (159, 46, 103)]
 
-pairs = [
-    [1, 1, 2],
-    [2, 5, 2],
-    [3, 3, 8],
-    [4, 4, 6],
-    [5, 7, 6],
-    [6, 22, 21],
-    [7, 21, 24],
-    [8, 23, 25],
-    [9, 5, 9]
-]
-
+pairs = [[520, 57, 58], [326, 42, 43], [388, 47, 48], [524, 58, 59], [523, 57, 59], [552, 61, 62], [339, 42, 44], [374, 46, 47], [387, 46, 48], [340, 43, 44]]
+# Определение множестенной связи
 def multiple(models):
     hash = {}
 
@@ -42,29 +30,28 @@ def multiple(models):
             hash.setdefault(i[1], num)
             mms.setdefault(num, [i[1], i[2]])
             model_list.setdefault(num, [i[0]])
+
         else:
-            try:
+            if i[2] not in mms[hash[i[1]]]:
                 mms[hash[i[1]]].append(i[2])
-                if i[0] not in model_list[hash[i[1]]]:
-                    model_list[hash[i[1]]].append(i[0])
-            except:
-                pass
+                hash.setdefault(i[2], hash[i[1]])
+
+            if i[0] not in model_list[hash[i[1]]]:
+                model_list[hash[i[1]]].append(i[0])
+
 
         if i[2] not in hash:
             hash.setdefault(i[2], num)
             if num not in model_list:
                 model_list.setdefault(num, [i[0]])
         else:
-            hash[i[1]] = hash[i[2]]
-            mms[hash[i[2]]].append(i[1])
             if i[0] not in model_list[hash[i[1]]]:
                 model_list[hash[i[1]]].append(i[0])
 
     result = [mms[i] for i in mms if len(mms[i])>2]
     models_id = [model_list[i] for i in model_list if len(model_list[i]) > 1]
-    print('mms: ', mms)
-    print('model_list: ', models_id)
-    return result
+
+    return result, models_id
 
 # Поиск рядов ассоциированных измерений и подстановка их в список моделей
 def group_associations(associats, mod):
@@ -93,6 +80,7 @@ def group_associations(associats, mod):
             hash[i[0]] = hash[i[1]]
             result[hash[i[1]]].append(i[0])
             hash2.setdefault(i[0], hash[i[0]])
+    print('Ассоциации: ', result)
 
     # Подстановка ассоциаций вместо измерений. Теперь они станут ключём для сбора множественной модели
     # с учетом дополнительных связей
@@ -111,7 +99,7 @@ def group_associations(associats, mod):
 
 # Итоговое получение сложных моделей выраженых в измерениях и простых связях
 def count_measures(associations, pairs):
-    complex_models = multiple(group_associations(associations, pairs))
+    complex_models, complex_models_id = multiple(group_associations(associations, pairs))
     result = []
     for model in complex_models:
         new_model = []
@@ -123,12 +111,10 @@ def count_measures(associations, pairs):
                     new_model.append(int(measure))
         result.append(new_model)
 
-
-    return result
+    return result, complex_models_id
 
 print('Пары: ', pairs)
 print('Сложные связи без ассоциаций: ', multiple(pairs))
-print('Ассоциированные пары: ', group_associations(associations, pairs))
-print('Сложные модели: ', multiple(group_associations(associations, pairs)))
-print('Сложные модели (измерениями): ', count_measures(associations, pairs))
-print('Пары: ', pairs)
+complex_models, complex_models_id = count_measures(associations, pairs)
+print('Сложные модели (измерениями): ', complex_models)
+print('Сложные модели (идентификаторами): ', complex_models_id)
