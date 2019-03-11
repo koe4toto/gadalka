@@ -140,17 +140,21 @@ def primal_calc(data_area_id, log_id):
 def multiple_models_safe(koef):
 
     # Выбираются модели по силе связи
+    # TODO чтобы не производить этих вычислений лучше сразу делать правильную выборку в базе
     mods = db_app.get_models(koef)
+    mods_ids = [[i[6], i[4], i[5]] for i in mods]
+
     asss = db_app.select_all_associations()
 
     # Поиск сложных связей
-    models = sm.agreg(mods)
-
+    models = sm.count_measures(asss, mods_ids)
 
     # Имя модели
     if len(models) > 0:
         for mod in models:
-            model_name = ', '.join([i[2] for i in mod[0]])
+            print('mod: ', mod)
+            #model_name = ', '.join([i for i in mod[0]])
+            model_name = 'Модель'
             model_kind = constants.KIND_OF_MODEL['Сильная связь']
             model_type = constants.TYPE_OF_MODEL['Автоматически расчитанный']
 
@@ -162,11 +166,10 @@ def multiple_models_safe(koef):
 
             for measure in mod[0]:
                 # Характеристики измерений модели
-                measure_id = measure[0]
-                measure_data_area_id = measure[3]
+                measure_id = measure
 
                 # Сохранение измерений модели
-                db_app.insert_complex_model_measures(model_id[0][0], measure_id, measure_data_area_id, model_type)
+                db_app.insert_complex_model_measures(model_id[0][0], measure_id, model_type)
 
             for pair in mod[1]:
                 # Сохранение измерений модели

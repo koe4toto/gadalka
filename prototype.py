@@ -15,7 +15,7 @@ import databases.db_queue as db_queue
 from itertools import groupby
 
 
-associations = [(157, 46, 44), (159, 46, 103)]
+associations = [(157, 46, 44), (159, 46, 1000003)]
 
 pairs = [[520, 57, 58], [326, 42, 43], [388, 47, 48], [524, 58, 59], [523, 57, 59], [552, 61, 62], [339, 42, 44], [374, 46, 47], [387, 46, 48], [340, 43, 44]]
 # Определение множестенной связи
@@ -99,7 +99,19 @@ def group_associations(associats, mod):
 
 # Итоговое получение сложных моделей выраженых в измерениях и простых связях
 def count_measures(associations, pairs):
-    complex_models, complex_models_id = multiple(group_associations(associations, pairs))
+
+    # Для отчищения от лишних ассоциаций делается плоский список id измерений в выбранных моделях
+    pi = [[i[1], i[2]] for i in pairs]
+    p_list = np.array(pi)
+    flot = p_list.ravel()
+
+    # Избавляемся от ассоциаций, которых нет в списке моделей
+    good_ass = []
+    for i in associations:
+        if i[1] in flot and i[2] in flot:
+            good_ass.append(i)
+
+    complex_models, complex_models_id = multiple(group_associations(good_ass, pairs))
     result = []
     for model in complex_models:
         new_model = []

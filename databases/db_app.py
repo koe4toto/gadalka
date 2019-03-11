@@ -876,16 +876,15 @@ def insert_complex_models(model_name, model_type, model_kind, ti):
     return model_id
 
 # Сохранение измерений модели
-def insert_complex_model_measures(model_id, measure_id, measure_data_area_id, model_type):
+def insert_complex_model_measures(model_id, measure_id, model_type):
     cursor.execute(
         '''
         INSERT INTO complex_model_measures (
             complex_model_id, 
             measure_id, 
-            data_area_id,
             model_type
-        ) VALUES ('{0}', '{1}', '{2}', '{3}');
-        '''.format(model_id, measure_id, measure_data_area_id, model_type)
+        ) VALUES ('{0}', '{1}', '{2}');
+        '''.format(model_id, measure_id, model_type)
     )
     conn.commit()
 
