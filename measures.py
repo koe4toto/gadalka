@@ -436,11 +436,6 @@ def assosiations(measure_id):
         # Запуск расчета сложных связей
         multiple_models_auto_calc()
 
-        if measure[0][4] == 1:
-            return redirect(url_for('measures.measure_quantitative', data_asrea_id = measure[0][3], id=measure[0][0]))
-        elif measure[0][4] == 2 or measure[0][4] == 3:
-            return redirect(url_for('measures.measure_qualitative', data_asrea_id=measure[0][3], id=measure[0][0]))
-        else:
-            return redirect(url_for('measures.measure_time', data_asrea_id=measure[0][3], id=measure[0][0]))
+        return redirect(url_for('measures.measure', measure_id=measure[0][0]))
 
     return render_template('associations.html', form=form, measure=measure)

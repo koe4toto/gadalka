@@ -152,9 +152,7 @@ def multiple_models_safe(koef):
     # Имя модели
     if len(models) > 0:
         for mod in models:
-            print('mod: ', mod)
-            #model_name = ', '.join([i for i in mod[0]])
-            model_name = 'Модель'
+            model_name = ', '.join([str(i) for i in mod[0]])
             model_kind = constants.KIND_OF_MODEL['Сильная связь']
             model_type = constants.TYPE_OF_MODEL['Автоматически расчитанный']
 
