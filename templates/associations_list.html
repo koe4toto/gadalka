@@ -1,0 +1,27 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <h1>Ассоциации параметров</h1>
+    <br>
+    <div class="list-group">
+    </div>
+        <table class="table">
+          <tbody>
+          {% for i in list %}
+            <tr>
+                <td>
+
+                    <b><a href="/measure/{{ i[0] }}">{{ i[1] }}</a></b><br>{{ i[2] }}
+                </td>
+                <td>
+                    <b><a href="/measure/{{ i[3] }}">{{ i[4] }}</a></b><br>{{ i[5] }}
+                </td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+
+  </div>
+</div>
+
+{% endblock %}

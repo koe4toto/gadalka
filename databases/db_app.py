@@ -1124,3 +1124,25 @@ def select_all_associations():
     )
     result = cursor.fetchall()
     return result
+
+# Сохранение измерений модели
+def assosiations_list(user_id):
+    cursor.execute(
+        '''
+        SELECT 
+            association.measure_id_1, 
+            m1.description, 
+            da1.name,
+            association.measure_id_2, 
+            m2.description, 
+            da2.name
+        FROM association
+        LEFT JOIN measures as m1 ON association.measure_id_1 = m1.id
+        LEFT JOIN measures as m2 ON association.measure_id_2 = m2.id
+        LEFT JOIN data_area as da1 ON m1.data_area_id = da1.id
+        LEFT JOIN data_area as da2 ON m2.data_area_id = da2.id
+        WHERE da1.user_id = '{0}' AND da2.user_id = '{0}' ;
+        '''.format(user_id)
+    )
+    result = cursor.fetchall()
+    return result

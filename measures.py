@@ -439,3 +439,13 @@ def assosiations(measure_id):
         return redirect(url_for('measures.measure', measure_id=measure[0][0]))
 
     return render_template('associations.html', form=form, measure=measure)
+
+# Параметры
+@mod.route("/associations")
+@is_logged_in
+def associations_list():
+    user = str(session['user_id'])
+    return render_template(
+        'associations_list.html',
+        list = db_app.assosiations_list(user)
+    )
