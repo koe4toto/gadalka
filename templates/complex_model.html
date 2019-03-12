@@ -4,12 +4,40 @@
 <a class="text-secondary" href="/complex_models">Сложные связи</a><br>
 &#8595;
 <h1>{{ model[0][1] }}</h1>
-<h3>Модель</h3>
+<br>
+<div class="row">
+  <div class="col-sm-8">
+  <div class="card bg-light">
+  <div class="card-body">
+    <h5 class="card-title">Измерения</h5>
+  </div>
+  <ul class="list-group list-group-flush">
+    {% for i in complex_model_measures %}
+      <li class="list-group-item bg-light">
+          <a class="card-link" href="/measure/{{ i[0] }}" class="card-link text-dark">{{ i[1] }}</a>
+          <br>
+          <small>{{ i[2] }}</small>
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+  </div>
+    <div class="col-sm-4">
+  <div class="card text-white bg-dark">
+  <div class="card-body">
+     <h5 class="card-title">Простые связи</h5>
+  </div>
+  <ul class="list-group list-group-flush">
+        {% for i in pair_models %}
+      <li class="list-group-item bg-dark">
+            <a class="card-link" href="/pair/{{ i[0] }}" class="card-link text-dark">{{ i[1] }}</a>
+          <br>
+          <small>{{ i[2] }}-{{ i[3] }}</small>
+          </li>
+    {% endfor %}
+  </ul>
 
-{{ model }}
-<h3>Измерения</h3>
-{{ complex_model_measures }}
-
-<h3>Простые связи</h3>
-{{ pair_models }}
+</div>
+  </div>
+</div>
 {% endblock %}

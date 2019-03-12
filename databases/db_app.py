@@ -608,7 +608,14 @@ def select_complex_model(model_id):
 def select_complex_model_measures(model_id):
     cursor.execute(
         '''
-        SELECT * FROM complex_model_measures WHERE complex_model_id = '{0}';
+        SELECT 
+             measures.id,
+             measures.description,
+             data_area.name
+        FROM complex_model_measures 
+        LEFT JOIN measures ON complex_model_measures.measure_id = measures.id
+        LEFT JOIN data_area ON measures.data_area_id = data_area.id
+        WHERE complex_model_id = '{0}';
         '''.format(model_id)
     )
     result = cursor.fetchall()
@@ -618,7 +625,17 @@ def select_complex_model_measures(model_id):
 def select_complex_model_pairs(model_id):
     cursor.execute(
         '''
-        SELECT * FROM complex_model_pairs WHERE complex_model_id = '{0}';
+        SELECT 
+            math_models.id,
+            hypotheses.name,
+            m1.description,
+            m2.description
+        FROM complex_model_pairs 
+        LEFT JOIN math_models ON complex_model_pairs.pair_id = math_models.id
+        LEFT JOIN hypotheses ON math_models.hypothesis = hypotheses.id
+        LEFT JOIN measures as m1 ON math_models.area_description_1 = m1.id
+        LEFT JOIN measures as m2 ON math_models.area_description_2 = m2.id
+        WHERE complex_model_id = '{0}';
         '''.format(model_id)
     )
     result = cursor.fetchall()
