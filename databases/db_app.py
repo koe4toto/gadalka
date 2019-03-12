@@ -1146,3 +1146,19 @@ def assosiations_list(user_id):
     )
     result = cursor.fetchall()
     return result
+
+# Сохранение измерений модели
+def select_measures_by_unit(unit, user_id):
+    cursor.execute(
+        '''
+        SELECT 
+            measures.id, 
+            measures.description, 
+            da1.name
+        FROM measures
+        LEFT JOIN data_area as da1 ON measures.data_area_id = da1.id
+        WHERE da1.user_id = '{1}' AND measures.unit_of_measurement = '{0}';
+        '''.format(unit, user_id)
+    )
+    result = cursor.fetchall()
+    return result

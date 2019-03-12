@@ -217,12 +217,15 @@ def units_of_measurement():
 def unit_of_measurement(id):
     # Единица измерения
     unit_of_measurement_item = db_app.unit_of_measurement_item(id)
+    user = str(session['user_id'])
+
+    measures = db_app.select_measures_by_unit(unit_of_measurement_item[0][0], user)
 
     # Список параметров с таким единицами измерения
     columns = []
 
     # ПРоверка на возможность удалять единицу
-    if len(columns) > 0:
+    if len(columns) > 0 or len(measures) > 0:
         is_delete = False
     else:
         is_delete = True
@@ -230,7 +233,8 @@ def unit_of_measurement(id):
         'unit_of_measurement.html',
         list = unit_of_measurement_item,
         columns=columns,
-        is_delete=is_delete
+        is_delete=is_delete,
+        measures=measures
     )
 
 

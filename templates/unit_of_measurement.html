@@ -29,16 +29,14 @@
     <table class="table table-hover">
       <thead>
         <tr>
-          <th scope="col">Код</th>
-          <th scope="col">Значение</th>
-          <th scope="col">Родительcкий элемент</th>
+          <th scope="col">Измерение</th>
+          <th scope="col">Предметная боласть</th>
         </tr>
       </thead>
       <tbody>
-      {% for i in columns %}
+      {% for i in measures %}
         <tr>
-          <td>{{ i[0] }}</td>
-          <td>{{ i[1] }}</td>
+          <td><a href="/measure/{{ i[0] }}">{{ i[1] }}</td>
           <td>{{ i[2] }}</td>
         </tr>
       {% endfor %}
