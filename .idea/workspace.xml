@@ -2,6 +2,15 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1719e8ec-808e-4103-a063-fff281569a44" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/clickhous_client_master/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/clickhous_client_master/AUTHORS" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/clickhous_client_master/COPYING" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/clickhous_client_master/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/clickhous_client_master/client.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/clickhous_client_master/errors.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/clickhous_client_master/example.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/clickhous_client_master/result.py" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/prototype.py" beforeDir="false" afterPath="$PROJECT_DIR$/prototype.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -30,7 +39,7 @@
           <entry key="css" value="1" />
           <entry key="gitignore" value="2" />
           <entry key="html" value="118" />
-          <entry key="py" value="261" />
+          <entry key="py" value="262" />
           <entry key="txt" value="4" />
         </counts>
       </usages-collector>
@@ -40,7 +49,7 @@
           <entry key="HTML" value="118" />
           <entry key="Hoi4 file" value="4" />
           <entry key="PLAIN_TEXT" value="2" />
-          <entry key="Python" value="261" />
+          <entry key="Python" value="262" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.vcs.git.usages" />
@@ -48,40 +57,25 @@
         <counts>
           <entry key="HTML" value="3328" />
           <entry key="PLAIN_TEXT" value="24" />
-          <entry key="Python" value="39190" />
+          <entry key="Python" value="39205" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="24" />
           <entry key="html" value="3328" />
-          <entry key="py" value="39190" />
+          <entry key="py" value="39205" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/measures.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="335">
-              <caret line="446" column="34" selection-start-line="446" selection-start-column="4" selection-end-line="446" selection-end-column="34" />
-              <folding>
-                <element signature="e#0#88#0" expanded="true" />
-                <marker date="1552401943464" expanded="true" signature="637:638" ph="..." />
-                <marker date="1552401943464" expanded="true" signature="1515:1517" ph="..." />
-                <marker date="1552401943464" expanded="true" signature="11511:11880" ph="..." />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/prototype.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="272">
-              <caret line="16" column="30" selection-start-line="16" selection-start-column="30" selection-end-line="16" selection-end-column="30" />
+            <state relative-caret-position="255">
+              <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
               <folding>
                 <element signature="e#0#16#0" expanded="true" />
               </folding>
@@ -245,7 +239,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/math_models.py" />
         <option value="$PROJECT_DIR$/templates/ref.html" />
         <option value="$PROJECT_DIR$/templates/data_areas.html" />
         <option value="$PROJECT_DIR$/templates/queue.html" />
@@ -295,6 +288,7 @@
         <option value="$PROJECT_DIR$/refs.py" />
         <option value="$PROJECT_DIR$/databases/db_app.py" />
         <option value="$PROJECT_DIR$/templates/complex_model.html" />
+        <option value="$PROJECT_DIR$/clickhous_client_master/__init__.py" />
         <option value="$PROJECT_DIR$/prototype.py" />
       </list>
     </option>
@@ -316,11 +310,6 @@
             <path>
               <item name="gadalka" type="b2602c69:ProjectViewProjectNode" />
               <item name="gadalka" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="gadalka" type="b2602c69:ProjectViewProjectNode" />
-              <item name="gadalka" type="462c0819:PsiDirectoryNode" />
-              <item name="clickhouse-client-master" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="gadalka" type="b2602c69:ProjectViewProjectNode" />
@@ -464,13 +453,14 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="0" width="1378" height="735" extended-state="0" />
+    <editor active="true" />
     <layout>
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" weight="0.3294509" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.0" />
+      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.3044925" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.39933443" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -491,13 +481,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/templates/edit_connection.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <caret selection-end-line="16" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/venv/Lib/site-packages/wtforms/fields/core.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="174">
@@ -802,13 +785,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/refs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="17">
-          <caret line="227" column="44" selection-start-line="227" selection-start-column="44" selection-end-line="227" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/templates/dashboard.html">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="204">
@@ -868,10 +844,24 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/clickhous_client_master/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="34">
+          <caret line="2" column="29" selection-start-line="2" selection-start-column="29" selection-end-line="2" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/refs.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="17">
+          <caret line="227" column="44" selection-start-line="227" selection-start-column="44" selection-end-line="227" selection-end-column="44" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/prototype.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="272">
-          <caret line="16" column="30" selection-start-line="16" selection-start-column="30" selection-end-line="16" selection-end-column="30" />
+        <state relative-caret-position="255">
+          <caret line="15" lean-forward="true" selection-start-line="15" selection-end-line="15" />
           <folding>
             <element signature="e#0#16#0" expanded="true" />
           </folding>
