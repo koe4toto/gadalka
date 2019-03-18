@@ -18,9 +18,14 @@ def pair_models():
     )
 
 # Карточка простой связи
-@mod.route("/pair/<string:id1>/<string:id2>/<string:model_id>")
+@mod.route("/pair/<string:model_id>")
 @is_logged_in
-def pair(id1, id2, model_id):
+def pair(model_id):
+    # Модель
+    model = db_app.select_model(model_id)
+    id1 = str(model[0][10])
+    id2 = str(model[0][11])
+
     list = [id1, id2]
     pop = [[id1, id2, 'Модель']]
 
@@ -30,8 +35,7 @@ def pair(id1, id2, model_id):
     x = [float(i[0]) for i in XY]
     y = [float(i[1]) for i in XY]
 
-    # Модель
-    model = db_app.select_model(model_id)
+
 
     # Список моделей пары
     list_models = db_app.select_pair_models(id1, id2)

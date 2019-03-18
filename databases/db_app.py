@@ -210,7 +210,8 @@ def select_measures(user):
             measures.description, 
             measures.data_area_id,
             measures.type,
-            data_area.name
+            data_area.name,
+            data_area.database_table
         FROM 
             measures 
         LEFT JOIN data_area ON measures.data_area_id = data_area.id
@@ -253,6 +254,25 @@ def select_measures_to_data_area(data_area_id):
         LEFT JOIN ref_measures_status ON measures.status = ref_measures_status.id
         WHERE measures.data_area_id='{0}'
         ORDER BY measures.type DESC;
+        '''.format(data_area_id)
+    )
+    result = cursor.fetchall()
+    return result
+
+# Список измерений предметной области
+def select_measures_to_stats(data_area_id):
+    cursor.execute(
+        '''
+        SELECT 
+            measures.id,
+            data_area.database_table,
+            measures.column_name,
+            measures.type
+        FROM 
+            measures
+        LEFT JOIN data_area ON measures.data_area_id = data_area.id
+        WHERE measures.data_area_id='{0}' 
+        AND (measures.type = '1' OR measures.type = '4' OR measures.type = '5' OR measures.type = '6');
         '''.format(data_area_id)
     )
     result = cursor.fetchall()

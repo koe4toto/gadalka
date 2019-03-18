@@ -4,6 +4,7 @@
 
 <h1>{{ maesures[0][2] }} и {{ maesures[1][2] }}</h1>
 <br>
+{{ model }}
 <div class="row">
     <div class="col-md-9 content">
       <br>
@@ -173,7 +174,7 @@
           <h4>Модели</h4>
         <ul class="list-group list-group-flush">
         {% for i in list_models %}
-          <a href="/pair/{{ i[4] }}/{{ i[5] }}/{{ i[6] }}"
+          <a href="/pair/{{ i[6] }}"
              class="list-group-item list-group-item-action flex-column align-items-start {% if i[6] == model[0][0] %}active{% endif %}">
             <div class="d-flex w-100 justify-content-between">
               <p class="mb-1">{{ i[0] }}</p>

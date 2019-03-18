@@ -125,6 +125,8 @@ def start(id, data_area_id, log_id, filename, type):
     path_adn_file = constants.ERROR_FOLDER + filename
     wb.save(path_adn_file)
 
+    # TODO нужно записать (обновить) статистические таблицы для измерений
+
     # Обновление статуса предметной области и измерений
     status = '5'
     db_app.update_data_area_status(status, log_id)

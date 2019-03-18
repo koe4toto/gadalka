@@ -227,3 +227,14 @@ def select_data_from_olap(me1_alt, me2_alt, database_table, limit):
         )
         measure_data = cursor.fetchall()
     return measure_data
+
+def measure_data_set(table, column):
+    cursor.execute(
+        '''
+        SELECT {1}  
+        FROM {0} 
+        WHERE {1} IS NOT NULL;
+        '''.format(table, column)
+    )
+    measure_data = cursor.fetchall()
+    return measure_data

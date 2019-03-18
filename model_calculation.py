@@ -1,3 +1,4 @@
+from flask import session
 import statistic_math as sm
 import numpy as np
 import constants
@@ -33,27 +34,39 @@ def take_lines (line1, line2, limit=None):
     measure_data = db_data.select_data_from_olap(me1_alt, me2_alt, database_table, limit)
     return measure_data, database_table, database_id
 
-def measure_stats(x, id):
-    x_stats = sm.Series(x).stats_line()
+def measure_stats(data_area_id):
 
-    # Сохранение результатов в базу данных. Записываются данные по модели.
-    db_app.upgate_math_models_stats(
-        id,
-        x_stats['Размер выборки'],
-        x_stats['Сумма'],
-        x_stats['Минимум'],
-        x_stats['Максимум'],
-        x_stats['Максимальная частота'],
-        x_stats['Размах'],
-        x_stats['Среднее'],
-        x_stats['Медиана'],
-        x_stats['Мода'],
-        x_stats['Средневзвешенное'],
-        x_stats['Стандартное отклонение'],
-        x_stats['Дисперсия'],
-        x_stats['Стандартная ошибка средней'],
-        x_stats['Межквартильный размах']
-    )
+    # Измерения
+    # TODO написать запрос, который возвращает по каждому измерению имя куба и колонки
+    measures = db_app.select_measures_to_stats(data_area_id)
+
+    # Обработка и сохранение статистик
+    for i in measures:
+
+        # Набор даных
+        data_set = db_data.measure_data_set(i[1], i[2])
+
+        # Статистики
+        x_stats = sm.Series(data_set).stats_line()
+
+        # Сохранение результатов в базу данных. Записываются данные по модели.
+        db_app.upgate_math_models_stats(
+            i[0],
+            x_stats['Размер выборки'],
+            x_stats['Сумма'],
+            x_stats['Минимум'],
+            x_stats['Максимум'],
+            x_stats['Максимальная частота'],
+            x_stats['Размах'],
+            x_stats['Среднее'],
+            x_stats['Медиана'],
+            x_stats['Мода'],
+            x_stats['Средневзвешенное'],
+            x_stats['Стандартное отклонение'],
+            x_stats['Дисперсия'],
+            x_stats['Стандартная ошибка средней'],
+            x_stats['Межквартильный размах']
+        )
 
 # Рассчета свойств модели и запись результатов в базу данных
 def search_model(hypothesis, x, y, adid1, adid2):
@@ -109,6 +122,7 @@ def primal_calc(data_area_id, log_id):
         line_id_2 = i[11]
         # Получение данных
         try:
+
             xy, database_table, database_id = take_lines(line_id_1, line_id_2)
 
             if xy == None:
@@ -117,10 +131,6 @@ def primal_calc(data_area_id, log_id):
                 XY = np.array(xy)
                 x = [float(i[0]) for i in XY]
                 y = [float(i[1]) for i in XY]
-
-                # Рассчет статистки рядов
-                measure_stats(x, line_id_1)
-                measure_stats(y, line_id_2)
 
                 # Рассчет параметров модели и запись их в базу
                 search_model(hypothesis, x, y, line_id_1, line_id_2)

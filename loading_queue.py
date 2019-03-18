@@ -1,5 +1,5 @@
 import threading
-from model_calculation import primal_calc, multiple_models_auto_calc
+import model_calculation as mc
 from loading_from_file import start
 import databases.db_queue as db_queue
 
@@ -38,11 +38,14 @@ def task(result):
 
     # Проверка гипотиз
     if loading == '5':
+        # Расчет статистик измерений
+        mc.measure_stats(data_area_id)
+
         # TODO нужно обработать ошибку расчета моделей и поставить конечный статус
-        primal_calc(data_area_id, log_id)
+        mc.primal_calc(data_area_id, log_id)
 
         # Расчет многомерных моделей
-        multiple_models_auto_calc()
+        mc.multiple_models_auto_calc()
 
     # Удаление отработаной задачи
     db_queue.delete_task_by_id(id)
