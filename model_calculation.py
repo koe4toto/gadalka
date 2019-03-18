@@ -37,13 +37,13 @@ def take_lines (line1, line2, limit=None):
 def measure_stats(data_area_id):
 
     # Измерения
-    # TODO написать запрос, который возвращает по каждому измерению имя куба и колонки
     measures = db_app.select_measures_to_stats(data_area_id)
 
     # Обработка и сохранение статистик
     for i in measures:
 
         # Набор даных
+        # TODO сделать проверку про время: time_to_num
         data_set = db_data.measure_data_set(i[1], i[2])
 
         # Статистики
