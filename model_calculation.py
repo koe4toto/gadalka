@@ -26,8 +26,18 @@ def take_lines (line1, line2, limit=None):
     database_table = measures[0][1]
     database_id = measures[0][2]
 
-    me1_alt = time_to_num(measures[0])
-    me2_alt = time_to_num(measures[1])
+    x = None
+    y = None
+
+    # Расстановка измерений в правильном порядке
+    for i in measures:
+        if int(i[4]) == int(line1):
+            x = i
+        if int(i[4]) == int(line2):
+            y = i
+
+    me1_alt = time_to_num(x)
+    me2_alt = time_to_num(y)
 
     # Данные
     # Выборка всех данных
@@ -88,7 +98,7 @@ def search_model(hypothesis, x, y, adid1, adid2):
 
     # Рассчета показателей по указанной в базе модели
     slope, intercept, r_value, p_value, std_err = hypotheses[hypothesis]()
-    print(slope, intercept, r_value, p_value, std_err, pairs.xstat_div, pairs.ystat_div)
+    print('Расчеты: ', slope, intercept, r_value, p_value, std_err, pairs.xstat_div, pairs.ystat_div)
 
     # Сохранение результатов в базу данных. Записываются данные по модели.
     db_app.upgate_math_models(
@@ -120,9 +130,10 @@ def primal_calc(data_area_id, log_id):
         hypothesis = i[1]
         line_id_1 = i[10]
         line_id_2 = i[11]
+
+
         # Получение данных
         try:
-
             xy, database_table, database_id = take_lines(line_id_1, line_id_2)
 
             if xy == None:
@@ -131,6 +142,7 @@ def primal_calc(data_area_id, log_id):
                 XY = np.array(xy)
                 x = [float(i[0]) for i in XY]
                 y = [float(i[1]) for i in XY]
+
 
                 # Рассчет параметров модели и запись их в базу
                 search_model(hypothesis, x, y, line_id_1, line_id_2)

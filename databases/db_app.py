@@ -1076,7 +1076,8 @@ def select_measures_to_lines(line1, line2):
             measures.column_name, 
             data_area.database_table,
             data_area.id,
-            measures.type
+            measures.type,
+            measures.id
         FROM 
             measures 
         LEFT JOIN data_area ON measures.data_area_id = data_area.id
