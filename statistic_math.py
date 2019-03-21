@@ -326,7 +326,9 @@ class Pairs:
 
 
 # Определение множестенной связи
+# TODO этот алгоритм не работает. Его нужно переписать.
 def multiple(models):
+    print('models', models)
     hash = {}
 
     mms = {}
@@ -341,7 +343,11 @@ def multiple(models):
         else:
             if i[2] not in mms[hash[i[1]]]:
                 mms[hash[i[1]]].append(i[2])
-                hash.setdefault(i[2], hash[i[1]])
+                if i[2] not in hash:
+                    hash.setdefault(i[2], hash[i[1]])
+                else:
+                    hash.pop(i[2])
+                    hash.setdefault(i[2], hash[i[1]])
 
             if i[0] not in model_list[hash[i[1]]]:
                 model_list[hash[i[1]]].append(i[0])
@@ -351,11 +357,21 @@ def multiple(models):
             if num not in model_list:
                 model_list.setdefault(num, [i[0]])
         else:
+            if i[1] not in mms[hash[i[2]]]:
+                mms[hash[i[2]]].append(i[1])
+                if i[1] in hash:
+                    hash.pop(i[1])
+                    hash.setdefault(i[1], hash[i[2]])
+
             if i[0] not in model_list[hash[i[1]]]:
                 model_list[hash[i[1]]].append(i[0])
 
     result = [mms[i] for i in mms if len(mms[i]) > 2]
     models_id = [model_list[i] for i in model_list if len(model_list[i]) > 1]
+    print('hash', hash)
+    print('mms', mms)
+    print('result', result)
+    print('models_id', models_id)
 
     return result, models_id
 
