@@ -212,7 +212,7 @@ class Pairs:
 
     # Данные показательной модели 1
     def exponentialreg1_line(self, slope, intercept):
-        Y = slope * np.power(self.x, intercept)
+        Y = slope * np.power((self.x), intercept)
         return Y
 
 
