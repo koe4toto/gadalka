@@ -247,17 +247,17 @@ def agreg(m):
                 p2 = [p[1], p[2]]
                 if k == p2:
                     ids.append(p[0])
-                    next1 = [p[0], p[1], p[2]]
+                    next1 = p[1]
                     if next1 not in mea:
                         mea.append(next1)
-                    next2 = [p[0], p[1], p[2]]
+                    next2 = p[2]
                     if next2 not in mea:
                         mea.append(next2)
 
         ides.append(ids)
         measures.append(mea)
 
-    return measures
+    return measures, ides
 
 for pop in result:
     print('result', pop, result[pop][1])

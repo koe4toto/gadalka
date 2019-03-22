@@ -368,10 +368,6 @@ def multiple(models):
 
     result = [mms[i] for i in mms if len(mms[i]) > 2]
     models_id = [model_list[i] for i in model_list if len(model_list[i]) > 1]
-    print('hash', hash)
-    print('mms', mms)
-    print('result', result)
-    print('models_id', models_id)
 
     return result, models_id
 
