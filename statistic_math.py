@@ -441,7 +441,6 @@ def count_measures(associations, pairs):
     for i in associations:
         if i[1] in flot and i[2] in flot:
             good_ass.append(i)
-
     complex_models, complex_models_id = multiple(group_associations(good_ass, pairs))
 
     result = []
