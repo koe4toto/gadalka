@@ -143,6 +143,10 @@ std_mean = float
 # Фондовый коэффициент. Отношение суммы значений последнего децияля в сумме первого.
 # В Дециль попадают десятая часть всех элементов выборки
 
+# Анализ распределения. Посчитать матожидание и отклонение. Расчитать значение параметров для нормальной
+# функции распределения. https://www.youtube.com/watch?v=9HaCmjx-RnM&list=PLDrmKwRSNx7K3oySk9znyI4kolE8wQElL&index=10
+# Позволяет оценить вероятность распределения как нормального. 
+
 
 from model_calculation import take_lines, search_model
 
@@ -164,39 +168,11 @@ models = np.array([
 [1659, 108, 115],
 [34534, 112, 174],
 [345345, 174, 205],
-    [345345, 305, 205]
+[345345, 305, 205],
+[3453430, 11, 20],
+[3453450, 14, 11],
+[3453450, 17, 14]
 ])
-
-transp = models.transpose()
-print(models)
-
-hash = []
-for i in models:
-    if i[1] not in hash:
-        hash.append(i[1])
-    if i[2] not in hash:
-        hash.append(i[2])
-
-
-result = {}
-
-for i in hash:
-    result.setdefault(i, [[], [], []])
-    for model in models:
-        if i in model:
-            result[i][0].append(model)
-            if model[1] not in result[i][1]:
-                result[i][1].append(model[1])
-            if model[2] not in result[i][1]:
-                result[i][1].append(model[2])
-            if model[0] not in result[i][2]:
-                result[i][2].append(model[0])
-nemo = []
-for i in hash:
-    for t in result[i][1]:
-        if i in result[i][1]:
-            for to in result[i][1]:
-                nemo.append(to)
 
 
 # Поиск многомерной модели среди ряда пар
@@ -259,7 +235,8 @@ def agreg(m):
 
     return measures, ides
 
-for pop in result:
-    print('result', pop, result[pop][1])
 
 print(agreg(models))
+
+alt_models = sm.multiple(models)
+print(alt_models)

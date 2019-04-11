@@ -326,51 +326,64 @@ class Pairs:
 
 
 # Определение множестенной связи
-# TODO этот алгоритм не работает. Его нужно переписать.
-def multiple(models):
-    print('models', models)
-    hash = {}
+def multiple(m):
+    # Список пар
+    models = [[i[1], i[2]] for i in m]
 
-    mms = {}
+    # Список сложных моделей
+    result = []
 
-    model_list = {}
-    for num, i in enumerate(models):
-        if i[1] not in hash:
-            hash.setdefault(i[1], num)
-            mms.setdefault(num, [i[1], i[2]])
-            model_list.setdefault(num, [i[0]])
+    # Список идентицикатором парных моделей в многомерной модели
+    ides = []
 
-        else:
-            if i[2] not in mms[hash[i[1]]]:
-                mms[hash[i[1]]].append(i[2])
-                if i[2] not in hash:
-                    hash.setdefault(i[2], hash[i[1]])
-                else:
-                    hash.pop(i[2])
-                    hash.setdefault(i[2], hash[i[1]])
+    # Список коэфициентов корреляции моделей
+    measures = []
 
-            if i[0] not in model_list[hash[i[1]]]:
-                model_list[hash[i[1]]].append(i[0])
+    # Поиск сложных свзяей в списке
+    for i in models:
+        # Для каждой простой модели в исходном спике собирается список моделей, вкоторой встретилось одно из измерений
+        # Получается перечень связанных моделей по первым двум измерениям.
+        model = [n for n in models if i[0] in n or i[1] in n]
+        # Если есть ещё модели с такими же измерениями, то
+        if len(model) >= 2:
+            # Для каждой модели в получившейся сложной модели
+            for i in model:
+                # Снова перебираем все исходные модели
+                for p in models:
+                    # Если измерение есть в исходных моделях, но нет в текущей многомерной, то
+                    if i[0] in p and p not in model:
+                        # Добавляем модель в список
+                        model.append(p)
+                    if i[1] in p and p not in model:
+                        # Добавляем модель в список
+                        model.append(p)
+            # Из списка пар исключаются те, что собрались в модель
+            models = [t for t in models if t not in model]
 
-        if i[2] not in hash:
-            hash.setdefault(i[2], num)
-            if num not in model_list:
-                model_list.setdefault(num, [i[0]])
-        else:
-            if i[1] not in mms[hash[i[2]]]:
-                mms[hash[i[2]]].append(i[1])
-                if i[1] in hash:
-                    hash.pop(i[1])
-                    hash.setdefault(i[1], hash[i[2]])
+            # Добавляем слождую модель в итоговый список
+            if len(model) >= 2:
+                result.append(model)
 
-            if i[0] not in model_list[hash[i[1]]]:
-                model_list[hash[i[1]]].append(i[0])
+    # Формирование списка идентификаторов парных моделей для каждой многомерной модели
+    for i in result:
+        ids = []
+        mea = []
+        for k in i:
+            for p in m:
+                p2 = [p[1], p[2]]
+                if k == p2:
+                    ids.append(p[0])
+                    next1 = p[1]
+                    if next1 not in mea:
+                        mea.append(next1)
+                    next2 = p[2]
+                    if next2 not in mea:
+                        mea.append(next2)
 
-    result = [mms[i] for i in mms if len(mms[i]) > 2]
-    models_id = [model_list[i] for i in model_list if len(model_list[i]) > 1]
+        ides.append(ids)
+        measures.append(mea)
 
-    return result, models_id
-
+    return measures, ides
 
 # Поиск рядов ассоциированных измерений и подстановка их в список моделей
 def group_associations(associats, mod):
