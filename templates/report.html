@@ -85,14 +85,24 @@ var twoColComp = {
       }
     }
 
-    max = Math.max.apply( Math, vals );
-    percent = 100/max;
+    const columnsCount = 2;
+    let maxValues = [[],[]];
+    let percentValues = [[],[]];
+    for(let count = 0; count < columnsCount; count++) {
+      maxValues[count] = Math.max.apply( Math, vals.filter((value, index) => index%columnsCount === count));
+      percentValues[count] = 100/maxValues[count];  // 100/Math.max.apply( Math, vals.filter((value, index) => index%columnsCount === count));
+
+    }
+
+
+
+
 
     for(x = 0; x < rows.length; x++) {
       var cells = rows[x].getElementsByTagName('td');
       for(var y = 1; y < cells.length; y++){
         var currNum = parseInt(cells[y].innerHTML, 10);
-        cells[y].style.backgroundSize = percent * currNum + "% 100%";
+        cells[y].style.backgroundSize = percentValues[(y+1) % columnsCount] * currNum + "% 100%"; // y + 1 потому что первая колонка - значения легенды графика - Value A, for example
         cells[y].style.transitionDelay = x/20 + "s";
       }
     }
@@ -108,6 +118,7 @@ window.onload = function(){
 window.onscroll = function(){
   twoColComp.init();
 }
+
 </script>
 
 <table class="table table-hover" style="width: 100%;">
