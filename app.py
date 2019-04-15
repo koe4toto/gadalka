@@ -99,6 +99,10 @@ app.register_blueprint(measuresModule)
 from models import mod as modelsModule
 app.register_blueprint(modelsModule)
 
+# Отчеты
+from reports import mod as modelsModule
+app.register_blueprint(modelsModule)
+
 
 
 

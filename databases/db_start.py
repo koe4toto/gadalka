@@ -302,3 +302,22 @@ def start_app():
 
     # Подтверждение
     conn.commit()
+
+    # Единицы измерений
+    cursor.execute(
+        '''
+        CREATE SEQUENCE auto_id_reports;
+
+        CREATE TABLE reports (
+            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_reports'), 
+            "name" varchar(300), 
+            "description" varchar(600), 
+            "type" int, 
+            "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            "user_id" varchar(30)
+        );
+        '''
+    )
+
+    # Подтверждение
+    conn.commit()

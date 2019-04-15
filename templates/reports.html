@@ -1,0 +1,20 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+<h1>Отчёты  <a class="btn btn-outline-primary" href="/add_report"><i class="fas fa-plus"></i> Добавить</a></h1>
+<br>
+<div class="list-group">
+{% for i in list %}
+  <a href="report/{{ i[0] }}" class="list-group-item list-group-item-action flex-column align-items-start">
+    <div class="d-flex w-100 justify-content-between">
+      <h5 class="mb-1 text-primary">{{ i[1] }}</h5>
+    </div>
+  </a>
+{% endfor %}
+</div>
+
+</div>
+</div>
+
+
+{% endblock %}

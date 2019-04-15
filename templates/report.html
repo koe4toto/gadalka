@@ -1,0 +1,171 @@
+{% extends 'layout.html' %}
+
+{% block body %}
+    <a class="text-secondary" href="/reports">Отчеты</a><br>
+    &#8595;
+    <div class="row">
+      <div class="col-10">
+          <h1>{{ report[0][1] }}</h1>
+      </div>
+    <div class="col-2">
+      <form action="{{url_for('reports.delete_report', id=report[0][0])}}" method="post">
+          <input type="hidden" name="_method" value="DELETE">
+          <input type="submit" value=" Удалить" class="btn btn-link float-right text-danger">
+      </form>
+    </div>
+    </div>
+
+    <p  class="lead">{{ report[0][2] }}</p>
+    <a class="btn btn-outline-primary" href="/edit_report/{{ report[0][0] }}"><i class="fas fa-pencil-alt"></i> Редактировать</a>
+
+    <hr>
+
+
+<style>
+
+td {
+  border-bottom: 1px solid #fbfbfb;
+  background-size: 0% 100%;
+  background-repeat: no-repeat;
+  -webkit-transition: all .75s ease-out;
+  -moz-transition: all .75s ease-out;
+  transition: all .75s ease-out;
+
+}
+
+td:nth-child(2) {
+  width: 30%;
+  background-image: -webkit-linear-gradient(right, #3498db, #3498db);
+  background-image: -moz-linear-gradient(right, #3498db, #3498db);
+  background-image: linear-gradient(right, #3498db, #3498db);
+  background-position: left top;
+}
+
+td:nth-child(3) {
+  width: 30%;
+  background-image: -webkit-linear-gradient(right, #349844, #349844);
+  background-image: -moz-linear-gradient(right, #349844, #349844);
+  background-image: linear-gradient(right, #349844, #349844);
+  background-position: left top;
+}
+}
+</style>
+
+<script type="text/javascript">
+var twoColComp = {
+  init: function (){
+    var tables = document.getElementsByTagName('table');
+
+    for(var i = 0; i < tables.length; i++) {
+      if (new RegExp('(^| )two-column-comp( |$)', 'gi').test(tables[i].className)){
+         return;
+      }
+
+      var h = tables[i].clientHeight,
+          t = tables[i].getBoundingClientRect().top,
+          wT = window.pageYOffset || document.documentElement.scrollTop,
+          wH = window.innerHeight;
+
+      if(wT + wH > t + h/2){
+         this.make(tables[i]);
+       }
+    }
+  },
+
+  make : function(el){
+    var rows = el.getElementsByTagName('tr'),
+        vals = [],
+        max,
+        percent;
+
+    for(var x = 0; x < rows.length; x++) {
+      var cells = rows[x].getElementsByTagName('td');
+      for(var y = 1; y < cells.length; y++){
+        vals.push(parseInt(cells[y].innerHTML, 10));
+      }
+    }
+
+    max = Math.max.apply( Math, vals );
+    percent = 100/max;
+
+    for(x = 0; x < rows.length; x++) {
+      var cells = rows[x].getElementsByTagName('td');
+      for(var y = 1; y < cells.length; y++){
+        var currNum = parseInt(cells[y].innerHTML, 10);
+        cells[y].style.backgroundSize = percent * currNum + "% 100%";
+        cells[y].style.transitionDelay = x/20 + "s";
+      }
+    }
+
+    el.className =+ " two-column-comp"
+  }
+}
+
+window.onload = function(){
+  twoColComp.init();
+}
+
+window.onscroll = function(){
+  twoColComp.init();
+}
+</script>
+
+<table class="table table-hover" style="width: 100%;">
+  <tr>
+    <th scope="col"></th>
+    <th scope="col">2014</th>
+    <th scope="col">2015</th>
+  </tr>
+  <tr>
+    <td>Value A</td>
+    <td>2</td>
+    <td>8</td>
+  </tr>
+  <tr>
+    <td>Value B</td>
+    <td>3</td>
+    <td>9</td>
+  </tr>
+  <tr>
+    <td>Value C</td>
+    <td>7</td>
+    <td>11</td>
+  </tr>
+  <tr>
+    <td>Value D</td>
+    <td>10</td>
+    <td>9</td>
+  </tr>
+  <tr>
+    <td>Value E</td>
+    <td>9</td>
+    <td>10</td>
+  </tr>
+  <tr>
+    <td>Value F</td>
+    <td>11</td>
+    <td>10</td>
+  </tr>
+  <tr>
+    <td>Value G</td>
+    <td>15</td>
+    <td>9</td>
+  </tr>
+  <tr>
+    <td>Value H</td>
+    <td>18</td>
+    <td>10</td>
+  </tr>
+  <tr>
+    <td>Value I</td>
+    <td>17</td>
+    <td>11</td>
+  </tr>
+  <tr>
+    <td>Value J</td>
+    <td>40</td>
+    <td>12</td>
+  </tr>
+</table>
+
+{% endblock %}

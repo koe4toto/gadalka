@@ -1185,6 +1185,20 @@ def assosiations_list(user_id):
     result = cursor.fetchall()
     return result
 
+
+def reports_list(user_id):
+    cursor.execute(
+        '''
+        SELECT 
+            *
+        FROM reports
+        WHERE user_id = '{0}';
+        '''.format(user_id)
+    )
+    result = cursor.fetchall()
+    return result
+
+
 # Сохранение измерений модели
 def select_measures_by_unit(unit, user_id):
     cursor.execute(
@@ -1200,3 +1214,76 @@ def select_measures_by_unit(unit, user_id):
     )
     result = cursor.fetchall()
     return result
+
+# Список отчетов
+def reports_list(user_id):
+    cursor.execute(
+        '''
+        SELECT 
+            *
+        FROM reports
+        WHERE user_id = '{0}';
+        '''.format(user_id)
+    )
+    result = cursor.fetchall()
+    return result
+
+
+# СОздание отчета
+def create_report(name, description, type_of, user_id):
+    cursor.execute(
+        '''
+        INSERT INTO reports (
+            name, 
+            description, 
+            user_id, 
+            type
+        ) VALUES ('{0}', '{1}', '{2}', '{3}')
+        RETURNING id;
+        '''.format(
+            name,
+            description,
+            user_id,
+            type_of
+        )
+    )
+    conn.commit()
+    report_id = cursor.fetchall()
+
+    return report_id
+
+# Отчёт
+def report(id):
+    cursor.execute(
+        '''
+        SELECT 
+            *
+        FROM reports
+        WHERE id = '{0}';
+        '''.format(id)
+    )
+    result = cursor.fetchall()
+    return result
+
+# Изменить отчет
+def update_report(id, name, description):
+    cursor.execute(
+        '''
+        UPDATE reports 
+        SET 
+            name='{1}',
+            description='{2}'
+        WHERE id = '{0}';
+        '''.format(id, name, description)
+    )
+    conn.commit()
+
+
+# Удаление отчета
+def delete_report(id):
+    cursor.execute(
+        '''
+        DELETE FROM reports WHERE id = '{0}';
+        '''.format(id)
+    )
+    conn.commit()
