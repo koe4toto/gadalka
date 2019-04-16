@@ -27,28 +27,53 @@ td {
   border-bottom: 1px solid #fbfbfb;
   background-size: 0% 100%;
   background-repeat: no-repeat;
-  -webkit-transition: all .75s ease-out;
-  -moz-transition: all .75s ease-out;
-  transition: all .75s ease-out;
+  -webkit-transition: all .1s ease-out;
+  -moz-transition: all .1s ease-out;
+  transition: all .1s ease-out;
 
 }
 
-td:nth-child(2) {
-  width: 30%;
+td:nth-child(1) {
+  width: 10%;
   background-image: -webkit-linear-gradient(right, #3498db, #3498db);
   background-image: -moz-linear-gradient(right, #3498db, #3498db);
   background-image: linear-gradient(right, #3498db, #3498db);
   background-position: left top;
 }
 
-td:nth-child(3) {
-  width: 30%;
+td:nth-child(2) {
+  width: 10%;
   background-image: -webkit-linear-gradient(right, #349844, #349844);
   background-image: -moz-linear-gradient(right, #349844, #349844);
   background-image: linear-gradient(right, #349844, #349844);
   background-position: left top;
 }
+
+td.int {
+  width: 10%;
+  background-image: -webkit-linear-gradient(right, #349843, #d49844);
+  background-image: -moz-linear-gradient(right, #349843, #d49844);
+  background-image: linear-gradient(right, #349843, #d49844);
+  background-position: left top;
 }
+
+td:nth-child(3) {
+  width: 10%;
+  background-image: -webkit-linear-gradient(right, #349844, #349844);
+  background-image: -moz-linear-gradient(right, #349844, #349844);
+  background-image: linear-gradient(right, #349844, #349844);
+  background-position: left top;
+}
+
+td:nth-child(4) {
+  width: 10%;
+  background-image: -webkit-linear-gradient(right, #3498db, #3498db);
+  background-image: -moz-linear-gradient(right, #3498db, #3498db);
+  background-image: linear-gradient(right, #3498db, #3498db);
+  background-position: left top;
+}
+
+
 </style>
 
 <script type="text/javascript">
@@ -80,29 +105,19 @@ var twoColComp = {
 
     for(var x = 0; x < rows.length; x++) {
       var cells = rows[x].getElementsByTagName('td');
-      for(var y = 1; y < cells.length; y++){
+      for(var y = 0; y < cells.length; y++){
         vals.push(parseInt(cells[y].innerHTML, 10));
       }
     }
 
-    const columnsCount = 2;
-    let maxValues = [[],[]];
-    let percentValues = [[],[]];
-    for(let count = 0; count < columnsCount; count++) {
-      maxValues[count] = Math.max.apply( Math, vals.filter((value, index) => index%columnsCount === count));
-      percentValues[count] = 100/maxValues[count];  // 100/Math.max.apply( Math, vals.filter((value, index) => index%columnsCount === count));
-
-    }
-
-
-
-
+    max = Math.max.apply( Math, vals );
+    percent = 100/max;
 
     for(x = 0; x < rows.length; x++) {
       var cells = rows[x].getElementsByTagName('td');
-      for(var y = 1; y < cells.length; y++){
+      for(var y = 0; y < cells.length; y++){
         var currNum = parseInt(cells[y].innerHTML, 10);
-        cells[y].style.backgroundSize = percentValues[(y+1) % columnsCount] * currNum + "% 100%"; // y + 1 потому что первая колонка - значения легенды графика - Value A, for example
+        cells[y].style.backgroundSize = percent * currNum + "% 100%";
         cells[y].style.transitionDelay = x/20 + "s";
       }
     }
@@ -121,62 +136,134 @@ window.onscroll = function(){
 
 </script>
 
-<table class="table table-hover" style="width: 100%;">
-  <tr>
-    <th scope="col"></th>
-    <th scope="col">2014</th>
-    <th scope="col">2015</th>
-  </tr>
-  <tr>
-    <td>Value A</td>
-    <td>2</td>
-    <td>8</td>
-  </tr>
-  <tr>
-    <td>Value B</td>
-    <td>3</td>
-    <td>9</td>
-  </tr>
-  <tr>
-    <td>Value C</td>
-    <td>7</td>
-    <td>11</td>
-  </tr>
-  <tr>
-    <td>Value D</td>
-    <td>10</td>
-    <td>9</td>
-  </tr>
-  <tr>
-    <td>Value E</td>
-    <td>9</td>
-    <td>10</td>
-  </tr>
-  <tr>
-    <td>Value F</td>
-    <td>11</td>
-    <td>10</td>
-  </tr>
-  <tr>
-    <td>Value G</td>
-    <td>15</td>
-    <td>9</td>
-  </tr>
-  <tr>
-    <td>Value H</td>
-    <td>18</td>
-    <td>10</td>
-  </tr>
-  <tr>
-    <td>Value I</td>
-    <td>17</td>
-    <td>11</td>
-  </tr>
-  <tr>
-    <td>Value J</td>
-    <td>40</td>
-    <td>12</td>
-  </tr>
-</table>
+
+
+<div class="row">
+
+  <div class="col-md-6">
+      <table class="table table-hover" style="width: 100%;">
+        <tr>
+          <th>2014</th>
+          <th>2015</th>
+        </tr>
+        <tr>
+          <td>2</td>
+          <td>8</td>
+        </tr>
+        <tr>
+          <td>3</td>
+          <td>9</td>
+        </tr>
+        <tr>
+          <td>7</td>
+          <td>11</td>
+        </tr>
+        <tr>
+          <td>10</td>
+          <td>9</td>
+        </tr>
+        <tr>
+          <td>9</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <td>11</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <td>15</td>
+          <td>9</td>
+        </tr>
+        <tr>
+          <td>18</td>
+          <td>10</td>
+        </tr>
+        <tr>
+          <td>17</td>
+          <td>11</td>
+        </tr>
+        <tr>
+          <td>20</td>
+          <td>12</td>
+        </tr>
+      </table>
+  </div>
+  <div class="col-md-3">
+    <table class="table table-hover" style="width: 100%;">
+      <tr>
+        <th scope="col">2016</th>
+      </tr>
+      <tr>
+        <td>dsfsd</td>
+      </tr>
+      <tr>
+        <td>sdf</td>
+      </tr>
+      <tr>
+        <td>sf</td>
+      </tr>
+      <tr>
+        <td>sdf</td>
+      </tr>
+      <tr>
+        <td>gfd</td>
+      </tr>
+      <tr>
+        <td>dfg</td>
+      </tr>
+      <tr>
+        <td>dfg</td>
+      </tr>
+      <tr>
+        <td>dfgdf</td>
+      </tr>
+      <tr>
+        <td>serw</td>
+      </tr>
+      <tr>
+        <td>wre</td>
+      </tr>
+    </table>
+  </div>
+  <div class="col-md-3">
+    <table class="table table-hover" style="width: 100%;">
+      <tr>
+        <th scope="col">2016</th>
+      </tr>
+      <tr>
+        <td class="int">8</td>
+      </tr>
+      <tr>
+        <td class="int">9</td>
+      </tr>
+      <tr>
+        <td class="int">11</td>
+      </tr>
+      <tr>
+        <td class="int">21</td>
+      </tr>
+      <tr>
+        <td class="int">10</td>
+      </tr>
+      <tr>
+        <td class="int">10</td>
+      </tr>
+      <tr>
+        <td class="int">9</td>
+      </tr>
+      <tr>
+        <td class="int">10</td>
+      </tr>
+      <tr>
+        <td class="int">11</td>
+      </tr>
+      <tr>
+        <td class="int">12</td>
+      </tr>
+    </table>
+  </div>
+
+  </div>
+</div>
 
 {% endblock %}

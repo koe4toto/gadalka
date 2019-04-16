@@ -62,8 +62,11 @@ def add_aggregation_report():
 @is_logged_in
 def report(id):
     report = db_app.report(id)
+    count = 3
+    lists = '[], [], []'
+
     if report[0][3] == 1:
-        return render_template('simple_report.html', report=report)
+        return render_template('simple_report.html', report=report, count=count, lists=lists)
     elif report[0][3] == 2:
         return render_template('aggregation_report.html', report=report)
 
