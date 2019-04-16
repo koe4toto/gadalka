@@ -93,16 +93,16 @@ class UnitOfMeasurement(Form):
     name = StringField('Название', [validators.required(message='Обязательное поле')])
     short_name = StringField('Сокращенное название', [validators.required(message='Обязательное поле')])
 
-# Форма добавление отчета
-class Report(Form):
+# Форма добавление отчета на исходных данных
+class SimpleReport(Form):
     name = StringField('Название', [validators.required(message='Обязательное поле')])
     description = TextAreaField('Комментарий')
-    type_of = RadioField(
-        'Тип обработки',
-        [validators.required(message='Обязательное поле')],
-        choices=[('1', 'Будет отображать исходные данные'), ('2', 'Будет собирать агрегированные показатели')],
-        default = '1'
-    )
+    data_area = SelectField('Наборы данных')
+
+# Форма добавление отчета на исходных данных
+class АggregationReport(Form):
+    name = StringField('Название', [validators.required(message='Обязательное поле')])
+    description = TextAreaField('Комментарий')
 
 # Форма редактирования отчета
 class EditReport(Form):

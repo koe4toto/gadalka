@@ -314,7 +314,8 @@ def start_app():
             "description" varchar(600), 
             "type" int, 
             "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            "user_id" varchar(30)
+            "user_id" varchar(30),
+            "ata_area_id" int
         );
         '''
     )

@@ -1229,8 +1229,34 @@ def reports_list(user_id):
     return result
 
 
-# СОздание отчета
-def create_report(name, description, type_of, user_id):
+# Создание отчета
+def create_simple_report(name, description, type_of, user_id, data_area_id):
+    cursor.execute(
+        '''
+        INSERT INTO reports (
+            name, 
+            description, 
+            user_id, 
+            type,
+            data_area_id
+        ) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}')
+        RETURNING id;
+        '''.format(
+            name,
+            description,
+            user_id,
+            type_of,
+            data_area_id
+        )
+    )
+    conn.commit()
+    report_id = cursor.fetchall()
+
+    return report_id
+
+
+# Создание отчета
+def create_aggregation_report(name, description, type_of, user_id):
     cursor.execute(
         '''
         INSERT INTO reports (

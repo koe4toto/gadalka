@@ -14,18 +14,44 @@ def reports():
     reports_list = db_app.reports_list(session['user_id'])
     return render_template('reports.html', list=reports_list)
 
-# Добавление отчёта
-@mod.route("/add_report", methods =['GET', 'POST'] )
+# Добавление простого отчёта
+@mod.route("/add_simple_report", methods =['GET', 'POST'] )
 @is_logged_in
-def add_report():
-    form = Report(request.form)
+def add_simple_report():
+
+    user = str(session['user_id'])
+
+    result = db_app.select_da(user)
+    dif = [(str(i[0]), str(i[1])) for i in result]
+    form = SimpleReport(request.form)
+    form.data_area.choices = dif
+
+
     if request.method == 'POST' and form.validate():
         name = form.name.data
         description = form.description.data
-        type_of = form.type_of.data
+        data_area = form.data_area.data
+        type_of = '1'
 
         # Запись в базу данных
-        report_id = db_app.create_report(name, description, type_of, session['user_id'])
+        report_id = db_app.create_simple_report(name, description, type_of, session['user_id'], data_area)
+
+        flash('Новый отчет добавлен', 'success')
+        return redirect(url_for('reports.report', id=report_id[0][0]))
+    return render_template('add_report.html', form=form)
+
+# Добавление простого отчёта
+@mod.route("/add_aggregation_report", methods =['GET', 'POST'] )
+@is_logged_in
+def add_aggregation_report():
+    form = АggregationReport(request.form)
+    if request.method == 'POST' and form.validate():
+        name = form.name.data
+        description = form.description.data
+        type_of = '2'
+
+        # Запись в базу данных
+        report_id = db_app.create_aggregation_report(name, description, type_of, session['user_id'])
 
         flash('Новый отчет добавлен', 'success')
         return redirect(url_for('reports.report', id=report_id[0][0]))
@@ -36,7 +62,10 @@ def add_report():
 @is_logged_in
 def report(id):
     report = db_app.report(id)
-    return render_template('report.html', report=report)
+    if report[0][3] == 1:
+        return render_template('simple_report.html', report=report)
+    elif report[0][3] == 2:
+        return render_template('aggregation_report.html', report=report)
 
 # Редактирование отчета
 @mod.route("/edit_report/<string:id>", methods =['GET', 'POST'] )

@@ -1,8 +1,16 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-<h1>Отчёты  <a class="btn btn-outline-primary" href="/add_report"><i class="fas fa-plus"></i> Добавить</a></h1>
+<h1>Отчёты</h1>
 <br>
+<a class="btn dropdown-toggle btn-secondary"   href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+Добавить отчет
+</a>
+<div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+    <a class="dropdown-item" href="/add_simple_report" title="Данные выраженные в числах">Из исходных данных наборов данных</a>
+    <a class="dropdown-item" href="/add_aggregation_report" title="Данные в текстовом виде">Основанный из агрегатов</a>
+</div>
+<hr>
 <div class="list-group">
 {% for i in list %}
   <a href="report/{{ i[0] }}" class="list-group-item list-group-item-action flex-column align-items-start">
