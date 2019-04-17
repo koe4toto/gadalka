@@ -105,7 +105,7 @@ var twoColComp = {
         percent;
 
     for(var x = 0; x < rows.length; x++) {
-      var cells = rows[x].getElementsByTagName('td');
+      var cells = rows[x].getElementsByClassName('int');
       for(var y = 0; y < cells.length; y++){
         vals.push(parseInt(cells[y].innerHTML, 10));
       }
@@ -124,7 +124,7 @@ var twoColComp = {
     }
 
     for(x = 0; x < rows.length; x++) {
-      var cells = rows[x].getElementsByTagName('td');
+      var cells = rows[x].getElementsByClassName('int');
       for(var y = 0; y < cells.length; y++){
         var currNum = parseInt(cells[y].innerHTML, 10);
         cells[y].style.backgroundSize = percentValues[(y) % columnsCount] * currNum + "% 100%"; // y + 1 потому что первая колонка - значения легенды графика - Value A, for example
@@ -155,46 +155,57 @@ window.onscroll = function(){
         <tr>
           <th>2014</th>
           <th>2015</th>
+          <th>Текстовая</th>
         </tr>
         <tr>
-          <td>2</td>
-          <td>8</td>
+          <td class="int">2</td>
+          <td class="int">8</td>
+          <td>ываыва</td>
         </tr>
         <tr>
-          <td>3</td>
-          <td>9</td>
+          <td class="int">3</td>
+          <td class="int">9</td>
+          <td>ываыва</td>
         </tr>
         <tr>
-          <td>7</td>
-          <td>11</td>
+          <td class="int">7</td>
+          <td class="int">11</td>
+          <td>ываыва</td>
         </tr>
         <tr>
-          <td>10</td>
-          <td>9</td>
+          <td class="int">10</td>
+          <td class="int">9</td>
+          <td>ываыва</td>
         </tr>
         <tr>
-          <td>9</td>
-          <td>10</td>
+          <td class="int">9</td>
+          <td class="int">10</td>
+          <td>ываыва</td>
         </tr>
         <tr>
-          <td>11</td>
-          <td>10</td>
+          <td class="int">11</td>
+          <td class="int">10</td>
+          <td>ываыва</td>
         </tr>
         <tr>
-          <td>15</td>
-          <td>9</td>
+          <td class="int">15</td>
+          <td class="int">9</td>
+          <td>ываыва</td>
         </tr>
         <tr>
-          <td>18</td>
-          <td>100</td>
+          <td class="int">18</td>
+          <td class="int">100</td>
+          <td>ываыва</td>
         </tr>
         <tr>
-          <td>17</td>
-          <td>11</td>
+          <td class="int">17</td>
+          <td class="int">11</td>
+          <td>ываыва</td>
         </tr>
         <tr>
-          <td>60</td>
-          <td>12</td>
+          <td class="int">60</td>
+          <td class="int">12</td>
+          <td>ываыва</td>
         </tr>
       </table>
   </div>

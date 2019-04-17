@@ -2,8 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1719e8ec-808e-4103-a063-fff281569a44" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/prototype.py" beforeDir="false" afterPath="$PROJECT_DIR$/prototype.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/simple_report.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/simple_report.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -52,7 +50,7 @@
       <usages-collector id="statistics.vcs.git.usages" />
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="HTML" value="3931" />
+          <entry key="HTML" value="3973" />
           <entry key="PLAIN_TEXT" value="24" />
           <entry key="Python" value="52548" />
         </counts>
@@ -60,7 +58,7 @@
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="24" />
-          <entry key="html" value="3931" />
+          <entry key="html" value="3973" />
           <entry key="py" value="52548" />
         </counts>
       </usages-collector>
@@ -110,8 +108,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/templates/simple_report.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="84">
-              <caret line="36" column="10" selection-start-line="36" selection-start-column="10" selection-end-line="36" selection-end-column="10" />
+            <state relative-caret-position="357">
+              <caret line="126" column="26" lean-forward="true" selection-start-line="126" selection-start-column="26" selection-end-line="126" selection-end-column="52" />
               <folding>
                 <element signature="n#style#0;n#table#0;n#div#1;n#div#1;n#!!top" expanded="true" />
               </folding>
@@ -853,8 +851,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/templates/simple_report.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="84">
-          <caret line="36" column="10" selection-start-line="36" selection-start-column="10" selection-end-line="36" selection-end-column="10" />
+        <state relative-caret-position="357">
+          <caret line="126" column="26" lean-forward="true" selection-start-line="126" selection-start-column="26" selection-end-line="126" selection-end-column="52" />
           <folding>
             <element signature="n#style#0;n#table#0;n#div#1;n#div#1;n#!!top" expanded="true" />
           </folding>
