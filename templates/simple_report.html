@@ -33,22 +33,6 @@ td {
 
 }
 
-td:nth-child(1) {
-  width: 10%;
-  background-image: -webkit-linear-gradient(right, #3498db, #3498db);
-  background-image: -moz-linear-gradient(right, #3498db, #3498db);
-  background-image: linear-gradient(right, #3498db, #3498db);
-  background-position: left top;
-}
-
-td:nth-child(2) {
-  width: 10%;
-  background-image: -webkit-linear-gradient(right, #349844, #349844);
-  background-image: -moz-linear-gradient(right, #349844, #349844);
-  background-image: linear-gradient(right, #349844, #349844);
-  background-position: left top;
-}
-
 td.int {
   width: 10%;
   background-image: -webkit-linear-gradient(right, #d49800, #d49844);
@@ -57,20 +41,15 @@ td.int {
   background-position: left top;
 }
 
-td:nth-child(3) {
+td.blew {
   width: 10%;
-  background-image: -webkit-linear-gradient(right, #349844, #349844);
-  background-image: -moz-linear-gradient(right, #349844, #349844);
-  background-image: linear-gradient(right, #349844, #349844);
+  background-image: -webkit-linear-gradient(right, #249843, #249844);
+  background-image: -moz-linear-gradient(right, #249834, #249844);
+  background-image: linear-gradient(right, #249834, #249844);
   background-position: left top;
 }
 
-td:nth-child(4) {
-  width: 10%;
-  background-image: -webkit-linear-gradient(right, #3498db, #3498db);
-  background-image: -moz-linear-gradient(right, #3498db, #3498db);
-  background-image: linear-gradient(right, #3498db, #3498db);
-  background-position: left top;
+td:numb {
 }
 
 
@@ -105,7 +84,7 @@ var twoColComp = {
         percent;
 
     for(var x = 0; x < rows.length; x++) {
-      var cells = rows[x].getElementsByClassName('int');
+      var cells = rows[x].getElementsByClassName('numb');
       for(var y = 0; y < cells.length; y++){
         vals.push(parseInt(cells[y].innerHTML, 10));
       }
@@ -114,7 +93,7 @@ var twoColComp = {
     max = Math.max.apply( Math, vals );
     percent = 100/max;
 
-    const columnsCount = 2;
+    const columnsCount = cells.length;
     let maxValues = [[],[]];
     let percentValues = [[],[]];
     for(let count = 0; count < columnsCount; count++) {
@@ -124,7 +103,7 @@ var twoColComp = {
     }
 
     for(x = 0; x < rows.length; x++) {
-      var cells = rows[x].getElementsByClassName('int');
+      var cells = rows[x].getElementsByClassName('numb');
       for(var y = 0; y < cells.length; y++){
         var currNum = parseInt(cells[y].innerHTML, 10);
         cells[y].style.backgroundSize = percentValues[(y) % columnsCount] * currNum + "% 100%"; // y + 1 потому что первая колонка - значения легенды графика - Value A, for example
@@ -150,7 +129,7 @@ window.onscroll = function(){
 
 <div class="row">
 
-  <div class="col-md-6">
+  <div class="col-md-10">
       <table class="table table-hover" style="width: 100%;">
         <tr>
           <th>2014</th>
@@ -158,131 +137,58 @@ window.onscroll = function(){
           <th>Текстовая</th>
         </tr>
         <tr>
-          <td class="int">2</td>
-          <td class="int">8</td>
+          <td class="numb int">2</td>
+          <td class="numb blew">8</td>
           <td>ываыва</td>
         </tr>
         <tr>
-          <td class="int">3</td>
-          <td class="int">9</td>
+          <td class="numb int">3</td>
+          <td class="numb blew">9</td>
           <td>ываыва</td>
         </tr>
         <tr>
-          <td class="int">7</td>
-          <td class="int">11</td>
+          <td class="numb int">7</td>
+          <td class="numb blew">11</td>
           <td>ываыва</td>
         </tr>
         <tr>
-          <td class="int">10</td>
-          <td class="int">9</td>
+          <td class="numb int">10</td>
+          <td class="numb blew">9</td>
           <td>ываыва</td>
         </tr>
         <tr>
-          <td class="int">9</td>
-          <td class="int">10</td>
+          <td class="numb int">9</td>
+          <td class="numb blew">10</td>
           <td>ываыва</td>
         </tr>
         <tr>
-          <td class="int">11</td>
-          <td class="int">10</td>
+          <td class="numb int">11</td>
+          <td class="numb blew">10</td>
           <td>ываыва</td>
         </tr>
         <tr>
-          <td class="int">15</td>
-          <td class="int">9</td>
+          <td class="numb int">15</td>
+          <td class="numb blew">9</td>
           <td>ываыва</td>
         </tr>
         <tr>
-          <td class="int">18</td>
-          <td class="int">100</td>
+          <td class="numb int">18</td>
+          <td class="numb blew">10</td>
           <td>ываыва</td>
         </tr>
         <tr>
-          <td class="int">17</td>
-          <td class="int">11</td>
+          <td class="numb int">17</td>
+          <td class="numb blew">11</td>
           <td>ываыва</td>
         </tr>
         <tr>
-          <td class="int">60</td>
-          <td class="int">12</td>
+          <td class="numb int">60</td>
+          <td class="numb blew">12</td>
           <td>ываыва</td>
         </tr>
       </table>
   </div>
-  <div class="col-md-3">
-    <table class="table table-hover" style="width: 100%;">
-      <tr>
-        <th scope="col">2016</th>
-      </tr>
-      <tr>
-        <td>dsfsd</td>
-      </tr>
-      <tr>
-        <td>sdf</td>
-      </tr>
-      <tr>
-        <td>sf</td>
-      </tr>
-      <tr>
-        <td>sdf</td>
-      </tr>
-      <tr>
-        <td>gfd</td>
-      </tr>
-      <tr>
-        <td>dfg</td>
-      </tr>
-      <tr>
-        <td>dfg</td>
-      </tr>
-      <tr>
-        <td>dfgdf</td>
-      </tr>
-      <tr>
-        <td>serw</td>
-      </tr>
-      <tr>
-        <td>wre</td>
-      </tr>
-    </table>
-  </div>
-  <div class="col-md-3">
-    <table class="table table-hover" style="width: 100%;">
-      <tr>
-        <th scope="col">2016</th>
-      </tr>
-      <tr>
-        <td class="int">8</td>
-      </tr>
-      <tr>
-        <td class="int">9</td>
-      </tr>
-      <tr>
-        <td class="int">11</td>
-      </tr>
-      <tr>
-        <td class="int">21</td>
-      </tr>
-      <tr>
-        <td class="int">10</td>
-      </tr>
-      <tr>
-        <td class="int">10</td>
-      </tr>
-      <tr>
-        <td class="int">9</td>
-      </tr>
-      <tr>
-        <td class="int">10</td>
-      </tr>
-      <tr>
-        <td class="int">11</td>
-      </tr>
-      <tr>
-        <td class="int">12</td>
-      </tr>
-    </table>
-  </div>
+
 
   </div>
 </div>
