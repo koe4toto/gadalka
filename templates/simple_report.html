@@ -34,7 +34,6 @@ td {
 }
 
 td.int {
-  width: 10%;
   background-image: -webkit-linear-gradient(right, #d49800, #d49844);
   background-image: -moz-linear-gradient(right, #d49800, #d49844);
   background-image: linear-gradient(right, #d49800, #d49844);
@@ -42,7 +41,6 @@ td.int {
 }
 
 td.blew {
-  width: 10%;
   background-image: -webkit-linear-gradient(right, #249843, #249844);
   background-image: -moz-linear-gradient(right, #249834, #249844);
   background-image: linear-gradient(right, #249834, #249844);
@@ -94,8 +92,14 @@ var twoColComp = {
     percent = 100/max;
 
     const columnsCount = cells.length;
-    let maxValues = [[],[]];
-    let percentValues = [[],[]];
+    let maxValues = [];
+    let percentValues = [];
+    
+    for(var x = 0; x < rows.length; x++) {
+      maxValues.push([]);
+      percentValues.push([]);
+    }
+
     for(let count = 0; count < columnsCount; count++) {
       maxValues[count] = Math.max.apply( Math, vals.filter((value, index) => index%columnsCount === count));
       percentValues[count] = 100/maxValues[count];  // 100/Math.max.apply( Math, vals.filter((value, index) => index%columnsCount === count));
@@ -188,7 +192,10 @@ window.onscroll = function(){
         </tr>
       </table>
   </div>
-
+  <div class="col-md-2">
+    Фильтры
+    <Пресеты></Пресеты>
+  </div>
 
   </div>
 </div>
