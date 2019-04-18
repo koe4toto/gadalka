@@ -1313,3 +1313,27 @@ def delete_report(id):
         '''.format(id)
     )
     conn.commit()
+
+
+# Создание измерения отчета
+def create_measurement_report(report_id, measure_id, next_measure, style):
+    cursor.execute(
+        '''
+        INSERT INTO reports (
+            report_id, 
+            measure_id, 
+            next_measure, 
+            style
+        ) VALUES ('{0}', '{1}', '{2}', '{3}')
+        RETURNING id;
+        '''.format(
+            report_id,
+            measure_id,
+            next_measure,
+            style
+        )
+    )
+    conn.commit()
+    report_id = cursor.fetchall()
+
+    return report_id

@@ -303,7 +303,7 @@ def start_app():
     # Подтверждение
     conn.commit()
 
-    # Единицы измерений
+    # Отчеты
     cursor.execute(
         '''
         CREATE SEQUENCE auto_id_reports;
@@ -315,7 +315,25 @@ def start_app():
             "type" int, 
             "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             "user_id" varchar(30),
-            "ata_area_id" int
+            "data_area_id" int
+        );
+        '''
+    )
+
+    # Подтверждение
+    conn.commit()
+
+    # Колонки или параметры отчета
+    cursor.execute(
+        '''
+        CREATE SEQUENCE auto_id_measurement_report;
+
+        CREATE TABLE measurement_report (
+            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_measurement_report'), 
+            "report_id" int,
+            "measure_id" int,
+            "next_measure" int,
+            "style" int
         );
         '''
     )

@@ -108,3 +108,13 @@ class АggregationReport(Form):
 class EditReport(Form):
     name = StringField('Название', [validators.required(message='Обязательное поле')])
     description = TextAreaField('Комментарий')
+
+class MeasurementReport(Form):
+    measure_id = StringField('Название', [validators.required(message='Обязательное поле')])
+    next_measure = StringField('Название', [validators.required(message='Обязательное поле')])
+    style = StringField('Название', [validators.required(message='Обязательное поле')])
+
+class MeasurementReport2(Form):
+    measure_id = SelectField('Параметр')
+    next_measure = SelectField('Разместить перед')
+    style = SelectField('Стиль')

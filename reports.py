@@ -40,7 +40,7 @@ def add_simple_report():
         return redirect(url_for('reports.report', id=report_id[0][0]))
     return render_template('add_report.html', form=form)
 
-# Добавление простого отчёта
+# Добавление отчёта из агрегатов
 @mod.route("/add_aggregation_report", methods =['GET', 'POST'] )
 @is_logged_in
 def add_aggregation_report():
@@ -102,6 +102,51 @@ def edit_report(id):
 @mod.route('/delete_report/<string:id>', methods=['POST'])
 @is_logged_in
 def delete_report(id):
+    # TODO реализовать каскадное удаление колонок
     db_app.delete_report(id)
     flash('Отчёт удалён', 'success')
     return redirect(url_for('reports.reports'))
+
+# Добавление колонки в отчет
+@mod.route("/add_measurement_report/<string:report_id>", methods =['GET', 'POST'] )
+@is_logged_in
+def add_measurement_report(report_id):
+    form = MeasurementReport(request.form)
+    report_name = 'test'
+
+    # Получение имени отчета
+    # Получение списка измерений предметной области
+    # Формирование списка измерений в отчете на данный момент
+    # Получение списка стилей
+
+    if request.method == 'POST' and form.validate():
+        measure_id = form.measure_id.data
+        next_measure = form.next_measure.data
+        style = form.style.data
+
+        # Запись в базу данных
+        report_id = db_app.create_measurement_report(report_id, measure_id, next_measure, style)
+
+        flash('Параметр добавлен', 'success')
+        return redirect(url_for('reports.report', id=report_id[0][0]))
+    return render_template('add_measurement_report.html', form=form, report_id=report_id, report_name=report_name)
+
+# Редактирвание колонки в отчете
+@mod.route("/edit_measurement_report/<string:measurement_report_id>", methods =['GET', 'POST'] )
+@is_logged_in
+def edit_measurement_report(measurement_report_id):
+
+    # TODO реализовать
+    report_id = None
+    report_name = None
+    return render_template('edit_measurement_report.html', form=form, report_id=report_id, report_name=report_name)
+
+# Удаление колонки в отчете
+@mod.route("/delete_measurement_report/<string:measurement_report_id>", methods =['GET', 'POST'] )
+@is_logged_in
+def delete_measurement_report(measurement_report_id):
+    # TODO реализовать
+    flash('Колонка удалена', 'success')
+    return redirect(url_for('reports.report', id=measurement_report_id))
+
+
