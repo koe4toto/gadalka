@@ -112,11 +112,21 @@ def delete_report(id):
 @is_logged_in
 def add_measurement_report(report_id):
     form = MeasurementReport(request.form)
-    report_name = 'test'
 
     # Получение имени отчета
+    report = db_app.report(report_id)[0]
+    report_name = report[1]
+    data_area_id = report[6]
+
     # Получение списка измерений предметной области
+    measurement_report_list = db_app.select_measures_to_data_area(data_area_id)
+    unit = [(str(i[0]), str(i[2])) for i in measurement_report_list]
+    form.measure_id.choices = unit
+
     # Формирование списка измерений в отчете на данный момент
+    n_me = [('1', 'Разместить в начале')]
+    form.next_measure.choices = n_me
+
     # Получение списка стилей
 
     if request.method == 'POST' and form.validate():

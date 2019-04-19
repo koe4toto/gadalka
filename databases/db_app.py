@@ -1337,3 +1337,17 @@ def create_measurement_report(report_id, measure_id, next_measure, style):
     report_id = cursor.fetchall()
 
     return report_id
+
+def select_measurement_report_list(report_id):
+    cursor.execute(
+        '''
+        SELECT 
+            measurement_report.id,
+            measures.description
+        FROM measurement_report
+        LEFT JOIN measures ON measurement_report.measure_id = measures.id
+        WHERE measurement_report.report_id = '{0}';
+        '''.format(report_id)
+    )
+    result = cursor.fetchall()
+    return result
