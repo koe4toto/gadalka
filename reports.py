@@ -62,11 +62,14 @@ def add_aggregation_report():
 @is_logged_in
 def report(id):
     report = db_app.report(id)
-    count = 3
-    lists = '[], [], []'
+    data_area_id = report[0][6]
+
+    # Получение списка измерений предметной области
+    measurement_report_list = db_app.select_measures_to_data_area(data_area_id)
+    unit = [(str(i[0]), str(i[2])) for i in measurement_report_list]
 
     if report[0][3] == 1:
-        return render_template('simple_report.html', report=report, count=count, lists=lists)
+        return render_template('simple_report.html', report=report, measurement_report_list= measurement_report_list)
     elif report[0][3] == 2:
         return render_template('aggregation_report.html', report=report)
 
@@ -108,20 +111,14 @@ def delete_report(id):
     return redirect(url_for('reports.reports'))
 
 # Добавление колонки в отчет
-@mod.route("/add_measurement_report/<string:report_id>", methods =['GET', 'POST'] )
+@mod.route("/add_measurement_report/<string:report_id>/<string:measurement_report_id>", methods =['GET', 'POST'] )
 @is_logged_in
-def add_measurement_report(report_id):
+def add_measurement_report(report_id, measurement_report_id):
     form = MeasurementReport(request.form)
 
     # Получение имени отчета
     report = db_app.report(report_id)[0]
     report_name = report[1]
-    data_area_id = report[6]
-
-    # Получение списка измерений предметной области
-    measurement_report_list = db_app.select_measures_to_data_area(data_area_id)
-    unit = [(str(i[0]), str(i[2])) for i in measurement_report_list]
-    form.measure_id.choices = unit
 
     # Формирование списка измерений в отчете на данный момент
     n_me = [('1', 'Разместить в начале')]
@@ -130,7 +127,7 @@ def add_measurement_report(report_id):
     # Получение списка стилей
 
     if request.method == 'POST' and form.validate():
-        measure_id = form.measure_id.data
+        measure_id = measurement_report_id
         next_measure = form.next_measure.data
         style = form.style.data
 

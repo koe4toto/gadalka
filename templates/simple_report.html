@@ -19,11 +19,15 @@
     <a class="btn btn-outline-primary" href="/edit_report/{{ report[0][0] }}">
       <i class="fas fa-pencil-alt"></i> Редактировать
     </a>
-    <a class="btn btn-outline-primary" href="/add_measurement_report/{{ report[0][0] }}">
-      <i class="fas fa-pencil-alt"></i> Добавить колонку
-    </a>
+    <a class="btn dropdown-toggle btn-secondary"   href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+      Добавить параметр в отчёт
+      </a>
+      <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+        {% for i in measurement_report_list %}
+          <a class="dropdown-item" href="/add_measurement_report/{{ report[0][0] }}/{{ i[0] }}" title="Данные выраженные в числах">{{ i[2] }}</a>
+        {% endfor %}
+      </div>
     <hr>
-
 
 
 <style>

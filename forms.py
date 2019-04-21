@@ -110,7 +110,6 @@ class EditReport(Form):
     description = TextAreaField('Комментарий')
 
 class MeasurementReport(Form):
-    measure_id = SelectField('Параметр')
     next_measure = SelectField('Разместить перед')
     style = StringField('Название', [validators.required(message='Обязательное поле')])
 
