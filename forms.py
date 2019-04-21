@@ -111,9 +111,5 @@ class EditReport(Form):
 
 class MeasurementReport(Form):
     next_measure = SelectField('Разместить перед')
-    style = StringField('Название', [validators.required(message='Обязательное поле')])
-
-class MeasurementReport2(Form):
-    measure_id = SelectField('Параметр')
-    next_measure = SelectField('Разместить перед')
     style = SelectField('Стиль')
+

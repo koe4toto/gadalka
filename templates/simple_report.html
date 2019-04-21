@@ -19,14 +19,20 @@
     <a class="btn btn-outline-primary" href="/edit_report/{{ report[0][0] }}">
       <i class="fas fa-pencil-alt"></i> Редактировать
     </a>
+{% if no_more_measures == False %}
     <a class="btn dropdown-toggle btn-secondary"   href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       Добавить параметр в отчёт
       </a>
+
       <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+
         {% for i in measurement_report_list %}
           <a class="dropdown-item" href="/add_measurement_report/{{ report[0][0] }}/{{ i[0] }}" title="Данные выраженные в числах">{{ i[2] }}</a>
         {% endfor %}
+
       </div>
+          {% else  %}
+          {% endif %}
     <hr>
 
 
@@ -141,13 +147,14 @@ window.onscroll = function(){
 
 
 <div class="row">
-
+{{measurement_report_list}}
+    {{ columns }}
   <div class="col-md-10">
       <table class="table table-hover" style="width: 100%;">
         <tr>
-          <th>2014</th>
-          <th>2015</th>
-          <th>Текстовая</th>
+            {% for i in columns %}
+              <th>{{ i[1] }}</th>
+            {% endfor %}
         </tr>
         <tr>
           <td class="numb int">2</td>

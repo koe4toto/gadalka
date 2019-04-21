@@ -1319,7 +1319,7 @@ def delete_report(id):
 def create_measurement_report(report_id, measure_id, next_measure, style):
     cursor.execute(
         '''
-        INSERT INTO reports (
+        INSERT INTO measurement_report (
             report_id, 
             measure_id, 
             next_measure, 
@@ -1334,9 +1334,9 @@ def create_measurement_report(report_id, measure_id, next_measure, style):
         )
     )
     conn.commit()
-    report_id = cursor.fetchall()
+    result = cursor.fetchall()
 
-    return report_id
+    return result
 
 def select_measurement_report_list(report_id):
     cursor.execute(

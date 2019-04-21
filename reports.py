@@ -68,8 +68,21 @@ def report(id):
     measurement_report_list = db_app.select_measures_to_data_area(data_area_id)
     unit = [(str(i[0]), str(i[2])) for i in measurement_report_list]
 
+    # Полуение списка солонок
+    columns = db_app.select_measurement_report_list(id)
+    if len(columns) == len(measurement_report_list):
+        no_more_measures = True
+    else:
+        no_more_measures = False
+
     if report[0][3] == 1:
-        return render_template('simple_report.html', report=report, measurement_report_list= measurement_report_list)
+        return render_template(
+            'simple_report.html',
+            report=report,
+            measurement_report_list= measurement_report_list,
+            columns=columns,
+            no_more_measures=no_more_measures
+        )
     elif report[0][3] == 2:
         return render_template('aggregation_report.html', report=report)
 
@@ -122,7 +135,9 @@ def add_measurement_report(report_id, measurement_report_id):
 
     # Формирование списка измерений в отчете на данный момент
     n_me = [('1', 'Разместить в начале')]
+    colors = [(i[0], i[1]) for i in constants.COLORS_IN_OREDERS]
     form.next_measure.choices = n_me
+    form.style.choices = colors
 
     # Получение списка стилей
 
@@ -132,10 +147,10 @@ def add_measurement_report(report_id, measurement_report_id):
         style = form.style.data
 
         # Запись в базу данных
-        report_id = db_app.create_measurement_report(report_id, measure_id, next_measure, style)
+        db_app.create_measurement_report(report_id, measure_id, next_measure, style)
 
         flash('Параметр добавлен', 'success')
-        return redirect(url_for('reports.report', id=report_id[0][0]))
+        return redirect(url_for('reports.report', id=report[0]))
     return render_template('add_measurement_report.html', form=form, report_id=report_id, report_name=report_name)
 
 # Редактирвание колонки в отчете
