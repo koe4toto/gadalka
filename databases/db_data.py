@@ -238,3 +238,17 @@ def measure_data_set(table, column):
     )
     measure_data = cursor.fetchall()
     return measure_data
+
+# Выборка всех данных
+def select_columns_to_simple_report(columns, database_table):
+    # Выборка всех данных
+    cursor.execute(
+        '''
+        SELECT {0}  
+        FROM {1};
+        '''.format(columns, database_table, database_table)
+    )
+    measure_data = cursor.fetchall()
+
+    return measure_data
+

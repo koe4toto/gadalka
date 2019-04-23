@@ -2,6 +2,7 @@ from flask import Blueprint, render_template, flash, redirect, url_for, session,
 from forms import *
 from decorators import is_logged_in
 import databases.db_app as db_app
+import databases.db_data as db_data
 import constants
 
 mod = Blueprint('reports', __name__)
@@ -75,13 +76,22 @@ def report(id):
     else:
         no_more_measures = False
 
+    columns_name = [i[2] for i in columns]
+    columns_string = ','.join(columns_name)
+
+    # Подучение данных
+    data_area = db_app.data_area(data_area_id)
+    database_table = data_area[0][5]
+    columns_to_simple_report = db_data.select_columns_to_simple_report(columns_string, database_table)
+
     if report[0][3] == 1:
         return render_template(
             'simple_report.html',
             report=report,
             measurement_report_list= measurement_report_list,
             columns=columns,
-            no_more_measures=no_more_measures
+            no_more_measures=no_more_measures,
+            columns_to_simple_report=columns_to_simple_report
         )
     elif report[0][3] == 2:
         return render_template('aggregation_report.html', report=report)
@@ -134,7 +144,7 @@ def add_measurement_report(report_id, measurement_report_id):
     report_name = report[1]
 
     # Формирование списка измерений в отчете на данный момент
-    n_me = [('1', 'Разместить в начале')]
+    n_me = [('0', 'Разместить в начале')]
     colors = [(i[0], i[1]) for i in constants.COLORS_IN_OREDERS]
     form.next_measure.choices = n_me
     form.style.choices = colors

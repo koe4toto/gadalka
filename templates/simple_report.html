@@ -125,7 +125,7 @@ var twoColComp = {
       var cells = rows[x].getElementsByClassName('numb');
       for(var y = 0; y < cells.length; y++){
         var currNum = parseInt(cells[y].innerHTML, 10);
-        cells[y].style.backgroundSize = percentValues[(y) % columnsCount] * currNum + "% 100%"; // y + 1 потому что первая колонка - значения легенды графика - Value A, for example
+        cells[y].style.backgroundSize = percentValues[(y) % columnsCount] * currNum - 10 + "% 100%";
         cells[y].style.transitionDelay = x/20 + "s";
       }
     }
@@ -150,63 +150,51 @@ window.onscroll = function(){
 {{measurement_report_list}}
     {{ columns }}
   <div class="col-md-10">
+
+      <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-bottom">
+
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+              <nav aria-label="Page navigation example">
+                  <ul class="pagination">
+                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
+                    <li class="page-item"><a class="page-link" href="#">1</a></li>
+                    <li class="page-item"><a class="page-link" href="#">2</a></li>
+                    <li class="page-item"><a class="page-link" href="#">3</a></li>
+                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                  </ul>
+                </nav>
+            </ul>
+
+            <form class="form-inline my-2 my-lg-0">
+              <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+              <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+            </form>
+          </div>
+        </nav>
+
+
+
       <table class="table table-hover" style="width: 100%;">
         <tr>
             {% for i in columns %}
               <th>{{ i[1] }}</th>
             {% endfor %}
         </tr>
+          {% for i in columns_to_simple_report %}
         <tr>
-          <td class="numb int">2</td>
-          <td class="numb blew">8</td>
-          <td>ываыва</td>
+            {% for k in i %}
+          <td class="numb int">{{ k }}</td>
+            {% endfor %}
         </tr>
-        <tr>
-          <td class="numb int">3</td>
-          <td class="numb blew">9</td>
-          <td>ываыва</td>
-        </tr>
-        <tr>
-          <td class="numb int">7</td>
-          <td class="numb blew">11</td>
-          <td>ываыва</td>
-        </tr>
-        <tr>
-          <td class="numb int">10</td>
-          <td class="numb blew">9</td>
-          <td>ываыва</td>
-        </tr>
-        <tr>
-          <td class="numb int">9</td>
-          <td class="numb blew">10</td>
-          <td>ываыва</td>
-        </tr>
-        <tr>
-          <td class="numb int">11</td>
-          <td class="numb blew">10</td>
-          <td>ываыва</td>
-        </tr>
-        <tr>
-          <td class="numb int">15</td>
-          <td class="numb blew">9</td>
-          <td>ываыва</td>
-        </tr>
-        <tr>
-          <td class="numb int">18</td>
-          <td class="numb blew">10</td>
-          <td>ываыва</td>
-        </tr>
-        <tr>
-          <td class="numb int">17</td>
-          <td class="numb blew">11</td>
-          <td>ываыва</td>
-        </tr>
-        <tr>
-          <td class="numb int">60</td>
-          <td class="numb blew">12</td>
-          <td>ываыва</td>
-        </tr>
+          {% endfor %}
       </table>
+        <br>
+      <br>
+      <br>
+      <br>
+
+
   </div>
   <div class="col-md-2">
     Фильтры
