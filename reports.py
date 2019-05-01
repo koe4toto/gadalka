@@ -174,11 +174,12 @@ def edit_measurement_report(measurement_report_id):
     return render_template('edit_measurement_report.html', form=form, report_id=report_id, report_name=report_name)
 
 # Удаление колонки в отчете
-@mod.route("/delete_measurement_report/<string:measurement_report_id>", methods =['GET', 'POST'] )
+@mod.route("/delete_measurement_report/<string:measurement_report_id>/<string:report_id>", methods =['GET', 'POST'] )
 @is_logged_in
-def delete_measurement_report(measurement_report_id):
+def delete_measurement_report(measurement_report_id, report_id):
     # TODO реализовать
+    db_app.delete_report_column(measurement_report_id)
     flash('Колонка удалена', 'success')
-    return redirect(url_for('reports.report', id=measurement_report_id))
+    return redirect(url_for('reports.report', id=report_id))
 
 

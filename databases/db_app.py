@@ -1310,6 +1310,7 @@ def delete_report(id):
     cursor.execute(
         '''
         DELETE FROM reports WHERE id = '{0}';
+        DELETE FROM measurement_report WHERE report_id = '{0}'
         '''.format(id)
     )
     conn.commit()
@@ -1352,3 +1353,12 @@ def select_measurement_report_list(report_id):
     )
     result = cursor.fetchall()
     return result
+
+# Удаление колонки отчета
+def delete_report_column(id):
+    cursor.execute(
+        '''
+        DELETE FROM measurement_report WHERE id = '{0}';
+        '''.format(id)
+    )
+    conn.commit()
