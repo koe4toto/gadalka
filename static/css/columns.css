@@ -1,0 +1,26 @@
+td {
+  border-bottom: 1px solid #fbfbfb;
+  background-size: 0% 100%;
+  background-repeat: no-repeat;
+  -webkit-transition: all .1s ease-out;
+  -moz-transition: all .1s ease-out;
+  transition: all .1s ease-out;
+
+}
+
+td.int {
+  background-image: -webkit-linear-gradient(right, #d49800, #d49844);
+  background-image: -moz-linear-gradient(right, #d49800, #d49844);
+  background-image: linear-gradient(right, #d49800, #d49844);
+  background-position: left top;
+}
+
+td.blew {
+  background-image: -webkit-linear-gradient(right, #249843, #249844);
+  background-image: -moz-linear-gradient(right, #249834, #249844);
+  background-image: linear-gradient(right, #249834, #249844);
+  background-position: left top;
+}
+
+td:numb {
+}

@@ -1345,7 +1345,8 @@ def select_measurement_report_list(report_id):
         SELECT 
             measurement_report.id,
             measures.description,
-            measures.column_name
+            measures.column_name,
+            measurement_report.next_measure
         FROM measurement_report
         LEFT JOIN measures ON measurement_report.measure_id = measures.id
         WHERE measurement_report.report_id = '{0}';

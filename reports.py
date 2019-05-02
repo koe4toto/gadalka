@@ -58,6 +58,36 @@ def add_aggregation_report():
         return redirect(url_for('reports.report', id=report_id[0][0]))
     return render_template('add_report.html', form=form)
 
+class order(object):
+    def __init__(self):
+        self.columns = list
+        self.result_columns = []
+
+    # Запуск поиск первого
+    def search_first(self):
+        for i in self.columns:
+            if i[3]==0:
+                return i
+
+    # Поиск следующего
+    def search_next(self, prev):
+        while prev != None:
+            for i in self.columns:
+                if i[3]==prev[0]:
+                    prev = i
+                    self.result_columns.append(prev)
+                else:
+                    prev = None
+
+    # Запуск выстраивния очереди
+    def start(self):
+        first = self.search_first()
+        self.result_columns.append(first)
+        #self.search_next(first)
+
+
+
+
 # Отчёт
 @mod.route("/report/<string:id>", methods =['GET', 'POST'] )
 @is_logged_in
@@ -67,7 +97,6 @@ def report(id):
 
     # Получение списка измерений предметной области
     measurement_report_list = db_app.select_measures_to_data_area(data_area_id)
-    unit = [(str(i[0]), str(i[2])) for i in measurement_report_list]
 
     # Полуение списка солонок
     columns = db_app.select_measurement_report_list(id)
@@ -76,7 +105,13 @@ def report(id):
     else:
         no_more_measures = False
 
-    columns_name = [i[2] for i in columns]
+    orders = order()
+    orders.columns = columns
+    orders.start()
+    columns_orders = orders.result_columns
+
+
+    columns_name = [i[2] for i in columns_orders]
     columns_string = ','.join(columns_name)
 
     # Подучение данных
@@ -84,12 +119,19 @@ def report(id):
     database_table = data_area[0][5]
     columns_to_simple_report = db_data.select_columns_to_simple_report(columns_string, database_table)
 
+    # Формирование списка доступных измерений
+    names_in_columns = [i[2] for i in columns_orders]
+    choises = []
+    for i in measurement_report_list:
+        if i[1] not in names_in_columns:
+            choises.append(i)
+
     if report[0][3] == 1:
         return render_template(
             'simple_report.html',
             report=report,
-            measurement_report_list= measurement_report_list,
-            columns=columns,
+            measurement_report_list= choises,
+            columns=columns_orders,
             no_more_measures=no_more_measures,
             columns_to_simple_report=columns_to_simple_report
         )
@@ -148,6 +190,13 @@ def add_measurement_report(report_id, measurement_report_id):
     colors = [(i[0], i[1]) for i in constants.COLORS_IN_OREDERS]
     form.next_measure.choices = n_me
     form.style.choices = colors
+
+    # Полуение списка солонок
+    columns = db_app.select_measurement_report_list(report_id)
+    cols = [[str(i[0]), i[1]] for i in columns]
+    for i in cols:
+        n_me.append(i)
+
 
     # Получение списка стилей
 

@@ -1,6 +1,8 @@
 {% extends 'layout.html' %}
 
 {% block body %}
+    <link href="{{ url_for('static', filename='css/columns.css') }}" rel="stylesheet">
+    <script src="{{ url_for('static', filename='js/histogram.js') }}"></script>
     <a class="text-secondary" href="/reports">Отчеты</a><br>
     &#8595;
     <div class="row">
@@ -23,128 +25,14 @@
     <a class="btn dropdown-toggle btn-secondary"   href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       Добавить параметр в отчёт
       </a>
-
       <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-
         {% for i in measurement_report_list %}
           <a class="dropdown-item" href="/add_measurement_report/{{ report[0][0] }}/{{ i[0] }}" title="Данные выраженные в числах">{{ i[2] }}</a>
         {% endfor %}
-
       </div>
           {% else  %}
           {% endif %}
     <hr>
-
-
-<style>
-
-td {
-  border-bottom: 1px solid #fbfbfb;
-  background-size: 0% 100%;
-  background-repeat: no-repeat;
-  -webkit-transition: all .1s ease-out;
-  -moz-transition: all .1s ease-out;
-  transition: all .1s ease-out;
-
-}
-
-td.int {
-  background-image: -webkit-linear-gradient(right, #d49800, #d49844);
-  background-image: -moz-linear-gradient(right, #d49800, #d49844);
-  background-image: linear-gradient(right, #d49800, #d49844);
-  background-position: left top;
-}
-
-td.blew {
-  background-image: -webkit-linear-gradient(right, #249843, #249844);
-  background-image: -moz-linear-gradient(right, #249834, #249844);
-  background-image: linear-gradient(right, #249834, #249844);
-  background-position: left top;
-}
-
-td:numb {
-}
-
-
-</style>
-
-<script type="text/javascript">
-var twoColComp = {
-  init: function (){
-    var tables = document.getElementsByTagName('table');
-
-    for(var i = 0; i < tables.length; i++) {
-      if (new RegExp('(^| )two-column-comp( |$)', 'gi').test(tables[i].className)){
-         return;
-      }
-
-      var h = tables[i].clientHeight,
-          t = tables[i].getBoundingClientRect().top,
-          wT = window.pageYOffset || document.documentElement.scrollTop,
-          wH = window.innerHeight;
-
-      if(wT + wH > t + h/2){
-         this.make(tables[i]);
-       }
-    }
-  },
-
-  make : function(el){
-
-    var rows = el.getElementsByTagName('tr'),
-        vals = [],
-        max,
-        percent;
-
-    for(var x = 0; x < rows.length; x++) {
-      var cells = rows[x].getElementsByClassName('numb');
-      for(var y = 0; y < cells.length; y++){
-        vals.push(parseInt(cells[y].innerHTML, 10));
-      }
-    }
-
-    max = Math.max.apply( Math, vals );
-    percent = 100/max;
-
-    const columnsCount = cells.length;
-    let maxValues = [];
-    let percentValues = [];
-
-    for(var x = 0; x < rows.length; x++) {
-      maxValues.push([]);
-      percentValues.push([]);
-    }
-
-    for(let count = 0; count < columnsCount; count++) {
-      maxValues[count] = Math.max.apply( Math, vals.filter((value, index) => index%columnsCount === count));
-      percentValues[count] = 100/maxValues[count];  // 100/Math.max.apply( Math, vals.filter((value, index) => index%columnsCount === count));
-
-    }
-
-    for(x = 0; x < rows.length; x++) {
-      var cells = rows[x].getElementsByClassName('numb');
-      for(var y = 0; y < cells.length; y++){
-        var currNum = parseInt(cells[y].innerHTML, 10);
-        cells[y].style.backgroundSize = percentValues[(y) % columnsCount] * currNum - 10 + "% 100%";
-        cells[y].style.transitionDelay = x/20 + "s";
-      }
-    }
-
-    el.className =+ " two-column-comp"
-  }
-}
-
-window.onload = function(){
-  twoColComp.init();
-}
-
-window.onscroll = function(){
-  twoColComp.init();
-}
-
-</script>
-
-
 
 <div class="row">
 {{measurement_report_list}}
@@ -220,5 +108,4 @@ window.onscroll = function(){
 
   </div>
 </div>
-
 {% endblock %}

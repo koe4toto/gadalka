@@ -279,4 +279,33 @@ https://www.youtube.com/watch?v=JcHCinmoef4&list=PLDrmKwRSNx7K3oySk9znyI4kolE8wQ
 
 
 '''
+columns = [(6, 'рас', '', 0),(7, 'два', '', 8),(8, 'три', '', 6)]
+class order(object):
+    def __init__(self):
+        self.columns = list
+        self.result_columns = []
 
+    # Запуск поиск первого
+    def search_first(self):
+        for i in self.columns:
+            if i[3] == 0:
+                return i
+
+    # Поиск следующего
+    def search_next(self, prev):
+        for i in self.columns:
+            if i[3] == prev[0]:
+                self.result_columns.append(i)
+
+    # Запуск выстраивния очереди
+    def start(self):
+        first = self.search_first()
+        self.result_columns.append(first)
+        self.search_next(first)
+
+
+one = order()
+one.columns = columns
+print(one.columns)
+one.start()
+print(one.result_columns)
