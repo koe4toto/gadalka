@@ -59,34 +59,35 @@ def add_aggregation_report():
     return render_template('add_report.html', form=form)
 
 class order(object):
-    def __init__(self):
-        self.columns = list
-        self.result_columns = []
+    def __init__(self, columns):
+        self.columns = columns
+        self.result_columns =[]
+        self.start()
 
     # Запуск поиск первого
     def search_first(self):
         for i in self.columns:
-            if i[3]==0:
+            if i[3] == 0:
                 return i
 
     # Поиск следующего
     def search_next(self, prev):
-        while prev != None:
-            for i in self.columns:
-                if i[3]==prev[0]:
-                    prev = i
-                    self.result_columns.append(prev)
-                else:
-                    prev = None
+        for i in self.columns:
+            if i[3] == prev[0]:
+                self.result_columns.append(i)
+                self.start_next(i)
+
+    # Запуск поиска следующего в очереди
+    def start_next(self, last):
+        if last != None:
+            self.search_next(last)
 
     # Запуск выстраивния очереди
     def start(self):
         first = self.search_first()
-        self.result_columns.append(first)
-        #self.search_next(first)
-
-
-
+        if first != None:
+            self.result_columns.append(first)
+            self.search_next(first)
 
 # Отчёт
 @mod.route("/report/<string:id>", methods =['GET', 'POST'] )
@@ -105,11 +106,9 @@ def report(id):
     else:
         no_more_measures = False
 
-    orders = order()
-    orders.columns = columns
-    orders.start()
+    # Колонки выстраиваются по порядку
+    orders = order(columns)
     columns_orders = orders.result_columns
-
 
     columns_name = [i[2] for i in columns_orders]
     columns_string = ','.join(columns_name)

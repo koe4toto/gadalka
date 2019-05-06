@@ -279,11 +279,12 @@ https://www.youtube.com/watch?v=JcHCinmoef4&list=PLDrmKwRSNx7K3oySk9znyI4kolE8wQ
 
 
 '''
-columns = [(6, 'рас', '', 0),(7, 'два', '', 8),(8, 'три', '', 6)]
+columns = [(6, 'рас', '', 0),(7, 'два', '', 8),(8, 'три', '', 11), (11, 'два', '', 6)]
 class order(object):
-    def __init__(self):
-        self.columns = list
-        self.result_columns = []
+    def __init__(self, columns):
+        self.columns = columns
+        self.result_columns =[]
+        self.start()
 
     # Запуск поиск первого
     def search_first(self):
@@ -296,16 +297,22 @@ class order(object):
         for i in self.columns:
             if i[3] == prev[0]:
                 self.result_columns.append(i)
+                self.start_next(i)
+
+    # Запуск поиска следующего в очереди
+    def start_next(self, last):
+        if last != None:
+            self.search_next(last)
 
     # Запуск выстраивния очереди
     def start(self):
         first = self.search_first()
-        self.result_columns.append(first)
-        self.search_next(first)
+        if first != None:
+            self.result_columns.append(first)
+            self.search_next(first)
 
 
-one = order()
-one.columns = columns
+one = order(columns)
 print(one.columns)
-one.start()
 print(one.result_columns)
+
