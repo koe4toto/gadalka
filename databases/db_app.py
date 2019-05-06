@@ -1333,7 +1333,7 @@ def create_measurement_report(report_id, measure_id, next_measure, style):
         UPDATE measurement_report 
         SET 
             next_measure= (SELECT id FROM deleted_id)
-        WHERE next_measure = '{2}' AND id != (SELECT id FROM deleted_id)
+        WHERE next_measure = '{2}' AND id != (SELECT id FROM deleted_id) AND report_id = '{0}'
         RETURNING (SELECT id FROM deleted_id);
         '''.format(
             report_id,
@@ -1353,7 +1353,8 @@ def select_measurement_report_list(report_id):
             measurement_report.id,
             measures.description,
             measures.column_name,
-            measurement_report.next_measure
+            measurement_report.next_measure,
+            measures.id
         FROM measurement_report
         LEFT JOIN measures ON measurement_report.measure_id = measures.id
         WHERE measurement_report.report_id = '{0}';
@@ -1369,12 +1370,12 @@ def delete_report_column(id):
         WITH deleted_id AS
              (
                 DELETE FROM measurement_report WHERE id = '{0}'
-                RETURNING next_measure
+                RETURNING next_measure, report_id
              )
         UPDATE measurement_report 
         SET 
             next_measure= (SELECT next_measure FROM deleted_id)
-        WHERE next_measure = '{0}';
+        WHERE next_measure = '{0}' AND report_id = (SELECT report_id FROM deleted_id);
         '''.format(id)
     )
     conn.commit()

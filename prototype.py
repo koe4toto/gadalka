@@ -279,7 +279,7 @@ https://www.youtube.com/watch?v=JcHCinmoef4&list=PLDrmKwRSNx7K3oySk9znyI4kolE8wQ
 
 
 '''
-columns = [(6, 'рас', '', 0),(7, 'два', '', 8),(8, 'три', '', 11), (11, 'два', '', 6)]
+columns = [(38, 'Площадь района', 'squere', 39, 61), (37, 'Количество людей', 'people', 38, 60)]
 class order(object):
     def __init__(self, columns):
         self.columns = columns
@@ -307,6 +307,7 @@ class order(object):
     # Запуск выстраивния очереди
     def start(self):
         first = self.search_first()
+        print(first)
         if first != None:
             self.result_columns.append(first)
             self.search_next(first)
@@ -315,16 +316,3 @@ class order(object):
 one = order(columns)
 print(one.columns)
 print(one.result_columns)
-
-db_app.cursor.execute(
-        '''
-        SELECT 
-            id
-        FROM measurement_report
-        WHERE next_measure = '{0}';        
-        '''.format(
-            '11'
-        )
-    )
-prev_id = db_app.cursor.fetchall()
-print(prev_id)

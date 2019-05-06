@@ -9,9 +9,9 @@ td {
 }
 
 td.int {
-  background-image: -webkit-linear-gradient(right, #d49800, #d49844);
-  background-image: -moz-linear-gradient(right, #d49800, #d49844);
-  background-image: linear-gradient(right, #d49800, #d49844);
+  background-image: -webkit-linear-gradient(right, #229800, #229844);
+  background-image: -moz-linear-gradient(right, #229800, #229844);
+  background-image: linear-gradient(right, #229800, #229844);
   background-position: left top;
 }
 
