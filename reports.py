@@ -58,6 +58,7 @@ def add_aggregation_report():
         return redirect(url_for('reports.report', id=report_id[0][0]))
     return render_template('add_report.html', form=form)
 
+# Расстановка колнок отчета по очереди
 class order(object):
     def __init__(self, columns):
         self.columns = columns
@@ -107,8 +108,11 @@ def report(id):
         no_more_measures = False
 
     # Колонки выстраиваются по порядку
-    orders = order(columns)
-    columns_orders = orders.result_columns
+    if len(columns) > 1:
+        orders = order(columns)
+        columns_orders = orders.result_columns
+    else:
+        columns_orders = columns
 
     columns_name = [i[2] for i in columns_orders]
     columns_string = ','.join(columns_name)
@@ -186,18 +190,24 @@ def add_measurement_report(report_id, measurement_report_id):
 
     # Формирование списка измерений в отчете на данный момент
     n_me = [('0', 'Разместить в начале')]
+
+    # Стили коонок
     colors = [(i[0], i[1]) for i in constants.COLORS_IN_OREDERS]
     form.next_measure.choices = n_me
     form.style.choices = colors
 
     # Полуение списка солонок
     columns = db_app.select_measurement_report_list(report_id)
-    cols = [[str(i[0]), i[1]] for i in columns]
+    # Колонки выстраиваются по порядку
+    if len(columns) > 1:
+        orders = order(columns)
+        columns_orders = orders.result_columns
+    else:
+        columns_orders = columns
+    cols = [[str(i[0]), i[1]] for i in columns_orders]
     for i in cols:
         n_me.append(i)
 
-
-    # Получение списка стилей
 
     if request.method == 'POST' and form.validate():
         measure_id = measurement_report_id

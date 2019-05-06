@@ -316,3 +316,15 @@ one = order(columns)
 print(one.columns)
 print(one.result_columns)
 
+db_app.cursor.execute(
+        '''
+        SELECT 
+            id
+        FROM measurement_report
+        WHERE next_measure = '{0}';        
+        '''.format(
+            '11'
+        )
+    )
+prev_id = db_app.cursor.fetchall()
+print(prev_id)

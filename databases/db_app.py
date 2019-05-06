@@ -1319,14 +1319,22 @@ def delete_report(id):
 # Создание измерения отчета
 def create_measurement_report(report_id, measure_id, next_measure, style):
     cursor.execute(
-        '''
-        INSERT INTO measurement_report (
-            report_id, 
-            measure_id, 
-            next_measure, 
-            style
-        ) VALUES ('{0}', '{1}', '{2}', '{3}')
-        RETURNING id;
+        '''        
+        WITH deleted_id AS
+             (
+                INSERT INTO measurement_report (
+                    report_id, 
+                    measure_id, 
+                    next_measure, 
+                    style
+                ) VALUES ('{0}', '{1}', '{2}', '{3}')
+                RETURNING id
+             )
+        UPDATE measurement_report 
+        SET 
+            next_measure= (SELECT id FROM deleted_id)
+        WHERE next_measure = '{2}' AND id != (SELECT id FROM deleted_id)
+        RETURNING (SELECT id FROM deleted_id);
         '''.format(
             report_id,
             measure_id,
@@ -1336,7 +1344,6 @@ def create_measurement_report(report_id, measure_id, next_measure, style):
     )
     conn.commit()
     result = cursor.fetchall()
-
     return result
 
 def select_measurement_report_list(report_id):
@@ -1359,7 +1366,15 @@ def select_measurement_report_list(report_id):
 def delete_report_column(id):
     cursor.execute(
         '''
-        DELETE FROM measurement_report WHERE id = '{0}';
+        WITH deleted_id AS
+             (
+                DELETE FROM measurement_report WHERE id = '{0}'
+                RETURNING next_measure
+             )
+        UPDATE measurement_report 
+        SET 
+            next_measure= (SELECT next_measure FROM deleted_id)
+        WHERE next_measure = '{0}';
         '''.format(id)
     )
     conn.commit()
