@@ -8,17 +8,17 @@ td {
 
 }
 
-td.int {
+td.b1 {
   background-image: -webkit-linear-gradient(right, #229800, #229844);
   background-image: -moz-linear-gradient(right, #229800, #229844);
   background-image: linear-gradient(right, #229800, #229844);
   background-position: left top;
 }
 
-td.blew {
-  background-image: -webkit-linear-gradient(right, #249843, #249844);
-  background-image: -moz-linear-gradient(right, #249834, #249844);
-  background-image: linear-gradient(right, #249834, #249844);
+td.b2 {
+  background-image: -webkit-linear-gradient(right, #666666, #666666);
+  background-image: -moz-linear-gradient(right, #666666, #666666);
+  background-image: linear-gradient(right, #666666, #666666);
   background-position: left top;
 }
 

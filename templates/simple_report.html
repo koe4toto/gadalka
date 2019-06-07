@@ -1,7 +1,29 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-    <link href="{{ url_for('static', filename='css/columns.css') }}" rel="stylesheet">
+    <!--<link href="{{ url_for('static', filename='css/columns.css') }}" rel="stylesheet">-->
+<style>
+td {
+  border-bottom: 1px solid #fbfbfb;
+  background-size: 0% 100%;
+  background-repeat: no-repeat;
+  -webkit-transition: all .1s ease-out;
+  -moz-transition: all .1s ease-out;
+  transition: all .1s ease-out;
+
+}
+{% for i in styles %}
+    td:nth-child({{ i[0]+1 }}) {
+      background-image: -webkit-linear-gradient({{ i[1] }});
+      background-image: -moz-linear-gradient({{ i[1] }});
+      background-image: linear-gradient({{ i[1] }});
+      background-position: left top;
+    }
+{% endfor %}
+
+td:numb {
+}
+</style>
     <script src="{{ url_for('static', filename='js/histogram.js') }}"></script>
     <a class="text-secondary" href="/reports">Отчеты</a><br>
     &#8595;
@@ -43,14 +65,28 @@
             <ul class="navbar-nav mr-auto">
               <nav aria-label="Page navigation example">
                   <ul class="pagination">
-                    <li class="page-item"><a class="page-link" href="#">Previous</a></li>
-                    <li class="page-item"><a class="page-link" href="#">1</a></li>
-                    <li class="page-item"><a class="page-link" href="#">2</a></li>
-                    <li class="page-item"><a class="page-link" href="#">3</a></li>
-                    <li class="page-item"><a class="page-link" href="#">Next</a></li>
+                    {% if current_page != 1 %}
+                      <li class="page-item" title="Первая страница"><a class="page-link" href="/report?id={{ report[0][0] }}&page={{ 1 }}&order_by_column={{ order_by_column }}&desc={{ desc }}"><i class="fas fa-angle-double-left"></i></a></li>
+                        <li class="page-item" title="Предыдущая страница"><a class="page-link" href="/report?id={{ report[0][0] }}&page={{ current_page-1 }}&order_by_column={{ order_by_column }}&desc={{ desc }}"><i class="fas fa-angle-left"></i></a></li>
+                    {% else  %}
+                      <li class="page-item disabled"><a class="page-link" href="#"><i class="fas fa-angle-double-left"></i></a></li>
+                        <li class="page-item disabled"><a class="page-link" href="#"><i class="fas fa-angle-left"></i></a></li>
+                      {% endif %}
+
+                      <li class="page-item disabled"><a class="page-link" href="#">{{current_page}} из {{ pages }}<span class="sr-only">(current)</span></a></li>
+
+                      {% if current_page != pages %}
+                    <li class="page-item" title="Следующая страница"><a class="page-link" href="/report?id={{ report[0][0] }}&page={{ current_page+1 }}&order_by_column={{ order_by_column }}&desc={{ desc }}"><i class="fas fa-angle-right"></i></a></li>
+                    <li class="page-item" title="Последняя страница"><a class="page-link" href="/report?id={{ report[0][0] }}&page={{ pages }}&order_by_column={{ order_by_column }}&desc={{ desc }}"><i class="fas fa-angle-double-right"></i></a></li>
+                    {% else  %}
+
+                    <li class="page-item disabled"><a class="page-link" href="#"><i class="fas fa-angle-right"></i></a></li>
+                    <li class="page-item disabled"><a class="page-link" href="#"><i class="fas fa-angle-double-right"></i></a></li>
+                      {% endif %}
                   </ul>
                 </nav>
             </ul>
+
 
             <form class="form-inline my-2 my-lg-0">
               <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
@@ -65,10 +101,13 @@
         <tr>
             {% for i in columns %}
               <th><div class="btn-group">
-                  <button class="btn btn-secondary btn-sm dropdown-toggle" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  <button class="btn btn-secondary btn-sm dropdown-toggle text-truncate" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="max-width: 150px;" title="{{ i[1] }}">
                     {{ i[1] }}
                   </button>
                   <div class="dropdown-menu">
+                      <a class="dropdown-item" href="/report?id={{ report[0][0] }}&page={{ current_page }}&order_by_column={{ columns.index( i )  }}&desc=True">Сортировать по убыванию</a>
+                      <a class="dropdown-item" href="/report?id={{ report[0][0] }}&page={{ current_page }}&order_by_column={{ columns.index( i ) }}&desc=False">Сортировать по возрастанию</a>
+                      <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="/measure/{{ i[4] }}">Посмотреть</a>
                     <div class="dropdown-divider"></div>
                       <div class="form-group">
@@ -79,13 +118,14 @@
                       </div>
                   </div>
                 </div>
+
                   </th>
             {% endfor %}
         </tr>
           {% for i in columns_to_simple_report %}
         <tr>
             {% for k in i %}
-          <td class="numb int">{{ k }}</td>
+          <td class="numb">{{ k }}</td>
             {% endfor %}
         </tr>
           {% endfor %}
@@ -98,6 +138,7 @@
 
   </div>
   <div class="col-md-2">
+    <p>Получено записей: {{count_data}}</p>
     Фильтры
     <br>
     Пресеты
@@ -105,6 +146,4 @@
 
   </div>
 </div>
-{{ columns_to_simple_report }}
-{{ columns }}
 {% endblock %}

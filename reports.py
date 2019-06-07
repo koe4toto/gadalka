@@ -91,9 +91,16 @@ class order(object):
             self.search_next(first)
 
 # Отчёт
-@mod.route("/report/<string:id>", methods =['GET', 'POST'] )
+@mod.route("/report", methods =['GET', 'POST'] )
 @is_logged_in
-def report(id):
+def report():
+    id = request.args.get('id', default=1, type=int)
+    page = request.args.get('page', default=1, type=int)
+    order_by_column = request.args.get('order_by_column', default=0, type=int)
+    desc = request.args.get('desc', default='True', type=str)
+    filter = request.args.get('filter', default='*', type=str)
+
+
     report = db_app.report(id)
     data_area_id = report[0][6]
 
@@ -117,10 +124,36 @@ def report(id):
     columns_name = [i[2] for i in columns_orders]
     columns_string = ','.join(columns_name)
 
+    styles = []
+    for num, i in enumerate(columns_orders):
+        n=i[5]-1
+        styles.append(
+            [num, 'right, {0}, {1}'.format(constants.COLORS_IN_OREDERS[n][2], constants.COLORS_IN_OREDERS[n][3])]
+        )
+
     # Подучение данных
+    if desc == 'True':
+        order_by = columns_orders[order_by_column][2] + ' DESC'
+    else:
+        order_by = columns_orders[order_by_column][2]
+
+    limit = 10
+    if int(page) == 1:
+        offset = 0
+    else:
+        offset = (int(page)-1) * limit
     data_area = db_app.data_area(data_area_id)
     database_table = data_area[0][5]
-    columns_to_simple_report = db_data.select_columns_to_simple_report(columns_string, database_table)
+    columns_to_simple_report = db_data.select_columns_to_simple_report(columns_string, database_table, limit, offset, order_by)
+
+    # Подучение общего количества записей
+    count_data = db_data.select_data_count(columns_string, database_table)
+
+    # Формирование переключателя
+    pages = (count_data[0][0]//limit)
+    if count_data[0][0]%limit > 0:
+        pages += 1
+
 
     # Формирование списка доступных измерений
     names_in_columns = [i[2] for i in columns_orders]
@@ -136,7 +169,13 @@ def report(id):
             measurement_report_list= choises,
             columns=columns_orders,
             no_more_measures=no_more_measures,
-            columns_to_simple_report=columns_to_simple_report
+            columns_to_simple_report=columns_to_simple_report,
+            pages=pages,
+            current_page=int(page),
+            count_data=count_data[0][0],
+            styles=styles,
+            order_by_column=order_by_column,
+            desc=desc
         )
     elif report[0][3] == 2:
         return render_template('aggregation_report.html', report=report)
@@ -166,7 +205,7 @@ def edit_report(id):
             db_app.update_report(id, form.name.data, form.description.data)
 
             flash('Данные обновлены', 'success')
-            return redirect(url_for('reports.report', id=id))
+            return redirect(url_for('reports.report', id=id, page=1))
     return render_template('edit_report.html', form=form, report_id=id, report_name=report[1])
 
 # Удаление отчёта
@@ -218,7 +257,7 @@ def add_measurement_report(report_id, measurement_report_id):
         db_app.create_measurement_report(report_id, measure_id, next_measure, style)
 
         flash('Параметр добавлен', 'success')
-        return redirect(url_for('reports.report', id=report[0]))
+        return redirect(url_for('reports.report', id=report[0], page=1))
     return render_template('add_measurement_report.html', form=form, report_id=report_id, report_name=report_name)
 
 # Редактирвание колонки в отчете
@@ -238,6 +277,6 @@ def delete_measurement_report(measurement_report_id, report_id):
     # TODO реализовать
     db_app.delete_report_column(measurement_report_id)
     flash('Колонка удалена', 'success')
-    return redirect(url_for('reports.report', id=report_id))
+    return redirect(url_for('reports.report', id=report_id, page=1))
 
 

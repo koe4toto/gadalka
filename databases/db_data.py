@@ -240,13 +240,31 @@ def measure_data_set(table, column):
     return measure_data
 
 # Выборка всех данных
-def select_columns_to_simple_report(columns, database_table):
+def select_columns_to_simple_report(columns, database_table, limit, offset, order_by):
     # Выборка всех данных
     cursor.execute(
         '''
         SELECT {0}  
-        FROM {1};
-        '''.format(columns, database_table, database_table)
+        FROM {1}
+        ORDER BY {4}
+        LIMIT {2} OFFSET {3};
+        '''.format(columns, database_table, limit, offset, order_by)
+    )
+    measure_data = cursor.fetchall()
+
+    return measure_data
+
+# Получение общего количества записей
+def select_data_count(columns, database_table):
+    # Выборка всех данных
+    cursor.execute(
+        '''
+        SELECT count(*) 
+        FROM (
+            SELECT {0}  
+            FROM {1}
+            )A;
+        '''.format(columns, database_table)
     )
     measure_data = cursor.fetchall()
 

@@ -279,40 +279,4 @@ https://www.youtube.com/watch?v=JcHCinmoef4&list=PLDrmKwRSNx7K3oySk9znyI4kolE8wQ
 
 
 '''
-columns = [(38, 'Площадь района', 'squere', 39, 61), (37, 'Количество людей', 'people', 38, 60)]
-class order(object):
-    def __init__(self, columns):
-        self.columns = columns
-        self.result_columns =[]
-        self.start()
 
-    # Запуск поиск первого
-    def search_first(self):
-        for i in self.columns:
-            if i[3] == 0:
-                return i
-
-    # Поиск следующего
-    def search_next(self, prev):
-        for i in self.columns:
-            if i[3] == prev[0]:
-                self.result_columns.append(i)
-                self.start_next(i)
-
-    # Запуск поиска следующего в очереди
-    def start_next(self, last):
-        if last != None:
-            self.search_next(last)
-
-    # Запуск выстраивния очереди
-    def start(self):
-        first = self.search_first()
-        print(first)
-        if first != None:
-            self.result_columns.append(first)
-            self.search_next(first)
-
-
-one = order(columns)
-print(one.columns)
-print(one.result_columns)
