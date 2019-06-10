@@ -3,7 +3,7 @@
 {% block body %}
     <a class="text-secondary" href="/report?id={{ report_id }}">{{ report_name }}</a><br>
     &#8595;
-    <h1>Новое измерение в отчёт</h1>
+    <h1>Добавление в отчет колнку: {{name_of_measure}}</h1>
     {% from "includes/_formtamplate.html" import form_render %}
     <div class="row">
         <div class="col-6">

@@ -2,14 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1719e8ec-808e-4103-a063-fff281569a44" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/constants.py" beforeDir="false" afterPath="$PROJECT_DIR$/constants.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/reports.py" beforeDir="false" afterPath="$PROJECT_DIR$/reports.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/add_measurement_report.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/add_measurement_report.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/edit_measurement_report.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/edit_measurement_report.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/simple_report.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/simple_report.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -61,26 +55,26 @@
       <usages-collector id="statistics.file.types.edit">
         <counts>
           <entry key="CSS" value="88" />
-          <entry key="HTML" value="5507" />
+          <entry key="HTML" value="5550" />
           <entry key="JavaScript" value="22" />
           <entry key="PLAIN_TEXT" value="24" />
-          <entry key="Python" value="68511" />
+          <entry key="Python" value="68814" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="css" value="88" />
           <entry key="dummy" value="24" />
-          <entry key="html" value="5507" />
+          <entry key="html" value="5550" />
           <entry key="js" value="22" />
-          <entry key="py" value="68511" />
+          <entry key="py" value="68814" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/templates/simple_report.html">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="238">
@@ -96,11 +90,11 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/reports.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2588">
-              <caret line="281" column="21" selection-start-line="281" selection-start-column="21" selection-end-line="281" selection-end-column="21" />
+            <state relative-caret-position="347">
+              <caret line="294" column="23" selection-start-line="294" selection-start-column="8" selection-end-line="294" selection-end-column="23" />
               <folding>
                 <element signature="e#0#88#0" expanded="true" />
-                <marker date="1560179777961" expanded="true" signature="10131:10294" ph="..." />
+                <marker date="1560180614485" expanded="true" signature="10503:10666" ph="..." />
               </folding>
             </state>
           </provider>
@@ -115,11 +109,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/templates/add_measurement_report.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="85">
-              <caret line="5" column="24" selection-start-line="5" selection-start-column="24" selection-end-line="5" selection-end-column="24" />
+            <state relative-caret-position="153">
+              <caret line="9" column="42" lean-forward="true" selection-start-line="9" selection-start-column="42" selection-end-line="9" selection-end-column="42" />
             </state>
           </provider>
         </entry>
@@ -157,8 +151,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/databases/db_start.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="24">
-              <caret line="210" column="39" selection-start-line="210" selection-start-column="32" selection-end-line="210" selection-end-column="39" />
+            <state relative-caret-position="143">
+              <caret line="217" column="21" selection-start-line="217" selection-start-column="21" selection-end-line="217" selection-end-column="21" />
             </state>
           </provider>
         </entry>
@@ -220,9 +214,9 @@
       <find>measures</find>
       <find>data</find>
       <find>desc</find>
-      <find>measure</find>
       <find>add_measurement_report</find>
       <find>set</find>
+      <find>measure</find>
     </findStrings>
     <dirStrings>
       <dir>C:\Users\user\Documents\GitHub\gadalka\error_files</dir>
@@ -279,12 +273,12 @@
         <option value="$PROJECT_DIR$/templates/reports.html" />
         <option value="$PROJECT_DIR$/static/js/histogram.js" />
         <option value="$PROJECT_DIR$/templates/edit_measurement_report.html" />
-        <option value="$PROJECT_DIR$/templates/add_measurement_report.html" />
         <option value="$PROJECT_DIR$/models.py" />
         <option value="$PROJECT_DIR$/forms.py" />
         <option value="$PROJECT_DIR$/constants.py" />
-        <option value="$PROJECT_DIR$/reports.py" />
         <option value="$PROJECT_DIR$/templates/simple_report.html" />
+        <option value="$PROJECT_DIR$/reports.py" />
+        <option value="$PROJECT_DIR$/templates/add_measurement_report.html" />
       </list>
     </option>
   </component>
@@ -837,13 +831,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/add_measurement_report.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="85">
-          <caret line="5" column="24" selection-start-line="5" selection-start-column="24" selection-end-line="5" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/models.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="51">
@@ -851,13 +838,6 @@
           <folding>
             <element signature="e#0#88#0" expanded="true" />
           </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/databases/db_start.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="24">
-          <caret line="210" column="39" selection-start-line="210" selection-start-column="32" selection-end-line="210" selection-end-column="39" />
         </state>
       </provider>
     </entry>
@@ -882,13 +862,20 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/databases/db_start.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="143">
+          <caret line="217" column="21" selection-start-line="217" selection-start-column="21" selection-end-line="217" selection-end-column="21" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/reports.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2588">
-          <caret line="281" column="21" selection-start-line="281" selection-start-column="21" selection-end-line="281" selection-end-column="21" />
+        <state relative-caret-position="347">
+          <caret line="294" column="23" selection-start-line="294" selection-start-column="8" selection-end-line="294" selection-end-column="23" />
           <folding>
             <element signature="e#0#88#0" expanded="true" />
-            <marker date="1560179777961" expanded="true" signature="10131:10294" ph="..." />
+            <marker date="1560180614485" expanded="true" signature="10503:10666" ph="..." />
           </folding>
         </state>
       </provider>
@@ -901,6 +888,13 @@
             <element signature="n#style#0;n#table#0;n#div#0;n#div#2;n#!!top" expanded="true" />
             <element signature="n#style#0;n#button#0;n#div#0;n#th#0;n#tr#0;n#table#0;n#div#0;n#div#2;n#!!top" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/add_measurement_report.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="153">
+          <caret line="9" column="42" lean-forward="true" selection-start-line="9" selection-start-column="42" selection-end-line="9" selection-end-column="42" />
         </state>
       </provider>
     </entry>

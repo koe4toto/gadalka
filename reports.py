@@ -232,15 +232,17 @@ def add_measurement_report(report_id, measurement_report_id):
     # Получение сведений о параметре
     measure_of_data_area = db_app.select_measure(measurement_report_id)
     type_of_measure = measure_of_data_area[0][4]
+    name_of_measure = measure_of_data_area[0][2]
 
     # Стили колонок
     colors = [(i[0], i[1]) for i in constants.COLORS_IN_OREDERS]
 
+    # Если поле стиля есть в форме, то оно удаляется
     if hasattr(MeasurementReport, 'style') == True:
         # Форма отчищается от лишних полей
         delattr(MeasurementReport, 'style')
 
-    # Стили колонок
+    # Если параметр количественный, то добавляется селект для выбора стилей
     if type_of_measure == 1:
         # Добавление полей в форму
         setattr(MeasurementReport, 'style', forrms['SelectField']('Стиль', choices=colors))
@@ -248,46 +250,50 @@ def add_measurement_report(report_id, measurement_report_id):
     # Форма
     form = MeasurementReport(request.form)
 
-
+    # Если параметр количественный, то полю стилей присваиваются варианты
     if type_of_measure == 1:
         form.style.choices = colors
 
 
     # Полуение списка солонок
     columns = db_app.select_measurement_report_list(report_id)
-
     # Колонки выстраиваются по порядку
     if len(columns) > 1:
         orders = order(columns)
         columns_orders = orders.result_columns
     else:
         columns_orders = columns
-
     cols = [[str(i[0]), i[1]] for i in columns_orders]
 
     # Формирование списка измерений в отчете на данный момент
     n_me = [('0', 'Разместить в начале')]
     for i in cols:
         n_me.append(i)
-
     form.next_measure.choices = n_me
 
     # Обработка полученных данных формы
     if request.method == 'POST' and form.validate():
         measure_id = measurement_report_id
         next_measure = form.next_measure.data
+
+        # Если параметр количественный, то полью стиля присваиваются значения
         if type_of_measure == 1:
             style = form.style.data
         else:
             style = 0
 
-            # Запись в базу данных
+        # Запись в базу данных
         db_app.create_measurement_report(report_id, measure_id, next_measure, style)
 
         flash('Параметр добавлен', 'success')
         return redirect(url_for('reports.report', id=report[0], page=1))
 
-    return render_template('add_measurement_report.html', form=form, report_id=report_id, report_name=report_name)
+    return render_template(
+        'add_measurement_report.html',
+        form=form, report_id=report_id,
+        report_name=report_name,
+        name_of_measure=name_of_measure
+    )
 
 # Редактирвание колонки в отчете
 @mod.route("/edit_measurement_report/<string:measurement_report_id>", methods =['GET', 'POST'] )
