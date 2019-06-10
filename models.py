@@ -35,8 +35,6 @@ def pair(model_id):
     x = [float(i[0]) for i in XY]
     y = [float(i[1]) for i in XY]
 
-
-
     # Список моделей пары
     list_models = db_app.select_pair_models(id1, id2)
 

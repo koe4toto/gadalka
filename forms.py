@@ -87,7 +87,6 @@ class MeFilterForm(Form):
 class AssosiationsForm(Form):
     pass
 
-
 # Форма единицы измерения
 class UnitOfMeasurement(Form):
     name = StringField('Название', [validators.required(message='Обязательное поле')])
@@ -110,6 +109,6 @@ class EditReport(Form):
     description = TextAreaField('Комментарий')
 
 class MeasurementReport(Form):
-    next_measure = SelectField('Разместить перед')
-    style = SelectField('Стиль')
+    next_measure = SelectField('Разместить после')
+
 

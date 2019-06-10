@@ -90,16 +90,24 @@ class order(object):
             self.result_columns.append(first)
             self.search_next(first)
 
-# Отчёт
-@mod.route("/report", methods =['GET', 'POST'] )
+# Функция распределитель
+@mod.route("/aggregation_report")
 @is_logged_in
-def report():
+def aggregation_report():
+    id = request.args.get('id', default=1, type=int)
+    report = db_app.report(id)
+    return render_template('aggregation_report.html', report=report)
+
+
+# Отчёт
+@mod.route("/simple_report", methods =['GET', 'POST'] )
+@is_logged_in
+def simple_report():
     id = request.args.get('id', default=1, type=int)
     page = request.args.get('page', default=1, type=int)
     order_by_column = request.args.get('order_by_column', default=0, type=int)
     desc = request.args.get('desc', default='True', type=str)
-    filter = request.args.get('filter', default='*', type=str)
-
+    filter = request.args.get('filter', default=10, type=int)
 
     report = db_app.report(id)
     data_area_id = report[0][6]
@@ -126,7 +134,7 @@ def report():
 
     styles = []
     for num, i in enumerate(columns_orders):
-        n=i[5]-1
+        n=i[5]
         styles.append(
             [num, 'right, {0}, {1}'.format(constants.COLORS_IN_OREDERS[n][2], constants.COLORS_IN_OREDERS[n][3])]
         )
@@ -137,7 +145,7 @@ def report():
     else:
         order_by = columns_orders[order_by_column][2]
 
-    limit = 10
+    limit = filter
     if int(page) == 1:
         offset = 0
     else:
@@ -154,7 +162,6 @@ def report():
     if count_data[0][0]%limit > 0:
         pages += 1
 
-
     # Формирование списка доступных измерений
     names_in_columns = [i[2] for i in columns_orders]
     choises = []
@@ -162,23 +169,20 @@ def report():
         if i[1] not in names_in_columns:
             choises.append(i)
 
-    if report[0][3] == 1:
-        return render_template(
-            'simple_report.html',
-            report=report,
-            measurement_report_list= choises,
-            columns=columns_orders,
-            no_more_measures=no_more_measures,
-            columns_to_simple_report=columns_to_simple_report,
-            pages=pages,
-            current_page=int(page),
-            count_data=count_data[0][0],
-            styles=styles,
-            order_by_column=order_by_column,
-            desc=desc
-        )
-    elif report[0][3] == 2:
-        return render_template('aggregation_report.html', report=report)
+    return render_template(
+        'simple_report.html',
+        report=report,
+        measurement_report_list= choises,
+        columns=columns_orders,
+        no_more_measures=no_more_measures,
+        columns_to_simple_report=columns_to_simple_report,
+        pages=pages,
+        current_page=int(page),
+        count_data=count_data[0][0],
+        styles=styles,
+        order_by_column=order_by_column,
+        desc=desc
+    )
 
 # Редактирование отчета
 @mod.route("/edit_report/<string:id>", methods =['GET', 'POST'] )
@@ -212,7 +216,6 @@ def edit_report(id):
 @mod.route('/delete_report/<string:id>', methods=['POST'])
 @is_logged_in
 def delete_report(id):
-    # TODO реализовать каскадное удаление колонок
     db_app.delete_report(id)
     flash('Отчёт удалён', 'success')
     return redirect(url_for('reports.reports'))
@@ -221,43 +224,69 @@ def delete_report(id):
 @mod.route("/add_measurement_report/<string:report_id>/<string:measurement_report_id>", methods =['GET', 'POST'] )
 @is_logged_in
 def add_measurement_report(report_id, measurement_report_id):
-    form = MeasurementReport(request.form)
 
     # Получение имени отчета
     report = db_app.report(report_id)[0]
     report_name = report[1]
 
-    # Формирование списка измерений в отчете на данный момент
-    n_me = [('0', 'Разместить в начале')]
+    # Получение сведений о параметре
+    measure_of_data_area = db_app.select_measure(measurement_report_id)
+    type_of_measure = measure_of_data_area[0][4]
 
-    # Стили коонок
+    # Стили колонок
     colors = [(i[0], i[1]) for i in constants.COLORS_IN_OREDERS]
-    form.next_measure.choices = n_me
-    form.style.choices = colors
+
+    if hasattr(MeasurementReport, 'style') == True:
+        # Форма отчищается от лишних полей
+        delattr(MeasurementReport, 'style')
+
+    # Стили колонок
+    if type_of_measure == 1:
+        # Добавление полей в форму
+        setattr(MeasurementReport, 'style', forrms['SelectField']('Стиль', choices=colors))
+
+    # Форма
+    form = MeasurementReport(request.form)
+
+
+    if type_of_measure == 1:
+        form.style.choices = colors
+
 
     # Полуение списка солонок
     columns = db_app.select_measurement_report_list(report_id)
+
     # Колонки выстраиваются по порядку
     if len(columns) > 1:
         orders = order(columns)
         columns_orders = orders.result_columns
     else:
         columns_orders = columns
+
     cols = [[str(i[0]), i[1]] for i in columns_orders]
+
+    # Формирование списка измерений в отчете на данный момент
+    n_me = [('0', 'Разместить в начале')]
     for i in cols:
         n_me.append(i)
 
+    form.next_measure.choices = n_me
 
+    # Обработка полученных данных формы
     if request.method == 'POST' and form.validate():
         measure_id = measurement_report_id
         next_measure = form.next_measure.data
-        style = form.style.data
+        if type_of_measure == 1:
+            style = form.style.data
+        else:
+            style = 0
 
-        # Запись в базу данных
+            # Запись в базу данных
         db_app.create_measurement_report(report_id, measure_id, next_measure, style)
 
         flash('Параметр добавлен', 'success')
         return redirect(url_for('reports.report', id=report[0], page=1))
+
     return render_template('add_measurement_report.html', form=form, report_id=report_id, report_name=report_name)
 
 # Редактирвание колонки в отчете
@@ -279,4 +308,15 @@ def delete_measurement_report(measurement_report_id, report_id):
     flash('Колонка удалена', 'success')
     return redirect(url_for('reports.report', id=report_id, page=1))
 
+
+# Перенаправление на отображение отчета
+@mod.route("/report")
+@is_logged_in
+def report():
+    id = request.args.get('id', type=int)
+    report = db_app.report(id)
+    if report[0][3] == 1:
+        return redirect(url_for('reports.simple_report', id=id))
+    if report[0][3] == 2:
+        return redirect(url_for('reports.aggregation_report', id=id))
 

@@ -1,7 +1,6 @@
 {% extends 'layout.html' %}
 
 {% block body %}
-    <!--<link href="{{ url_for('static', filename='css/columns.css') }}" rel="stylesheet">-->
 <style>
 td {
   border-bottom: 1px solid #fbfbfb;
@@ -24,7 +23,7 @@ td {
 td:numb {
 }
 </style>
-    <script src="{{ url_for('static', filename='js/histogram.js') }}"></script>
+
     <a class="text-secondary" href="/reports">Отчеты</a><br>
     &#8595;
     <div class="row">
@@ -66,8 +65,8 @@ td:numb {
               <nav aria-label="Page navigation example">
                   <ul class="pagination">
                     {% if current_page != 1 %}
-                      <li class="page-item" title="Первая страница"><a class="page-link" href="/report?id={{ report[0][0] }}&page={{ 1 }}&order_by_column={{ order_by_column }}&desc={{ desc }}"><i class="fas fa-angle-double-left"></i></a></li>
-                        <li class="page-item" title="Предыдущая страница"><a class="page-link" href="/report?id={{ report[0][0] }}&page={{ current_page-1 }}&order_by_column={{ order_by_column }}&desc={{ desc }}"><i class="fas fa-angle-left"></i></a></li>
+                      <li class="page-item" title="Первая страница"><a class="page-link" href="/simple_report?id={{ report[0][0] }}&page={{ 1 }}&order_by_column={{ order_by_column }}&desc={{ desc }}"><i class="fas fa-angle-double-left"></i></a></li>
+                        <li class="page-item" title="Предыдущая страница"><a class="page-link" href="/simple_report?id={{ report[0][0] }}&page={{ current_page-1 }}&order_by_column={{ order_by_column }}&desc={{ desc }}"><i class="fas fa-angle-left"></i></a></li>
                     {% else  %}
                       <li class="page-item disabled"><a class="page-link" href="#"><i class="fas fa-angle-double-left"></i></a></li>
                         <li class="page-item disabled"><a class="page-link" href="#"><i class="fas fa-angle-left"></i></a></li>
@@ -76,8 +75,8 @@ td:numb {
                       <li class="page-item disabled"><a class="page-link" href="#">{{current_page}} из {{ pages }}<span class="sr-only">(current)</span></a></li>
 
                       {% if current_page != pages %}
-                    <li class="page-item" title="Следующая страница"><a class="page-link" href="/report?id={{ report[0][0] }}&page={{ current_page+1 }}&order_by_column={{ order_by_column }}&desc={{ desc }}"><i class="fas fa-angle-right"></i></a></li>
-                    <li class="page-item" title="Последняя страница"><a class="page-link" href="/report?id={{ report[0][0] }}&page={{ pages }}&order_by_column={{ order_by_column }}&desc={{ desc }}"><i class="fas fa-angle-double-right"></i></a></li>
+                    <li class="page-item" title="Следующая страница"><a class="page-link" href="/simple_report?id={{ report[0][0] }}&page={{ current_page+1 }}&order_by_column={{ order_by_column }}&desc={{ desc }}"><i class="fas fa-angle-right"></i></a></li>
+                    <li class="page-item" title="Последняя страница"><a class="page-link" href="/simple_report?id={{ report[0][0] }}&page={{ pages }}&order_by_column={{ order_by_column }}&desc={{ desc }}"><i class="fas fa-angle-double-right"></i></a></li>
                     {% else  %}
 
                     <li class="page-item disabled"><a class="page-link" href="#"><i class="fas fa-angle-right"></i></a></li>
@@ -102,18 +101,28 @@ td:numb {
             {% for i in columns %}
               <th><div class="btn-group">
                   <button class="btn btn-secondary btn-sm dropdown-toggle text-truncate" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="max-width: 150px;" title="{{ i[1] }}">
-                    {{ i[1] }}
+                    {% if columns[order_by_column][2] == i[2] %}
+
+                          {% if desc == 'True' %}
+                            <i class="fas fa-long-arrow-alt-up"></i>
+                          {% else  %}
+                            <i class="fas fa-long-arrow-alt-down"></i>
+                          {% endif %}
+
+                      {% endif %}
+
+                      {{ i[1] }}
                   </button>
                   <div class="dropdown-menu">
-                      <a class="dropdown-item" href="/report?id={{ report[0][0] }}&page={{ current_page }}&order_by_column={{ columns.index( i )  }}&desc=True">Сортировать по убыванию</a>
-                      <a class="dropdown-item" href="/report?id={{ report[0][0] }}&page={{ current_page }}&order_by_column={{ columns.index( i ) }}&desc=False">Сортировать по возрастанию</a>
+                      <a class="dropdown-item" href="/simple_report?id={{ report[0][0] }}&page={{ current_page }}&order_by_column={{ columns.index( i )  }}&desc=True">Сортировать по убыванию</a>
+                      <a class="dropdown-item" href="/simple_report?id={{ report[0][0] }}&page={{ current_page }}&order_by_column={{ columns.index( i ) }}&desc=False">Сортировать по возрастанию</a>
                       <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="/measure/{{ i[4] }}">Посмотреть</a>
                     <div class="dropdown-divider"></div>
                       <div class="form-group">
                         <form action="{{url_for('reports.delete_measurement_report', measurement_report_id=i[0], report_id=report[0][0])}}" method="post">
                               <input type="hidden" name="_method" value="DELETE">
-                              <input type="submit" value=" Удалить" class="btn btn-link dropdown-item">
+                              <input type="submit" value=" Убрать из отчета" class="btn btn-link dropdown-item">
                           </form>
                       </div>
                   </div>
@@ -146,4 +155,5 @@ td:numb {
 
   </div>
 </div>
+<script src="{{ url_for('static', filename='js/histogram.js') }}"  onload="twoColComp.init();"></script>
 {% endblock %}
