@@ -1355,9 +1355,12 @@ def select_measurement_report_list(report_id):
             measures.column_name,
             measurement_report.next_measure,
             measures.id,
-            measurement_report.style
+            measurement_report.style,
+            measures.type,
+            refs.data
         FROM measurement_report
         LEFT JOIN measures ON measurement_report.measure_id = measures.id
+        LEFT JOIN refs ON measures.ref_id = refs.id
         WHERE measurement_report.report_id = '{0}';
         '''.format(report_id)
     )

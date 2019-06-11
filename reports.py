@@ -4,8 +4,10 @@ from decorators import is_logged_in
 import databases.db_app as db_app
 import databases.db_data as db_data
 import constants
+import prototype
 
 mod = Blueprint('reports', __name__)
+
 
 # Отчеты
 @mod.route("/reports")
@@ -15,18 +17,17 @@ def reports():
     reports_list = db_app.reports_list(session['user_id'])
     return render_template('reports.html', list=reports_list)
 
+
 # Добавление простого отчёта
-@mod.route("/add_simple_report", methods =['GET', 'POST'] )
+@mod.route("/add_simple_report", methods=['GET', 'POST'])
 @is_logged_in
 def add_simple_report():
-
     user = str(session['user_id'])
 
     result = db_app.select_da(user)
     dif = [(str(i[0]), str(i[1])) for i in result]
     form = SimpleReport(request.form)
     form.data_area.choices = dif
-
 
     if request.method == 'POST' and form.validate():
         name = form.name.data
@@ -41,8 +42,9 @@ def add_simple_report():
         return redirect(url_for('reports.report', id=report_id[0][0]))
     return render_template('add_report.html', form=form)
 
+
 # Добавление отчёта из агрегатов
-@mod.route("/add_aggregation_report", methods =['GET', 'POST'] )
+@mod.route("/add_aggregation_report", methods=['GET', 'POST'])
 @is_logged_in
 def add_aggregation_report():
     form = АggregationReport(request.form)
@@ -58,11 +60,12 @@ def add_aggregation_report():
         return redirect(url_for('reports.report', id=report_id[0][0]))
     return render_template('add_report.html', form=form)
 
+
 # Расстановка колнок отчета по очереди
 class order(object):
     def __init__(self, columns):
         self.columns = columns
-        self.result_columns =[]
+        self.result_columns = []
         self.start()
 
     # Запуск поиск первого
@@ -90,6 +93,7 @@ class order(object):
             self.result_columns.append(first)
             self.search_next(first)
 
+
 # Функция распределитель
 @mod.route("/aggregation_report")
 @is_logged_in
@@ -100,7 +104,7 @@ def aggregation_report():
 
 
 # Отчёт
-@mod.route("/simple_report", methods =['GET', 'POST'] )
+@mod.route("/simple_report", methods=['GET', 'POST'])
 @is_logged_in
 def simple_report():
     id = request.args.get('id', default=1, type=int)
@@ -129,12 +133,29 @@ def simple_report():
     else:
         columns_orders = columns
 
-    columns_name = [i[2] for i in columns_orders]
-    columns_string = ','.join(columns_name)
+    # Название таблицы, в которой хранятся данные
+    data_area = db_app.data_area(data_area_id)
+    database_table = data_area[0][5]
+
+    # Колонки, из которых нужно данные забирать
+    columns_string = ''
+    left_join = ''
+    for num, i in enumerate(columns_orders):
+        sep = ''
+        if num != 0:
+            sep = ', '
+
+        if i[6] == 3:
+            left_join += ('LEFT JOIN ' + i[7] + ' ON ' + database_table + '.' + i[2] + ' = ' + i[7] + '.code ')
+            columns_string += (sep + i[7] + '.value')
+            #columns_string += (sep + database_table + '.' + i[2])
+        else:
+            columns_string += (sep + database_table + '.' + i[2])
+
 
     styles = []
     for num, i in enumerate(columns_orders):
-        n=i[5]
+        n = i[5]
         styles.append(
             [num, 'right, {0}, {1}'.format(constants.COLORS_IN_OREDERS[n][2], constants.COLORS_IN_OREDERS[n][3])]
         )
@@ -149,17 +170,16 @@ def simple_report():
     if int(page) == 1:
         offset = 0
     else:
-        offset = (int(page)-1) * limit
-    data_area = db_app.data_area(data_area_id)
-    database_table = data_area[0][5]
-    columns_to_simple_report = db_data.select_columns_to_simple_report(columns_string, database_table, limit, offset, order_by)
+        offset = (int(page) - 1) * limit
+
+    columns_to_simple_report = db_data.select_columns_to_simple_report(columns_string, database_table, limit, offset, order_by, left_join)
 
     # Подучение общего количества записей
-    count_data = db_data.select_data_count(columns_string, database_table)
+    count_data = db_data.select_data_count(columns_string, database_table, left_join)
 
     # Формирование переключателя
-    pages = (count_data[0][0]//limit)
-    if count_data[0][0]%limit > 0:
+    pages = (count_data[0][0] // limit)
+    if count_data[0][0] % limit > 0:
         pages += 1
 
     # Формирование списка доступных измерений
@@ -172,7 +192,7 @@ def simple_report():
     return render_template(
         'simple_report.html',
         report=report,
-        measurement_report_list= choises,
+        measurement_report_list=choises,
         columns=columns_orders,
         no_more_measures=no_more_measures,
         columns_to_simple_report=columns_to_simple_report,
@@ -181,14 +201,15 @@ def simple_report():
         count_data=count_data[0][0],
         styles=styles,
         order_by_column=order_by_column,
-        desc=desc
+        desc=desc,
+        left_join=left_join
     )
 
+
 # Редактирование отчета
-@mod.route("/edit_report/<string:id>", methods =['GET', 'POST'] )
+@mod.route("/edit_report/<string:id>", methods=['GET', 'POST'])
 @is_logged_in
 def edit_report(id):
-
     # Достаётся предметная область из базы по идентификатору
     report = db_app.report(id)[0]
 
@@ -204,13 +225,13 @@ def edit_report(id):
 
         # Если данные из формы валидные
         if form.validate():
-
             # Обновление базе данных
             db_app.update_report(id, form.name.data, form.description.data)
 
             flash('Данные обновлены', 'success')
             return redirect(url_for('reports.report', id=id, page=1))
     return render_template('edit_report.html', form=form, report_id=id, report_name=report[1])
+
 
 # Удаление отчёта
 @mod.route('/delete_report/<string:id>', methods=['POST'])
@@ -220,11 +241,11 @@ def delete_report(id):
     flash('Отчёт удалён', 'success')
     return redirect(url_for('reports.reports'))
 
+
 # Добавление колонки в отчет
-@mod.route("/add_measurement_report/<string:report_id>/<string:measurement_report_id>", methods =['GET', 'POST'] )
+@mod.route("/add_measurement_report/<string:report_id>/<string:measurement_report_id>", methods=['GET', 'POST'])
 @is_logged_in
 def add_measurement_report(report_id, measurement_report_id):
-
     # Получение имени отчета
     report = db_app.report(report_id)[0]
     report_name = report[1]
@@ -253,7 +274,6 @@ def add_measurement_report(report_id, measurement_report_id):
     # Если параметр количественный, то полю стилей присваиваются варианты
     if type_of_measure == 1:
         form.style.choices = colors
-
 
     # Полуение списка солонок
     columns = db_app.select_measurement_report_list(report_id)
@@ -295,21 +315,22 @@ def add_measurement_report(report_id, measurement_report_id):
         name_of_measure=name_of_measure
     )
 
+
 # Редактирвание колонки в отчете
-@mod.route("/edit_measurement_report/<string:measurement_report_id>", methods =['GET', 'POST'] )
+@mod.route("/edit_measurement_report/<string:measurement_report_id>", methods=['GET', 'POST'])
 @is_logged_in
 def edit_measurement_report(measurement_report_id):
-
     # TODO реализовать
     report_id = None
     report_name = None
     return render_template('edit_measurement_report.html', form=form, report_id=report_id, report_name=report_name)
 
+
 # Удаление колонки в отчете
-@mod.route("/delete_measurement_report/<string:measurement_report_id>/<string:report_id>", methods =['GET', 'POST'] )
+@mod.route("/delete_measurement_report/<string:measurement_report_id>/<string:report_id>", methods=['GET', 'POST'])
 @is_logged_in
 def delete_measurement_report(measurement_report_id, report_id):
-    # TODO реализовать
+
     db_app.delete_report_column(measurement_report_id)
     flash('Колонка удалена', 'success')
     return redirect(url_for('reports.report', id=report_id, page=1))
@@ -325,4 +346,3 @@ def report():
         return redirect(url_for('reports.simple_report', id=id))
     if report[0][3] == 2:
         return redirect(url_for('reports.aggregation_report', id=id))
-

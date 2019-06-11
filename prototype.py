@@ -14,7 +14,7 @@ import databases.db_data as db_data
 import databases.db_queue as db_queue
 from itertools import groupby
 import math
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
 
 
 '''
