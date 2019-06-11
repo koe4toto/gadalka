@@ -140,6 +140,7 @@ def simple_report():
     # Колонки, из которых нужно данные забирать
     columns_string = ''
     left_join = ''
+    columns_names = []
     for num, i in enumerate(columns_orders):
         sep = ''
         if num != 0:
@@ -148,9 +149,10 @@ def simple_report():
         if i[6] == 3:
             left_join += ('LEFT JOIN ' + i[7] + ' ON ' + database_table + '.' + i[2] + ' = ' + i[7] + '.code ')
             columns_string += (sep + i[7] + '.value')
-            #columns_string += (sep + database_table + '.' + i[2])
+            columns_names.append((i[7] + '.value'))
         else:
             columns_string += (sep + database_table + '.' + i[2])
+            columns_names.append((database_table + '.' + i[2]))
 
 
     styles = []
@@ -162,16 +164,16 @@ def simple_report():
 
     # Подучение данных
     if desc == 'True':
-        order_by = columns_orders[order_by_column][2] + ' DESC'
+        order_by = columns_names[order_by_column] + ' DESC'
     else:
-        order_by = columns_orders[order_by_column][2]
+        order_by = columns_names[order_by_column]
 
     limit = filter
     if int(page) == 1:
         offset = 0
     else:
         offset = (int(page) - 1) * limit
-
+    # Подучение данных из базы
     columns_to_simple_report = db_data.select_columns_to_simple_report(columns_string, database_table, limit, offset, order_by, left_join)
 
     # Подучение общего количества записей
@@ -201,8 +203,7 @@ def simple_report():
         count_data=count_data[0][0],
         styles=styles,
         order_by_column=order_by_column,
-        desc=desc,
-        left_join=left_join
+        desc=desc
     )
 
 

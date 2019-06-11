@@ -2,9 +2,6 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1719e8ec-808e-4103-a063-fff281569a44" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/databases/db_app.py" beforeDir="false" afterPath="$PROJECT_DIR$/databases/db_app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/databases/db_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/databases/db_data.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/prototype.py" beforeDir="false" afterPath="$PROJECT_DIR$/prototype.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/reports.py" beforeDir="false" afterPath="$PROJECT_DIR$/reports.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/templates/simple_report.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/simple_report.html" afterDir="false" />
     </list>
@@ -61,7 +58,7 @@
           <entry key="HTML" value="5561" />
           <entry key="JavaScript" value="22" />
           <entry key="PLAIN_TEXT" value="24" />
-          <entry key="Python" value="69425" />
+          <entry key="Python" value="69463" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
@@ -70,7 +67,7 @@
           <entry key="dummy" value="24" />
           <entry key="html" value="5561" />
           <entry key="js" value="22" />
-          <entry key="py" value="69425" />
+          <entry key="py" value="69463" />
         </counts>
       </usages-collector>
     </session>
@@ -80,8 +77,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/templates/simple_report.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="307">
-              <caret line="151" column="19" selection-start-line="151" selection-start-column="19" selection-end-line="151" selection-end-column="19" />
+            <state relative-caret-position="324">
+              <caret line="152" column="11" selection-start-line="152" selection-start-column="11" selection-end-line="152" selection-end-column="11" />
               <folding>
                 <element signature="n#style#0;n#table#0;n#div#0;n#div#2;n#!!top" expanded="true" />
                 <element signature="n#style#0;n#button#0;n#div#0;n#th#0;n#tr#0;n#table#0;n#div#0;n#div#2;n#!!top" expanded="true" />
@@ -90,11 +87,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/reports.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="288">
-              <caret line="180" column="39" lean-forward="true" selection-start-line="180" selection-start-column="39" selection-end-line="180" selection-end-column="39" />
+            <state relative-caret-position="220">
+              <caret line="168" column="32" selection-start-line="168" selection-start-column="32" selection-end-line="168" selection-end-column="32" />
               <folding>
                 <element signature="e#0#88#0" expanded="true" />
                 <element signature="e#336#482#0" />
@@ -124,7 +121,7 @@
                 <element signature="e#8193#8632#0" />
                 <element signature="e#8370#8548#0" />
                 <element signature="e#10199#10358#0" />
-                <marker date="1560280018688" expanded="false" signature="11038:11200" ph="..." />
+                <marker date="1560280671367" expanded="false" signature="11121:11283" ph="..." />
               </folding>
             </state>
           </provider>
@@ -177,7 +174,7 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/prototype.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="305">
@@ -367,10 +364,10 @@
         <option value="$PROJECT_DIR$/constants.py" />
         <option value="$PROJECT_DIR$/templates/add_measurement_report.html" />
         <option value="$PROJECT_DIR$/databases/db_app.py" />
-        <option value="$PROJECT_DIR$/templates/simple_report.html" />
         <option value="$PROJECT_DIR$/databases/db_data.py" />
-        <option value="$PROJECT_DIR$/reports.py" />
         <option value="$PROJECT_DIR$/prototype.py" />
+        <option value="$PROJECT_DIR$/templates/simple_report.html" />
+        <option value="$PROJECT_DIR$/reports.py" />
       </list>
     </option>
   </component>
@@ -908,17 +905,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/templates/simple_report.html">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="307">
-          <caret line="151" column="19" selection-start-line="151" selection-start-column="19" selection-end-line="151" selection-end-column="19" />
-          <folding>
-            <element signature="n#style#0;n#table#0;n#div#0;n#div#2;n#!!top" expanded="true" />
-            <element signature="n#style#0;n#button#0;n#div#0;n#th#0;n#tr#0;n#table#0;n#div#0;n#div#2;n#!!top" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/databases/db_app.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="391">
@@ -1002,10 +988,31 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/prototype.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="305">
+          <caret line="282" lean-forward="true" selection-start-line="282" selection-end-line="282" />
+          <folding>
+            <element signature="e#0#16#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/templates/simple_report.html">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="324">
+          <caret line="152" column="11" selection-start-line="152" selection-start-column="11" selection-end-line="152" selection-end-column="11" />
+          <folding>
+            <element signature="n#style#0;n#table#0;n#div#0;n#div#2;n#!!top" expanded="true" />
+            <element signature="n#style#0;n#button#0;n#div#0;n#th#0;n#tr#0;n#table#0;n#div#0;n#div#2;n#!!top" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/reports.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="288">
-          <caret line="180" column="39" lean-forward="true" selection-start-line="180" selection-start-column="39" selection-end-line="180" selection-end-column="39" />
+        <state relative-caret-position="220">
+          <caret line="168" column="32" selection-start-line="168" selection-start-column="32" selection-end-line="168" selection-end-column="32" />
           <folding>
             <element signature="e#0#88#0" expanded="true" />
             <element signature="e#336#482#0" />
@@ -1035,17 +1042,7 @@
             <element signature="e#8193#8632#0" />
             <element signature="e#8370#8548#0" />
             <element signature="e#10199#10358#0" />
-            <marker date="1560280018688" expanded="false" signature="11038:11200" ph="..." />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/prototype.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="305">
-          <caret line="282" lean-forward="true" selection-start-line="282" selection-end-line="282" />
-          <folding>
-            <element signature="e#0#16#0" expanded="true" />
+            <marker date="1560280671367" expanded="false" signature="11121:11283" ph="..." />
           </folding>
         </state>
       </provider>
