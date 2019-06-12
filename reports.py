@@ -360,8 +360,48 @@ def report():
         return redirect(url_for('reports.aggregation_report', id=id))
 
 # Форма фильтра
-@mod.route("/simple_form_filter")
+@mod.route("/simple_report_filter", methods=['GET', 'POST'])
 @is_logged_in
 def simple_form_filter():
+    # Идентификатор отчета
+    id = request.args.get('id', type=int)
 
-    return True
+    # Описание отчета
+    report = db_app.report(id)
+    data_area_id = report[0][6]
+
+    # Получение списка параметров предметной области
+    measure = db_app.select_measures_of_the_data_area(data_area_id)
+
+    # Форма отчищается от лишних полей
+    atrr = FilterReportForm.__dict__.keys()
+    mix = [i for i in atrr]
+    for i in mix:
+        if mix.index(i) > 3:
+            delattr(FilterReportForm, i)
+
+    # Добавление полей в форму
+    for i in measure:
+        atrname = str(i[0])
+        setattr(FilterReportForm, atrname, forrms['StringField'](i[2]))
+
+    # Форма
+    form = FilterReportForm(request.form)
+
+
+    # Заполнение формы текущими значениями
+    '''
+    for i in checked:
+        n = [m[0] for m in i[3]]
+        getattr(form, i[0]).default = n 
+    '''
+    form.process()
+
+    # Обработка данных из формы
+    if request.method == 'POST':
+        # Получение данных из формы
+        form.process(request.form)
+
+        return redirect(url_for('reports.report', id=id))
+
+    return render_template('simple_report_filter.html', form=form, report=report)

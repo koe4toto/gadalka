@@ -111,4 +111,6 @@ class EditReport(Form):
 class MeasurementReport(Form):
     next_measure = SelectField('Разместить после')
 
-
+# Фильтр к отчету
+class FilterReportForm(Form):
+    pass
