@@ -9,10 +9,7 @@
       </div>
         {% if is_delete == True and list[0][3] == 1 %}
         <div class="col-2">
-          <form action="{{url_for('refs.delete_unit_of_measurement', id=list[0][0])}}" method="post">
-              <input type="hidden" name="_method" value="DELETE">
-              <input type="submit" value=" Удалить" class="btn btn-link float-right text-danger">
-          </form>
+            <a class="btn btn-link float-right text-danger" href="/delete_unit_of_measurement/{{ list[0][0] }}"><i class="far fa-trash-alt"></i></a>
         </div>
         {% endif %}
     </div>

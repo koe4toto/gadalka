@@ -449,3 +449,5 @@ def associations_list():
         'associations_list.html',
         list = db_app.assosiations_list(user)
     )
+
+

@@ -31,10 +31,7 @@ td:numb {
           <h1>{{ report[0][1] }}</h1>
       </div>
     <div class="col-2">
-      <form action="{{url_for('reports.delete_report', id=report[0][0])}}" method="post">
-          <input type="hidden" name="_method" value="DELETE">
-          <input type="submit" value=" Удалить" class="btn btn-link float-right text-danger">
-      </form>
+        <a class="btn btn-link float-right text-danger" href="/delete_report/{{report[0][0]}}"><i class="far fa-trash-alt"></i></a>
     </div>
     </div>
 
@@ -42,12 +39,12 @@ td:numb {
     <a class="btn btn-outline-primary" href="/edit_report/{{ report[0][0] }}">
       <i class="fas fa-pencil-alt"></i> Редактировать
     </a>
-{% if no_more_measures == False %}
+{% if choises != [] %}
     <a class="btn dropdown-toggle btn-secondary"   href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
       Добавить параметр в отчёт
       </a>
       <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-        {% for i in measurement_report_list %}
+        {% for i in choises %}
           <a class="dropdown-item" href="/add_measurement_report/{{ report[0][0] }}/{{ i[0] }}" title="Данные выраженные в числах">{{ i[2] }}</a>
         {% endfor %}
       </div>
@@ -85,12 +82,10 @@ td:numb {
                   </ul>
                 </nav>
             </ul>
+              Всего строк:&nbsp;<span class="badge badge-secondary">{{count_data}}</span>
 
 
-            <form class="form-inline my-2 my-lg-0">
-              <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-              <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-            </form>
+
           </div>
         </nav>
 
@@ -100,7 +95,7 @@ td:numb {
         <tr>
             {% for i in columns %}
               <th><div class="btn-group">
-                  <button class="btn btn-secondary btn-sm dropdown-toggle text-truncate" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="max-width: 150px;" title="{{ i[1] }}">
+                  <button class="btn btn-light btn-sm dropdown-toggle text-truncate" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="max-width: 150px;" title="{{ i[1] }}">
                     {% if columns[order_by_column][2] == i[2] %}
 
                           {% if desc == 'True' %}
@@ -131,7 +126,7 @@ td:numb {
                   </th>
             {% endfor %}
         </tr>
-          {% for i in columns_to_simple_report %}
+          {% for i in data_to_simple_report %}
         <tr>
             {% for k in i %}
           <td class="numb">{{ k }}</td>
@@ -147,10 +142,15 @@ td:numb {
 
   </div>
   <div class="col-md-2">
-    <p>Получено записей: {{count_data}}</p>
-    Фильтры
-    <br>
     Пресеты
+      <hr>
+      <div>
+          <p>
+          <small class="text-muted">Количество строк на странице:</small>
+          <br>
+          {{ filter }}
+          </p>
+      </div>
   </div>
 
   </div>

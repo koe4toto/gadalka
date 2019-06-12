@@ -8,10 +8,7 @@
           <h1>{{ ref[0][1] }}</h1>
       </div>
     <div class="col-2">
-      <form action="{{url_for('refs.delete_ref', id=ref[0][0])}}" method="post">
-          <input type="hidden" name="_method" value="DELETE">
-          <input type="submit" value=" Удалить" class="btn btn-link float-right text-danger">
-      </form>
+        <a class="btn btn-link float-right text-danger" href="/delete_ref/{{ ref[0][0] }}"><i class="far fa-trash-alt"></i></a>
     </div>
     </div>
 

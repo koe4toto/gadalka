@@ -34,7 +34,7 @@ def data_area(id):
     filename = 'olap_' + id + '.xls'
 
     # Получение описания параметров
-    measures = db_app.select_measures_to_data_area(id)
+    measures = db_app.select_measures_of_the_data_area(id)
 
     # Получение последнй операции загрузки данных
     log = db_app.select_data_log(id)

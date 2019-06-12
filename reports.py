@@ -4,7 +4,6 @@ from decorators import is_logged_in
 import databases.db_app as db_app
 import databases.db_data as db_data
 import constants
-import prototype
 
 mod = Blueprint('reports', __name__)
 
@@ -103,107 +102,119 @@ def aggregation_report():
     return render_template('aggregation_report.html', report=report)
 
 
-# Отчёт
+# Простой отчёт
 @mod.route("/simple_report", methods=['GET', 'POST'])
 @is_logged_in
 def simple_report():
+    # Идентификатор отчета
     id = request.args.get('id', default=1, type=int)
+
+    # Текущая страница
     page = request.args.get('page', default=1, type=int)
+
+    # Номер колонки по которой нужно сортировать
     order_by_column = request.args.get('order_by_column', default=0, type=int)
+
+    # Направление сортировки
     desc = request.args.get('desc', default='True', type=str)
+
+    # Количество элеменов списка на странице
     filter = request.args.get('filter', default=10, type=int)
 
+    # Список доступных параметров для добавления в отчете
+    choises = []
+
+    # Данные об отчете
     report = db_app.report(id)
     data_area_id = report[0][6]
 
     # Получение списка измерений предметной области
-    measurement_report_list = db_app.select_measures_to_data_area(data_area_id)
+    measures_of_the_data_area = db_app.select_measures_of_the_data_area(data_area_id)
 
     # Полуение списка солонок
     columns = db_app.select_measurement_report_list(id)
-    if len(columns) == len(measurement_report_list):
-        no_more_measures = True
-    else:
-        no_more_measures = False
 
     # Колонки выстраиваются по порядку
-    if len(columns) > 1:
-        orders = order(columns)
-        columns_orders = orders.result_columns
-    else:
-        columns_orders = columns
+    if len(columns) > 0:
+        columns_orders = order(columns).result_columns
 
-    # Название таблицы, в которой хранятся данные
-    data_area = db_app.data_area(data_area_id)
-    database_table = data_area[0][5]
+        # Название таблицы, в которой хранятся данные
+        data_area = db_app.data_area(data_area_id)
+        database_table = data_area[0][5]
 
-    # Колонки, из которых нужно данные забирать
-    columns_string = ''
-    left_join = ''
-    columns_names = []
-    for num, i in enumerate(columns_orders):
-        sep = ''
-        if num != 0:
-            sep = ', '
+        # Колонки, из которых нужно данные забирать
+        columns_string = ''
+        left_join = ''
+        columns_names = []
+        for num, i in enumerate(columns_orders):
+            sep = ''
+            if num != 0:
+                sep = ', '
 
-        if i[6] == 3:
-            left_join += ('LEFT JOIN ' + i[7] + ' ON ' + database_table + '.' + i[2] + ' = ' + i[7] + '.code ')
-            columns_string += (sep + i[7] + '.value')
-            columns_names.append((i[7] + '.value'))
+            if i[6] == 3:
+                left_join += ('LEFT JOIN ' + i[7] + ' ON ' + database_table + '.' + i[2] + ' = ' + i[7] + '.code ')
+                columns_string += (sep + i[7] + '.value')
+                columns_names.append((i[7] + '.value'))
+            else:
+                columns_string += (sep + database_table + '.' + i[2])
+                columns_names.append((database_table + '.' + i[2]))
+
+        styles = []
+        for num, i in enumerate(columns_orders):
+            n = i[5]
+            styles.append(
+                [num, 'right, {0}, {1}'.format(constants.COLORS_IN_OREDERS[n][2], constants.COLORS_IN_OREDERS[n][3])]
+            )
+
+        # Подучение данных
+        if desc == 'True':
+            order_by = columns_names[order_by_column] + ' DESC'
         else:
-            columns_string += (sep + database_table + '.' + i[2])
-            columns_names.append((database_table + '.' + i[2]))
+            order_by = columns_names[order_by_column]
 
+        limit = filter
+        if int(page) == 1:
+            offset = 0
+        else:
+            offset = (int(page) - 1) * limit
+        # Подучение данных из базы
+        data_to_simple_report = db_data.select_columns_to_simple_report(columns_string, database_table, limit, offset,
+                                                                        order_by, left_join)
 
-    styles = []
-    for num, i in enumerate(columns_orders):
-        n = i[5]
-        styles.append(
-            [num, 'right, {0}, {1}'.format(constants.COLORS_IN_OREDERS[n][2], constants.COLORS_IN_OREDERS[n][3])]
-        )
+        # Подучение общего количества записей
+        count_data = db_data.select_data_count(columns_string, database_table, left_join)[0][0]
 
-    # Подучение данных
-    if desc == 'True':
-        order_by = columns_names[order_by_column] + ' DESC'
+        # Формирование переключателя
+        pages = (count_data // limit)
+        if count_data % limit > 0:
+            pages += 1
     else:
-        order_by = columns_names[order_by_column]
-
-    limit = filter
-    if int(page) == 1:
-        offset = 0
-    else:
-        offset = (int(page) - 1) * limit
-    # Подучение данных из базы
-    columns_to_simple_report = db_data.select_columns_to_simple_report(columns_string, database_table, limit, offset, order_by, left_join)
-
-    # Подучение общего количества записей
-    count_data = db_data.select_data_count(columns_string, database_table, left_join)
-
-    # Формирование переключателя
-    pages = (count_data[0][0] // limit)
-    if count_data[0][0] % limit > 0:
-        pages += 1
+        columns_orders = []
+        data_to_simple_report = []
+        pages = 0
+        count_data = 0
+        styles = ''
 
     # Формирование списка доступных измерений
     names_in_columns = [i[2] for i in columns_orders]
-    choises = []
-    for i in measurement_report_list:
+    for i in measures_of_the_data_area:
         if i[1] not in names_in_columns:
             choises.append(i)
+
 
     return render_template(
         'simple_report.html',
         report=report,
-        measurement_report_list=choises,
+        choises=choises,
         columns=columns_orders,
-        no_more_measures=no_more_measures,
-        columns_to_simple_report=columns_to_simple_report,
+        data_to_simple_report=data_to_simple_report,
         pages=pages,
-        current_page=int(page),
-        count_data=count_data[0][0],
+        current_page=page,
+        count_data=count_data,
         styles=styles,
         order_by_column=order_by_column,
-        desc=desc
+        desc=desc,
+        filter=filter
     )
 
 
@@ -230,12 +241,12 @@ def edit_report(id):
             db_app.update_report(id, form.name.data, form.description.data)
 
             flash('Данные обновлены', 'success')
-            return redirect(url_for('reports.report', id=id, page=1))
+            return redirect(url_for('reports.report', id=id))
     return render_template('edit_report.html', form=form, report_id=id, report_name=report[1])
 
 
 # Удаление отчёта
-@mod.route('/delete_report/<string:id>', methods=['POST'])
+@mod.route('/delete_report/<string:id>', methods=['GET'])
 @is_logged_in
 def delete_report(id):
     db_app.delete_report(id)
@@ -347,3 +358,10 @@ def report():
         return redirect(url_for('reports.simple_report', id=id))
     if report[0][3] == 2:
         return redirect(url_for('reports.aggregation_report', id=id))
+
+# Форма фильтра
+@mod.route("/simple_form_filter")
+@is_logged_in
+def simple_form_filter():
+
+    return True

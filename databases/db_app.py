@@ -238,7 +238,7 @@ def select_measure(id):
     return result
 
 # Список измерений предметной области
-def select_measures_to_data_area(data_area_id):
+def select_measures_of_the_data_area(data_area_id):
     cursor.execute(
         '''
         SELECT 
