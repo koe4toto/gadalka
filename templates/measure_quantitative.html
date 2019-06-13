@@ -8,7 +8,7 @@
     {% if data %}
     <div class="row">
 
-      <div class="col-md-9">
+      <div class="col-md-9 ">
           <br>
           <h4>График распределения</h4>
 
@@ -155,16 +155,16 @@
 
       <div class="col-md-3 ml-auto">
           <br>
-          <div class="sticky-top"  style="top:80px;">
+          <div class="sticky-top" style="top:80px;">
           <h4>Связи</h4>
-        {% for i in pairs %}
-          <a href="/pair/{{ i[6] }}" class="list-group-item list-group-item-action flex-column align-items-start">
-            <div class="d-flex w-100 justify-content-between">
-              <h5 class="mb-1 text-primary">{{ i[2] }} и {{ i[3] }}</h5>
-            </div>
-              <p class="mb-1">{{ i[0] }}, {{ i[1] }}</p>
-          </a>
-        {% endfor %}
+            {% for i in pairs %}
+              <a href="/pair/{{ i[6] }}" class="list-group-item list-group-item-action flex-column align-items-start">
+                <div class="d-flex w-100 justify-content-between">
+                  <h5 class="mb-1 text-primary">{{ i[2] }} и {{ i[3] }}</h5>
+                </div>
+                  <p class="mb-1">{{ i[0] }}, {{ i[1] }}</p>
+              </a>
+            {% endfor %}
           <br>
 
               <h4 >Ассоциации</h4>

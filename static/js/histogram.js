@@ -7,14 +7,7 @@ var twoColComp = {
          return;
       }
 
-      var h = tables[i].clientHeight,
-          t = tables[i].getBoundingClientRect().top,
-          wT = window.pageYOffset || document.documentElement.scrollTop,
-          wH = window.innerHeight;
-
-      if(wT + wH > t + h/2){
-         this.make(tables[i]);
-       }
+      this.make(tables[i]);
     }
   },
 
@@ -64,9 +57,5 @@ var twoColComp = {
 }
 
 window.onload = function(){
-  twoColComp.init();
-}
-
-window.onscroll = function(){
   twoColComp.init();
 }

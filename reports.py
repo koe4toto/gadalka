@@ -119,7 +119,7 @@ def simple_report():
     desc = request.args.get('desc', default='True', type=str)
 
     # Количество элеменов списка на странице
-    filter = request.args.get('filter', default=10, type=int)
+    filter = request.args.get('filter', default=20, type=int)
 
     # Список доступных параметров для добавления в отчете
     choises = []
