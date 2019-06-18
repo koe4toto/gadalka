@@ -126,6 +126,12 @@ def simple_report():
     # Список доступных параметров для добавления в отчете
     choises = []
 
+    # URL для фильтра
+    preseto = ''
+
+    # SQL для фильтра
+    where = ''
+
     # Данные об отчете
     report = db_app.report(id)
     data_area_id = report[0][6]
@@ -168,6 +174,41 @@ def simple_report():
                 [num, 'right, {0}, {1}'.format(constants.COLORS_IN_OREDERS[n][2], constants.COLORS_IN_OREDERS[n][3])]
             )
 
+        # Фильтр
+        pres = [i for num, i in enumerate(request.args.items()) if num > 3]
+
+        if len(pres) > 0:
+            for i in pres:
+                preseto += ('&' + str(i[0]) + '=' + str(i[1]))
+
+            for num, i in enumerate(pres):
+                if num == 0:
+                    operator = 'WHERE '
+                else:
+                    operator = ' AND '
+
+                # Определение мультиселекта
+                if '[' in i[1]:
+                    array = 'ANY(ARRAY'
+                    skob = ')'
+                else:
+                    array = ''
+                    skob = ''
+
+                # Определение знака
+                if re.match(r'from_value_', str(i[0])) != None:
+                    symbol = '>'
+                    column = re.sub(r'from_value_', '', str(i[0]))
+                elif re.match(r'to_value_', str(i[0])) != None:
+                    symbol = '<'
+                    column = re.sub(r'to_value_', '', str(i[0]))
+                else:
+                    symbol = '='
+                    column = str(i[0])
+
+                # Строка
+                where += operator + column + symbol + array + str(i[1]) + skob
+
         # Подучение данных
         if desc == 'True':
             order_by = columns_names[order_by_column] + ' DESC'
@@ -181,10 +222,10 @@ def simple_report():
             offset = (int(page) - 1) * limit
         # Подучение данных из базы
         data_to_simple_report = db_data.select_columns_to_simple_report(columns_string, database_table, limit, offset,
-                                                                        order_by, left_join)
+                                                                        order_by, left_join, where)
 
         # Подучение общего количества записей
-        count_data = db_data.select_data_count(columns_string, database_table, left_join)[0][0]
+        count_data = db_data.select_data_count(columns_string, database_table, left_join, where)[0][0]
 
         # Формирование переключателя
         pages = (count_data // limit)
@@ -203,45 +244,6 @@ def simple_report():
         if i[1] not in names_in_columns:
             choises.append(i)
 
-    # Фильтр
-    pres = [i for num, i in enumerate(request.args.items()) if num>3]
-
-    # URL для фильтра
-    preseto = ''
-
-    # SQL для фильтра
-    where = ''
-    if len(pres) > 0:
-        for i in pres:
-            preseto += ('&' + str(i[0]) + '=' + str(i[1]))
-
-        for num, i in enumerate(pres):
-            if num == 0:
-                operator = 'WHERE '
-            else:
-                operator = ' AND '
-
-            # Определение мультиселекта
-            if '[' in i[1]:
-                array = 'ANY(ARRAY'
-                skob = ')'
-            else:
-                array = ''
-                skob = ''
-
-            # Определение знака
-            if re.match(r'from_value_', str(i[0])) != None:
-                symbol = '>'
-                column = re.sub(r'from_value_', '', str(i[0]))
-            elif re.match(r'to_value_', str(i[0])) != None:
-                symbol = '<'
-                column = re.sub(r'to_value_', '', str(i[0]))
-            else:
-                symbol = '='
-                column = str(i[0])
-
-            # Строка
-            where += operator + column + symbol + array + str(i[1]) + skob
 
 
     return render_template(

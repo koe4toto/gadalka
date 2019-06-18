@@ -2,16 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="1719e8ec-808e-4103-a063-fff281569a44" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/databases/db_app.py" beforeDir="false" afterPath="$PROJECT_DIR$/databases/db_app.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/forms.py" beforeDir="false" afterPath="$PROJECT_DIR$/forms.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/prototype.py" beforeDir="false" afterPath="$PROJECT_DIR$/prototype.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/databases/db_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/databases/db_data.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/reports.py" beforeDir="false" afterPath="$PROJECT_DIR$/reports.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/includes/_formtamplate.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/includes/_formtamplate.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/reports.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/reports.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/simple_report.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/simple_report.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/templates/simple_report_filter.html" beforeDir="false" afterPath="$PROJECT_DIR$/templates/simple_report_filter.html" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -47,7 +39,7 @@
           <entry key="gitignore" value="2" />
           <entry key="html" value="223" />
           <entry key="js" value="3" />
-          <entry key="py" value="376" />
+          <entry key="py" value="377" />
           <entry key="txt" value="7" />
         </counts>
       </usages-collector>
@@ -58,7 +50,7 @@
           <entry key="Hoi4 file" value="7" />
           <entry key="JavaScript" value="3" />
           <entry key="PLAIN_TEXT" value="2" />
-          <entry key="Python" value="376" />
+          <entry key="Python" value="377" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.vcs.git.usages" />
@@ -69,7 +61,7 @@
           <entry key="Hoi4 file" value="17" />
           <entry key="JavaScript" value="41" />
           <entry key="PLAIN_TEXT" value="24" />
-          <entry key="Python" value="71985" />
+          <entry key="Python" value="72048" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
@@ -78,7 +70,7 @@
           <entry key="dummy" value="24" />
           <entry key="html" value="6116" />
           <entry key="js" value="41" />
-          <entry key="py" value="71985" />
+          <entry key="py" value="72048" />
           <entry key="txt" value="17" />
         </counts>
       </usages-collector>
@@ -111,8 +103,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/reports.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="266">
-              <caret line="239" column="20" lean-forward="true" selection-start-line="239" selection-start-column="20" selection-end-line="239" selection-end-column="20" />
+            <state relative-caret-position="207">
+              <caret line="227" column="95" selection-start-line="227" selection-start-column="95" selection-end-line="227" selection-end-column="95" />
               <folding>
                 <element signature="e#0#88#0" expanded="true" />
                 <element signature="e#337#483#0" />
@@ -143,8 +135,17 @@
                 <element signature="e#10710#10888#0" />
                 <element signature="e#11119#11278#0" />
                 <element signature="e#12164#12225#0" />
-                <marker date="1560872881689" expanded="true" signature="3074:3077" ph="..." />
+                <marker date="1560886386665" expanded="true" signature="3074:3077" ph="..." />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/databases/db_data.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="292">
+              <caret line="269" column="14" selection-start-line="269" selection-start-column="14" selection-end-line="269" selection-end-column="14" />
             </state>
           </provider>
         </entry>
@@ -211,13 +212,6 @@
             <state relative-caret-position="334">
               <caret line="21" column="25" selection-start-line="21" selection-start-column="25" selection-end-line="21" selection-end-column="25" />
             </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/templates/dashboard.html">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-408" />
           </provider>
         </entry>
       </file>
@@ -325,7 +319,6 @@
         <option value="$PROJECT_DIR$/models.py" />
         <option value="$PROJECT_DIR$/constants.py" />
         <option value="$PROJECT_DIR$/templates/add_measurement_report.html" />
-        <option value="$PROJECT_DIR$/databases/db_data.py" />
         <option value="$PROJECT_DIR$/measures.py" />
         <option value="$PROJECT_DIR$/templates/aggregation_report.html" />
         <option value="$PROJECT_DIR$/data_areas.py" />
@@ -345,6 +338,7 @@
         <option value="$PROJECT_DIR$/templates/simple_report.html" />
         <option value="$PROJECT_DIR$/templates/reports.html" />
         <option value="$PROJECT_DIR$/prototype.py" />
+        <option value="$PROJECT_DIR$/databases/db_data.py" />
         <option value="$PROJECT_DIR$/reports.py" />
       </list>
     </option>
@@ -648,13 +642,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="323">
           <caret line="19" column="14" selection-start-line="19" selection-start-column="14" selection-end-line="19" selection-end-column="14" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/databases/db_data.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4522">
-          <caret line="267" column="14" selection-start-line="267" selection-start-column="14" selection-end-line="267" selection-end-column="14" />
         </state>
       </provider>
     </entry>
@@ -1043,10 +1030,17 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/databases/db_data.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="292">
+          <caret line="269" column="14" selection-start-line="269" selection-start-column="14" selection-end-line="269" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/reports.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="266">
-          <caret line="239" column="20" lean-forward="true" selection-start-line="239" selection-start-column="20" selection-end-line="239" selection-end-column="20" />
+        <state relative-caret-position="207">
+          <caret line="227" column="95" selection-start-line="227" selection-start-column="95" selection-end-line="227" selection-end-column="95" />
           <folding>
             <element signature="e#0#88#0" expanded="true" />
             <element signature="e#337#483#0" />
@@ -1077,7 +1071,7 @@
             <element signature="e#10710#10888#0" />
             <element signature="e#11119#11278#0" />
             <element signature="e#12164#12225#0" />
-            <marker date="1560872881689" expanded="true" signature="3074:3077" ph="..." />
+            <marker date="1560886386665" expanded="true" signature="3074:3077" ph="..." />
           </folding>
         </state>
       </provider>
