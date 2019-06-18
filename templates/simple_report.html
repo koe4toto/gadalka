@@ -52,6 +52,7 @@ td:numb {
           {% endif %}
     <hr>
 
+
 <div class="row">
   <div class="col-md-10">
 {% if columns != [] %}
@@ -62,8 +63,8 @@ td:numb {
               <nav aria-label="Page navigation example">
                   <ul class="pagination">
                     {% if current_page != 1 %}
-                      <li class="page-item" title="Первая страница"><a class="page-link" href="/simple_report?id={{ report[0][0] }}&page={{ 1 }}&order_by_column={{ order_by_column }}&desc={{ desc }}"><i class="fas fa-angle-double-left"></i></a></li>
-                        <li class="page-item" title="Предыдущая страница"><a class="page-link" href="/simple_report?id={{ report[0][0] }}&page={{ current_page-1 }}&order_by_column={{ order_by_column }}&desc={{ desc }}"><i class="fas fa-angle-left"></i></a></li>
+                      <li class="page-item" title="Первая страница"><a class="page-link" href="/simple_report?id={{ report[0][0] }}&page={{ 1 }}&order_by_column={{ order_by_column }}&desc={{ desc }}{{ preset }}"><i class="fas fa-angle-double-left"></i></a></li>
+                        <li class="page-item" title="Предыдущая страница"><a class="page-link" href="/simple_report?id={{ report[0][0] }}&page={{ current_page-1 }}&order_by_column={{ order_by_column }}&desc={{ desc }}{{ preset }}"><i class="fas fa-angle-left"></i></a></li>
                     {% else  %}
                       <li class="page-item disabled"><a class="page-link" href="#"><i class="fas fa-angle-double-left"></i></a></li>
                         <li class="page-item disabled"><a class="page-link" href="#"><i class="fas fa-angle-left"></i></a></li>
@@ -72,8 +73,8 @@ td:numb {
                       <li class="page-item disabled"><a class="page-link" href="#">{{current_page}} из {{ pages }}<span class="sr-only">(current)</span></a></li>
 
                       {% if current_page != pages %}
-                    <li class="page-item" title="Следующая страница"><a class="page-link" href="/simple_report?id={{ report[0][0] }}&page={{ current_page+1 }}&order_by_column={{ order_by_column }}&desc={{ desc }}"><i class="fas fa-angle-right"></i></a></li>
-                    <li class="page-item" title="Последняя страница"><a class="page-link" href="/simple_report?id={{ report[0][0] }}&page={{ pages }}&order_by_column={{ order_by_column }}&desc={{ desc }}"><i class="fas fa-angle-double-right"></i></a></li>
+                    <li class="page-item" title="Следующая страница"><a class="page-link" href="/simple_report?id={{ report[0][0] }}&page={{ current_page+1 }}&order_by_column={{ order_by_column }}&desc={{ desc }}{{ preset }}"><i class="fas fa-angle-right"></i></a></li>
+                    <li class="page-item" title="Последняя страница"><a class="page-link" href="/simple_report?id={{ report[0][0] }}&page={{ pages }}&order_by_column={{ order_by_column }}&desc={{ desc }}{{ preset }}"><i class="fas fa-angle-double-right"></i></a></li>
                     {% else  %}
 
                     <li class="page-item disabled"><a class="page-link" href="#"><i class="fas fa-angle-right"></i></a></li>
@@ -150,10 +151,22 @@ td:numb {
       <hr>
       <div>
           <p>
+          <a class="btn btn-outline-primary" href="/simple_report_filter?id={{ report[0][0] }}">
+                      Сохранить фильтр
+          </a>
+          </p>
+          <p>
           <small class="text-muted">Количество строк на странице:</small>
           <br>
           {{ filter }}
+          </p >
+          <p class="text-truncate">
+          <small class="text-muted">Пресет:</small>
+          <br>
+          {{preset}}
+
           </p>
+{{where}}
       </div>
   </div>
 
@@ -161,3 +174,17 @@ td:numb {
 </div>
 <script src="{{ url_for('static', filename='js/histogram.js') }}"  onload="twoColComp.init();"></script>
 {% endblock %}
+
+
+<div class="card-columns">
+{% for i in list %}
+  <a href="report?id={{ i[0] }}" >
+      <div class="card float-left">
+        <div class="card-body">
+            <h5 class="card-title">{{ i[1] }}</h5>
+        </div>
+      </div>
+  </a>
+
+{% endfor %}
+</div>

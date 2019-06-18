@@ -4,6 +4,7 @@ from decorators import is_logged_in
 import databases.db_app as db_app
 import databases.db_data as db_data
 import constants
+import re
 
 mod = Blueprint('reports', __name__)
 
@@ -100,6 +101,7 @@ def aggregation_report():
     id = request.args.get('id', default=1, type=int)
     report = db_app.report(id)
     return render_template('aggregation_report.html', report=report)
+
 
 
 # Простой отчёт
@@ -201,6 +203,46 @@ def simple_report():
         if i[1] not in names_in_columns:
             choises.append(i)
 
+    # Фильтр
+    pres = [i for num, i in enumerate(request.args.items()) if num>3]
+
+    # URL для фильтра
+    preseto = ''
+
+    # SQL для фильтра
+    where = ''
+    if len(pres) > 0:
+        for i in pres:
+            preseto += ('&' + str(i[0]) + '=' + str(i[1]))
+
+        for num, i in enumerate(pres):
+            if num == 0:
+                operator = 'WHERE '
+            else:
+                operator = ' AND '
+
+            # Определение мультиселекта
+            if '[' in i[1]:
+                array = 'ANY(ARRAY'
+                skob = ')'
+            else:
+                array = ''
+                skob = ''
+
+            # Определение знака
+            if re.match(r'from_value_', str(i[0])) != None:
+                symbol = '>'
+                column = re.sub(r'from_value_', '', str(i[0]))
+            elif re.match(r'to_value_', str(i[0])) != None:
+                symbol = '<'
+                column = re.sub(r'to_value_', '', str(i[0]))
+            else:
+                symbol = '='
+                column = str(i[0])
+
+            # Строка
+            where += operator + column + symbol + array + str(i[1]) + skob
+
 
     return render_template(
         'simple_report.html',
@@ -214,7 +256,9 @@ def simple_report():
         styles=styles,
         order_by_column=order_by_column,
         desc=desc,
-        filter=filter
+        filter=filter,
+        preset=preseto,
+        where=where
     )
 
 
@@ -353,11 +397,21 @@ def delete_measurement_report(measurement_report_id, report_id):
 @is_logged_in
 def report():
     id = request.args.get('id', type=int)
+
+    # Текущая страница
+    page = request.args.get('page', default=1, type=int)
+
+    # Номер колонки по которой нужно сортировать
+    order_by_column = request.args.get('order_by_column', default=0, type=int)
+
+    # Направление сортировки
+    desc = request.args.get('desc', default='True', type=str)
+
     report = db_app.report(id)
     if report[0][3] == 1:
-        return redirect(url_for('reports.simple_report', id=id))
+        return redirect(url_for('reports.simple_report', id=id, page=page, order_by_column=order_by_column, desc=desc))
     if report[0][3] == 2:
-        return redirect(url_for('reports.aggregation_report', id=id))
+        return redirect(url_for('reports.aggregation_report', id=id, page=page, order_by_column=order_by_column, desc=desc))
 
 # Форма фильтра
 @mod.route("/simple_report_filter", methods=['GET', 'POST'])
@@ -382,8 +436,16 @@ def simple_form_filter():
 
     # Добавление полей в форму
     for i in measure:
-        atrname = str(i[0])
-        setattr(FilterReportForm, atrname, forrms['StringField'](i[2]))
+        atrname = str(i[1])
+        if i[5] in [1, 4, 5, 6]:
+            setattr(FilterReportForm, ('from_value_' + atrname), forrms['IntegerField']((i[2] + " от:")))
+            setattr(FilterReportForm, ('to_value_' + atrname), forrms['IntegerField']((i[2] + " до:")))
+        elif i[5] == 2:
+            setattr(FilterReportForm, atrname, forrms['StringField'](i[2]))
+        elif i[5] == 3:
+            ref_data = db_data.ref_data(i[6])
+            choices = [(i[0], i[1]) for i in ref_data]
+            setattr(FilterReportForm, atrname, forrms['SelectMultipleField'](i[2], choices=choices))
 
     # Форма
     form = FilterReportForm(request.form)
@@ -398,10 +460,16 @@ def simple_form_filter():
     form.process()
 
     # Обработка данных из формы
-    if request.method == 'POST':
+    if request.method == 'POST' and form.validate():
         # Получение данных из формы
         form.process(request.form)
+        params = form.data
 
-        return redirect(url_for('reports.report', id=id))
+        part_of_url = ''
+        for i in params:
+            if params[i] not in [None, []]:
+                part_of_url += ('&' + str(i)+ '=' + str(params[i]))
 
-    return render_template('simple_report_filter.html', form=form, report=report)
+        return redirect(url_for('reports.simple_report', id=id, page=1, order_by_column=0, desc='False') + part_of_url)
+
+    return render_template('simple_report_filter.html', form=form, report=report, measure=measure)

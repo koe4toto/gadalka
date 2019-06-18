@@ -38,6 +38,11 @@
         {{ field.label }}
         {{ field(class='js-example-basic-multiple form-control') }}
 
+      {% elif field.type == 'IntegerField' %}
+        {{ field.label }}
+        {{ field(type='number', class='form-control') }}
+
+
       {% elif field.type == 'SelectField' %}
         {{ field.label }}
         {{ field(class='js-example-basic-multiple form-control') }}

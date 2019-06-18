@@ -9,7 +9,8 @@ forrms = {
     'RadioField': RadioField,
     'SelectField': SelectField,
     'SelectMultipleField': SelectMultipleField,
-    'BooleanField': BooleanField
+    'BooleanField': BooleanField,
+    'IntegerField': IntegerField
 }
 
 # Форма создания преметной области

@@ -247,11 +247,13 @@ def select_measures_of_the_data_area(data_area_id):
             measures.description, 
             ref_measures_type.name, 
             measures.status,
-            measures.type
+            measures.type,
+            refs.data
         FROM 
             measures 
         LEFT JOIN ref_measures_type ON measures.type = ref_measures_type.id
         LEFT JOIN ref_measures_status ON measures.status = ref_measures_status.id
+        LEFT JOIN refs ON measures.ref_id = refs.id
         WHERE measures.data_area_id='{0}'
         ORDER BY measures.type DESC;
         '''.format(data_area_id)

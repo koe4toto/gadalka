@@ -1,6 +1,14 @@
 {% extends 'layout.html' %}
 
 {% block body %}
+
+    <script type="text/javascript">
+        $(document).ready(function() {
+            $('.js-example-basic-multiple').select2();
+            console.log($('.js-example-basic-multiple'))
+        });
+    </script>
+
     <a class="text-secondary" href="/reports">Отчеты</a><br>
     &#8595;<br>
     <a class="text-secondary" href="/report?id={{ report[0][0] }}">{{ report[0][1] }}</a><br>

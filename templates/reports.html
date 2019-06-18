@@ -11,18 +11,24 @@
     <a class="dropdown-item" href="/add_aggregation_report" title="Данные в текстовом виде">Основанный из агрегатов</a>
 </div>
 <hr>
-<div class="list-group">
+<div class="card-columns">
+
+
 {% for i in list %}
-  <a href="report?id={{ i[0] }}" class="list-group-item list-group-item-action flex-column align-items-start">
-    <div class="d-flex w-100 justify-content-between">
-      <h5 class="mb-1 text-primary">{{ i[1] }}</h5>
-    </div>
-  </a>
+    <a href="report?id={{ i[0] }}" >
+       <div class="card p-3">
+            <blockquote class="blockquote mb-0 card-body">
+              <p>{{ i[1] }}</p>
+            </blockquote>
+      </div>
+    </a>
+
 {% endfor %}
-</div>
+
+
 
 </div>
-</div>
+
 
 
 {% endblock %}

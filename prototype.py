@@ -15,7 +15,7 @@ import databases.db_queue as db_queue
 from itertools import groupby
 import math
 # import matplotlib.pyplot as plt
-
+import re
 
 '''
 1. Преобразовывать качественные данные в количественные. 
@@ -280,8 +280,10 @@ https://www.youtube.com/watch?v=JcHCinmoef4&list=PLDrmKwRSNx7K3oySk9znyI4kolE8wQ
 
 '''
 
-one = list
-two = []
+preset = "&ref_district=['1.0', '3.0']&plo_from=12&plo_to=121"
+one = 'plo_to_from'
 
-print(one)
-print(len(two))
+two = '_to_from_to'
+
+result = re.match(r'from_value_|to_value_', one)
+print(result)
