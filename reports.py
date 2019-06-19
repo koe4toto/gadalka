@@ -433,10 +433,14 @@ def simple_form_filter():
     atrr = FilterReportForm.__dict__.keys()
     mix = [i for i in atrr]
     for i in mix:
-        if mix.index(i) > 3:
+        if mix.index(i) > 4:
             delattr(FilterReportForm, i)
 
     # Добавление полей в форму
+    columns = db_app.select_measurement_report_list(id)
+    columns_orders = order(columns).result_columns
+    setattr(FilterReportForm, 'order_by_column', forrms['SelectField']('Сортировать по колонке', choices=[(num, i[1]) for num, i in enumerate(columns_orders)]))
+    setattr(FilterReportForm, 'desc', forrms['SelectField']('Направение сортировки', choices=(('True', 'По убыванию'),('False', 'По возрастанию'))))
     for i in measure:
         atrname = str(i[1])
         if i[5] in [1, 4, 5, 6]:
@@ -454,15 +458,13 @@ def simple_form_filter():
 
 
     # Заполнение формы текущими значениями
-    '''
-    for i in checked:
-        n = [m[0] for m in i[3]]
-        getattr(form, i[0]).default = n 
-    '''
+    fields = [[i, request.args.get(i, type=str)] for num, i in enumerate(request.args) if num > 1]
+    for i in fields:
+        getattr(form, i[0]).default = i[1]
     form.process()
 
     # Обработка данных из формы
-    if request.method == 'POST' and form.validate():
+    if request.method == 'POST':
         # Получение данных из формы
         form.process(request.form)
         params = form.data
@@ -472,6 +474,7 @@ def simple_form_filter():
             if params[i] not in [None, []]:
                 part_of_url += ('&' + str(i)+ '=' + str(params[i]))
 
-        return redirect(url_for('reports.simple_report', id=id, page=1, order_by_column=0, desc='False') + part_of_url)
+        return redirect(url_for('reports.simple_report', id=id, page=1) + part_of_url)
+
 
     return render_template('simple_report_filter.html', form=form, report=report, measure=measure)

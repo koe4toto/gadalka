@@ -85,7 +85,7 @@ td:numb {
             </ul>
 
               Всего строк:&nbsp;<span class="badge badge-secondary">{{count_data}}</span>&nbsp;&nbsp;
-                <a class="btn btn-outline-primary" href="/simple_report_filter?id={{ report[0][0] }}">
+                <a class="btn btn-outline-primary" href="/simple_report_filter?id={{ report[0][0] }}&page={{ current_page }}&order_by_column={{ order_by_column }}&desc={{ desc }}{{ preset }}">
                       <i class="fas fa-filter"></i> Фильтровать
                     </a>
 
@@ -114,8 +114,8 @@ td:numb {
                       {{ i[1] }}
                   </button>
                   <div class="dropdown-menu">
-                      <a class="dropdown-item" href="/simple_report?id={{ report[0][0] }}&page={{ current_page }}&order_by_column={{ columns.index( i )  }}&desc=True">Сортировать по убыванию</a>
-                      <a class="dropdown-item" href="/simple_report?id={{ report[0][0] }}&page={{ current_page }}&order_by_column={{ columns.index( i ) }}&desc=False">Сортировать по возрастанию</a>
+                      <a class="dropdown-item" href="/simple_report?id={{ report[0][0] }}&page={{ current_page }}&order_by_column={{ columns.index( i )  }}&desc=True{{ preset }}">Сортировать по убыванию</a>
+                      <a class="dropdown-item" href="/simple_report?id={{ report[0][0] }}&page={{ current_page }}&order_by_column={{ columns.index( i ) }}&desc=False{{ preset }}">Сортировать по возрастанию</a>
                       <div class="dropdown-divider"></div>
                     <a class="dropdown-item" href="/measure/{{ i[4] }}">Посмотреть</a>
                     <div class="dropdown-divider"></div>
@@ -147,11 +147,13 @@ td:numb {
 
   </div>
   <div class="col-md-2">
-    Пресеты
+    <a href="/simple_report?id={{ report[0][0] }}&page=1&order_by_column=0&desc=True">
+                      Без фильтра
+          </a>
       <hr>
       <div>
           <p>
-          <a class="btn btn-outline-primary" href="/simple_report_filter?id={{ report[0][0] }}">
+          <a class="btn btn-outline-primary" href="/simple_report?id={{ report[0][0] }}&page=1&order_by_column=0&desc=True">
                       Сохранить фильтр
           </a>
           </p>
@@ -163,10 +165,10 @@ td:numb {
           <p class="text-truncate">
           <small class="text-muted">Пресет:</small>
           <br>
-          {{preset}}
+
 
           </p>
-{{where}}
+
       </div>
   </div>
 
@@ -174,17 +176,3 @@ td:numb {
 </div>
 <script src="{{ url_for('static', filename='js/histogram.js') }}"  onload="twoColComp.init();"></script>
 {% endblock %}
-
-
-<div class="card-columns">
-{% for i in list %}
-  <a href="report?id={{ i[0] }}" >
-      <div class="card float-left">
-        <div class="card-body">
-            <h5 class="card-title">{{ i[1] }}</h5>
-        </div>
-      </div>
-  </a>
-
-{% endfor %}
-</div>
