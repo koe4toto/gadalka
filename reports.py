@@ -456,7 +456,6 @@ def simple_form_filter():
     # Форма
     form = FilterReportForm(request.form)
 
-
     # Заполнение формы текущими значениями
     fields = [[i, request.args.get(i, type=str)] for num, i in enumerate(request.args) if num > 1]
     for i in fields:
@@ -478,3 +477,32 @@ def simple_form_filter():
 
 
     return render_template('simple_report_filter.html', form=form, report=report, measure=measure)
+
+
+# Форма добавления персета
+@mod.route("/add_preset_to_report", methods=['GET', 'POST'])
+@is_logged_in
+def report_add_preset():
+    # Идентификатор отчета
+    report_id = request.args.get('id', type=int)
+
+    # Значение пресета
+    preset = request.args
+
+    # Описание отчета
+    report = db_app.report(report_id)
+
+    form = AddReportPreset(request.form)
+
+    # Обработка данных из формы
+    if request.method == 'POST' and form.validate():
+        preset_name = form.name.data
+
+        # Строка для записи в БД
+        preset_to_save = ''
+        for i in preset:
+            preset_to_save += ('&' + str(i) + '=' + str(preset[i]))
+        flash((preset_name, preset_to_save), 'danger')
+        return redirect(url_for('reports.report', id=report_id))
+
+    return render_template('add_preset_to_report.html', form=form, report=report)

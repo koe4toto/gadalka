@@ -115,3 +115,7 @@ class MeasurementReport(Form):
 # Фильтр к отчету
 class FilterReportForm(Form):
     pass
+
+# Сохранение пресета
+class AddReportPreset(Form):
+    name = StringField('Название', [validators.required(message='Обязательное поле'), validators.Length(min=4, max=300)])

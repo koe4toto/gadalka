@@ -280,10 +280,3 @@ https://www.youtube.com/watch?v=JcHCinmoef4&list=PLDrmKwRSNx7K3oySk9znyI4kolE8wQ
 
 '''
 
-preset = "&ref_district=['1.0', '3.0']&plo_from=12&plo_to=121"
-one = 'plo_to_from'
-
-two = '_to_from_to'
-
-result = re.match(r'from_value_|to_value_', one)
-print(result)

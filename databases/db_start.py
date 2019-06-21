@@ -315,7 +315,8 @@ def start_app():
             "type" int, 
             "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             "user_id" varchar(30),
-            "data_area_id" int
+            "data_area_id" int,
+            "preset_id" integer 
         );
         '''
     )
@@ -338,5 +339,23 @@ def start_app():
         '''
     )
 
+    # Подтверждение
+    conn.commit()
+
+    # Персеты
+    cursor.execute(
+        '''
+        CREATE SEQUENCE auto_id_repotrs_presets;
+
+        CREATE TABLE repotrs_presets
+        (
+            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_repotrs_presets'), 
+            "report_id" integer, 
+            "name" varchar(300), 
+            "preset" varchar,
+            "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+        '''
+    )
     # Подтверждение
     conn.commit()
