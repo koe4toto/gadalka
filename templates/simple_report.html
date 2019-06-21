@@ -100,7 +100,7 @@ td:numb {
         <tr>
             {% for i in columns %}
               <th><div class="btn-group">
-                  <button class="btn btn-light btn-sm dropdown-toggle text-truncate" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="max-width: 150px;" title="{{ i[1] }}">
+                  <button class="btn btn-light btn-sm dropdown-toggle text-truncate float-right" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="max-width: 150px;" title="{{ i[1] }}">
                     {% if columns[order_by_column][2] == i[2] %}
 
                           {% if desc == 'True' %}
@@ -147,16 +147,49 @@ td:numb {
 
   </div>
   <div class="col-md-2">
+      <p>
     <a href="/simple_report?id={{ report[0][0] }}&page=1&order_by_column=0&desc=True">
-                      Без фильтра
+                      <small>Без фильтра</small>
           </a>
-      <hr>
+      </p><hr>
+        <table class="table table-hover" style="width: 100%;">
+          {% for i in presets_to_report %}
+           <tr>
+
+               <td>
+
+                   <div class="dropdown">
+                      <button class="btn btn-link" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <i class="fas fa-ellipsis-v text-secondary"></i>
+                      </button>
+                      <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                        <a class="dropdown-item" href="/simple_report_filter?id={{ report[0][0] }}&page={{ current_page }}&order_by_column={{ order_by_column }}&desc={{ desc }}{{ preset }}">Псомтреть содержание</a>
+                        <a class="dropdown-item" href="#">Редактировать</a>
+                          <div class="dropdown-divider"></div>
+                          {% if report[0][7] == i[0] %}
+                             <a class="dropdown-item" href="/delete_preset?report_id={{ report[0][0] }}&preset_id={{ i[0] }}&is_main=True">Удалить</a>
+                          {% else  %}
+                             <a class="dropdown-item" href="/delete_preset?report_id={{ report[0][0] }}&preset_id={{ i[0] }}&is_main=False">Удалить</a>
+                          {% endif %}
+                      </div>
+                    </div>
+               </td>
+               <td><a href="/simple_report?id={{ report[0][0] }}{{ i[3] }}" ><small>{{ i[2] }}</small></a></td>
+
+           </tr>
+          {% endfor %}
+         </table>
+
+<br>
+
+
       <div>
           <p>
-          <a class="btn btn-outline-primary" href="/add_preset_to_report?id={{ report[0][0] }}&page=1&order_by_column={{ order_by_column  }}&desc={{ desc }}{{ preset }}">
+          <a class="btn btn-outline-primary" href="/add_preset_to_simple_report?id={{ report[0][0] }}&page=1&order_by_column={{ order_by_column  }}&desc={{ desc }}{{ preset }}">
                       Сохранить фильтр
           </a>
           </p>
+
           <p>
           <small class="text-muted">Количество строк на странице:</small>
           <br>

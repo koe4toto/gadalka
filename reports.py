@@ -231,6 +231,10 @@ def simple_report():
         pages = (count_data // limit)
         if count_data % limit > 0:
             pages += 1
+
+        presets_to_report = db_app.select_presets_to_report(id)
+
+
     else:
         columns_orders = []
         data_to_simple_report = []
@@ -260,7 +264,8 @@ def simple_report():
         desc=desc,
         filter=filter,
         preset=preseto,
-        where=where
+        where=where,
+        presets_to_report=presets_to_report
     )
 
 
@@ -480,9 +485,9 @@ def simple_form_filter():
 
 
 # Форма добавления персета
-@mod.route("/add_preset_to_report", methods=['GET', 'POST'])
+@mod.route("/add_preset_to_simple_report", methods=['GET', 'POST'])
 @is_logged_in
-def report_add_preset():
+def simple_report_add_preset():
     # Идентификатор отчета
     report_id = request.args.get('id', type=int)
 
@@ -497,12 +502,27 @@ def report_add_preset():
     # Обработка данных из формы
     if request.method == 'POST' and form.validate():
         preset_name = form.name.data
+        is_main = form.is_main.data
 
         # Строка для записи в БД
         preset_to_save = ''
-        for i in preset:
-            preset_to_save += ('&' + str(i) + '=' + str(preset[i]))
-        flash((preset_name, preset_to_save), 'danger')
-        return redirect(url_for('reports.report', id=report_id))
+        for num, i in enumerate(preset):
+            if num != 0:
+                preset_to_save += ('&' + str(i) + '=' + str(preset[i]))
+
+        db_app.create_preset_to_report(report_id, preset_name, preset_to_save, is_main)
+        return redirect(url_for('reports.simple_report', id=report_id) + preset_to_save)
 
     return render_template('add_preset_to_report.html', form=form, report=report)
+
+# Удаление пресета
+@mod.route('/delete_preset', methods=['GET'])
+@is_logged_in
+def delete_preset():
+    # Идентификатор отчета
+    report_id = request.args.get('report_id', type=int)
+    preset_id = request.args.get('preset_id', type=int)
+    is_main = request.args.get('is_main', type=bool)
+
+    db_app.delete_prest(report_id, preset_id, is_main)
+    return redirect(url_for('reports.report', id=report_id, page=1))

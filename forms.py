@@ -119,3 +119,4 @@ class FilterReportForm(Form):
 # Сохранение пресета
 class AddReportPreset(Form):
     name = StringField('Название', [validators.required(message='Обязательное поле'), validators.Length(min=4, max=300)])
+    is_main =BooleanField('Запускать атоматически при загрузке отчета')

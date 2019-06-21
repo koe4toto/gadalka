@@ -345,11 +345,11 @@ def start_app():
     # Персеты
     cursor.execute(
         '''
-        CREATE SEQUENCE auto_id_repotrs_presets;
+        CREATE SEQUENCE auto_id_reports_presets;
 
-        CREATE TABLE repotrs_presets
+        CREATE TABLE reports_presets
         (
-            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_repotrs_presets'), 
+            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_reports_presets'), 
             "report_id" integer, 
             "name" varchar(300), 
             "preset" varchar,

@@ -1385,3 +1385,64 @@ def delete_report_column(id):
         '''.format(id)
     )
     conn.commit()
+
+# Создание пресета фильтра
+def create_preset_to_report(report_id, name, preset, is_main):
+    cursor.execute(
+        '''
+        INSERT INTO reports_presets(
+            report_id, 
+            name, 
+            preset
+        ) VALUES ('{0}', '{1}', '{2}')
+        RETURNING id;
+        '''.format(report_id, name, preset)
+    )
+    conn.commit()
+    result = cursor.fetchall()
+
+    if is_main == True:
+        cursor.execute(
+            '''
+            UPDATE reports 
+            SET 
+                preset_id='{1}'
+            WHERE id = '{0}';
+            '''.format(report_id, str(result[0][0]))
+        )
+        conn.commit()
+
+# Выборка пресетов отчета
+def select_presets_to_report(report_id):
+    cursor.execute(
+        '''
+        SELECT 
+            *
+        FROM reports_presets
+        WHERE report_id = '{0}';
+        '''.format(report_id)
+    )
+    result = cursor.fetchall()
+    return result
+
+
+
+# Удаление пресета
+def delete_prest(report_id, preset_id, is_main):
+    cursor.execute(
+        '''
+        DELETE FROM reports_presets WHERE id = '{0}';
+        '''.format(preset_id)
+    )
+    conn.commit()
+
+    if is_main == True:
+        cursor.execute(
+            '''
+            UPDATE reports 
+            SET 
+                preset_id=0
+            WHERE id = '{0}';
+            '''.format(report_id)
+        )
+        conn.commit()
