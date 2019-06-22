@@ -1446,3 +1446,18 @@ def delete_prest(report_id, preset_id, is_main):
             '''.format(report_id)
         )
         conn.commit()
+
+
+
+# Пресет по умолчанию
+def select_main_preset_to_repotr(preset_id):
+    cursor.execute(
+        '''
+        SELECT 
+            *
+        FROM reports_presets
+        WHERE id = '{0}';
+        '''.format(preset_id)
+    )
+    result = cursor.fetchall()
+    return result

@@ -147,9 +147,9 @@ td:numb {
 
   </div>
   <div class="col-md-2">
-      <p>
+      <p><small> &nbsp;&nbsp;&nbsp;<i class="fas fa-undo text-secondary"></i>&nbsp;&nbsp;</small>
     <a href="/simple_report?id={{ report[0][0] }}&page=1&order_by_column=0&desc=True">
-                      <small>Без фильтра</small>
+                      <small>Сбрость фильтр</small>
           </a>
       </p><hr>
         <table class="table table-hover" style="width: 100%;">
@@ -174,7 +174,14 @@ td:numb {
                       </div>
                     </div>
                </td>
-               <td><a href="/simple_report?id={{ report[0][0] }}{{ i[3] }}" ><small>{{ i[2] }}</small></a></td>
+               <td>
+                   <a href="/simple_report?id={{ report[0][0] }}&page={{ current_page }}{{ i[3] }}" >
+
+                       <small {% if active_preset == i[0] %}class="text-secondary"{% endif %}>{{ i[2] }}</small>
+
+
+                   </a>
+               </td>
 
            </tr>
           {% endfor %}
@@ -195,12 +202,6 @@ td:numb {
           <br>
           {{ filter }}
           </p >
-          <p class="text-truncate">
-          <small class="text-muted">Пресет:</small>
-          <br>
-
-
-          </p>
 
       </div>
   </div>

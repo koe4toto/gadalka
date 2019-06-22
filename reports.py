@@ -132,6 +132,8 @@ def simple_report():
     # SQL для фильтра
     where = ''
 
+    active_preset = 0
+
     # Данные об отчете
     report = db_app.report(id)
     data_area_id = report[0][6]
@@ -176,10 +178,17 @@ def simple_report():
 
         # Фильтр
         pres = [i for num, i in enumerate(request.args.items()) if num > 3]
+        pres2 = [i for num, i in enumerate(request.args.items()) if num > 1]
+
+        midle_pres = ''
 
         if len(pres) > 0:
-            for i in pres:
+            for num, i in enumerate(pres):
                 preseto += ('&' + str(i[0]) + '=' + str(i[1]))
+
+            for num, i in enumerate(pres2):
+                midle_pres += ('&' + str(i[0]) + '=' + str(i[1]))
+
 
             for num, i in enumerate(pres):
                 if num == 0:
@@ -232,7 +241,14 @@ def simple_report():
         if count_data % limit > 0:
             pages += 1
 
+        # Список сохраненных пресетов
         presets_to_report = db_app.select_presets_to_report(id)
+
+        # Текущий пресет
+        for i in presets_to_report:
+            if i[3] == midle_pres:
+                active_preset = i[0]
+
 
 
     else:
@@ -248,8 +264,6 @@ def simple_report():
         if i[1] not in names_in_columns:
             choises.append(i)
 
-
-
     return render_template(
         'simple_report.html',
         report=report,
@@ -264,8 +278,8 @@ def simple_report():
         desc=desc,
         filter=filter,
         preset=preseto,
-        where=where,
-        presets_to_report=presets_to_report
+        presets_to_report=presets_to_report,
+        active_preset=active_preset
     )
 
 
@@ -414,11 +428,23 @@ def report():
     # Направление сортировки
     desc = request.args.get('desc', default='True', type=str)
 
+    # Тип отчета
+    report_type = str
+
     report = db_app.report(id)
+
+    # Определение типа отчета
     if report[0][3] == 1:
-        return redirect(url_for('reports.simple_report', id=id, page=page, order_by_column=order_by_column, desc=desc))
+        report_type = 'reports.simple_report'
     if report[0][3] == 2:
-        return redirect(url_for('reports.aggregation_report', id=id, page=page, order_by_column=order_by_column, desc=desc))
+        report_type = 'reports.aggregation_report'
+
+    if report[0][7] != 0:
+        main_preset = db_app.select_main_preset_to_repotr(report[0][7])
+        preset = main_preset[0][3]
+        return redirect(url_for(report_type, id=id, page=page) + preset)
+
+    return redirect(url_for(report_type, id=id, page=page, order_by_column=order_by_column, desc=desc))
 
 # Форма фильтра
 @mod.route("/simple_report_filter", methods=['GET', 'POST'])
@@ -507,11 +533,11 @@ def simple_report_add_preset():
         # Строка для записи в БД
         preset_to_save = ''
         for num, i in enumerate(preset):
-            if num != 0:
+            if num > 1:
                 preset_to_save += ('&' + str(i) + '=' + str(preset[i]))
 
         db_app.create_preset_to_report(report_id, preset_name, preset_to_save, is_main)
-        return redirect(url_for('reports.simple_report', id=report_id) + preset_to_save)
+        return redirect(url_for('reports.simple_report', id=report_id, page=1) + preset_to_save)
 
     return render_template('add_preset_to_report.html', form=form, report=report)
 
