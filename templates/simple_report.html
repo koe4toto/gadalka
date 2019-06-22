@@ -84,11 +84,7 @@ td:numb {
                 </nav>
             </ul>
 
-              Всего строк:&nbsp;<span class="badge badge-secondary">{{count_data}}</span>&nbsp;&nbsp;
-                <a class="btn btn-outline-primary" href="/simple_report_filter?id={{ report[0][0] }}&page={{ current_page }}&order_by_column={{ order_by_column }}&desc={{ desc }}{{ preset }}">
-                      <i class="fas fa-filter"></i> Фильтровать
-                    </a>
-
+              Всего строк:&nbsp;<span class="badge badge-secondary">{{count_data}}</span>
 
           </div>
         </nav>
@@ -147,11 +143,27 @@ td:numb {
 
   </div>
   <div class="col-md-2">
-      <p><small> &nbsp;&nbsp;&nbsp;<i class="fas fa-undo text-secondary"></i>&nbsp;&nbsp;</small>
-    <a href="/simple_report?id={{ report[0][0] }}&page=1&order_by_column=0&desc=True">
-                      <small>Сбрость фильтр</small>
+      <p>
+      <a class="btn btn-sm btn-outline-primary" href="/simple_report_filter?id={{ report[0][0] }}&page={{ current_page }}&order_by_column={{ order_by_column }}&desc={{ desc }}{{ preset }}">
+                      <i class="fas fa-filter"></i> Фильтровать
+                    </a>
+      </p>
+      <p>
+          <small> &nbsp;&nbsp;&nbsp;<i class="fas fa-undo text-secondary"></i>&nbsp;&nbsp;</small>
+          <a href="/simple_report?id={{ report[0][0] }}&page=1&order_by_column=0&desc=True">
+          <small>Сбрость фильтр</small>
           </a>
-      </p><hr>
+      </p>
+      <hr>
+      <p>
+
+          <a class="btn btn-sm btn-outline-primary"  href="/add_preset_to_simple_report?id={{ report[0][0] }}&page=1&order_by_column={{ order_by_column  }}&desc={{ desc }}{{ preset }}">
+          <i class="far fa-save"></i> Сохранить фильтр
+          </a>
+      </p>
+
+
+
         <table class="table table-hover" style="width: 100%;">
           {% for i in presets_to_report %}
            <tr>
@@ -187,23 +199,13 @@ td:numb {
           {% endfor %}
          </table>
 
-<br>
+        <br>
 
 
       <div>
-          <p>
-          <a class="btn btn-outline-primary" href="/add_preset_to_simple_report?id={{ report[0][0] }}&page=1&order_by_column={{ order_by_column  }}&desc={{ desc }}{{ preset }}">
-                      Сохранить фильтр
-          </a>
-          </p>
 
-          <p>
-          <small class="text-muted">Количество строк на странице:</small>
-          <br>
-          {{ filter }}
-          </p >
 
-      </div>
+    </div>
   </div>
 
   </div>
