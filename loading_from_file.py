@@ -109,7 +109,7 @@ def start(id, data_area_id, log_id, filename, type):
             names_to_record = ', '.join(str(e[1]) for e in measures)
             data_to_record = ', '.join("'" + str(e) + "'" for e in result)
             try:
-                db_data.insret_data_to_olap(table_name, names_to_record, data_to_record)
+                db_data.insret_data_to_olap(table_name, names_to_record, data_to_record, log_id)
                 done += 1
             except psycopg2.Error as er:
                 db_data.conn.rollback()

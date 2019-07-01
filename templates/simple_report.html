@@ -54,8 +54,9 @@ td:numb {
 
 
 <div class="row">
-  <div class="col-md-10">
 {% if columns != [] %}
+  <div class="col-md-10">
+
       <nav class="navbar navbar-expand-lg navbar-light bg-light fixed-bottom">
 
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -88,7 +89,7 @@ td:numb {
 
           </div>
         </nav>
-      {% endif %}
+
 
 
 
@@ -209,6 +210,7 @@ td:numb {
   </div>
 
   </div>
+{% endif %}
 </div>
 <script src="{{ url_for('static', filename='js/histogram.js') }}"  onload="twoColComp.init();"></script>
 {% endblock %}

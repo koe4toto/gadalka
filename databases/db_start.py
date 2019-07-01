@@ -27,13 +27,56 @@ conn = DBConnect.inst().conn
 cursor = conn.cursor()
 
 status = {
-            1: 'Нет данных',
-            2: 'Ожидает обработки',
-            3: 'Обработка данных',
-            4: 'Данных недостаточно для анализа',
-            5: 'Поиск связей',
-            6: 'Обработано'
-        }
+    1: 'Нет данных',
+    2: 'Ожидает обработки',
+    3: 'Обработка данных',
+    4: 'Данных недостаточно для анализа',
+    5: 'Поиск связей',
+    6: 'Обработано'
+}
+
+measure_type = {
+    1: 'Количественные данные',
+    2: 'Качественные данные',
+    3: 'Качественные данные по справочнику',
+    4: 'Время',
+    5: 'Дата',
+    6: 'Дата и время'
+}
+
+statistics_type = {
+    1: 'Порция',
+    2: 'Генеральная выборка'
+}
+
+statistics_kind = {
+    1: 'Размер выборки',
+    2: 'Сумма',
+    3: 'Минимум',
+    4: 'Максимум',
+    5: 'Максимальная частота',
+    6: 'Размах',
+    7: 'Среднее',
+    8: 'Медиана',
+    9: 'Мода',
+    10: 'Средневзвешенное',
+    11: 'Стандартное отклонение',
+    12: 'Дисперсия',
+    13: 'Стандартная ошибка средней',
+    14: 'Межквартильный размах',
+    15: 'Коэффициент Джини',
+    16: 'Третий момент распределения',
+    17: 'Четвертый момент распределения',
+    18: 'Вариация',
+    19: 'Последнее значение первого дециля',
+    20: 'Первое значение последнего дециля',
+    21: 'Децильный коэффициент',
+    22: 'Сумма значений первого дециля',
+    23: 'Сумма значений последнего дециля',
+    24: 'Фондовый коэффициент',
+    25: 'Оценка вероятности нормального распределения в выборке'
+}
+
 
 # Заполнение справочника
 def update_ref(ref, name):
@@ -357,5 +400,39 @@ def start_app():
         );
         '''
     )
+    # Подтверждение
+    conn.commit()
+
+    # Статистики
+    cursor.execute(
+        '''
+        CREATE SEQUENCE auto_id_statistics;
+        CREATE SEQUENCE auto_id_statistics_type;
+        CREATE SEQUENCE auto_id_statistics_kind;
+
+        CREATE TABLE statistics (
+            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_statistics'), 
+            "measure_id" int,
+            "data_log_id" int, 
+            "type" int,  
+            "kind" int, 
+            "value" varchar
+        );
+
+        CREATE TABLE ref_statistics_type (
+            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_ref_measures_type'), 
+            "code" varchar(100), 
+            "name" varchar(600)
+        );
+
+        CREATE TABLE ref_statistics_kind (
+            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_ref_measures_kind'), 
+            "code" varchar(100), 
+            "name" varchar(600)
+        );
+
+        '''
+    )
+
     # Подтверждение
     conn.commit()

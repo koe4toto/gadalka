@@ -33,8 +33,23 @@ def create_olap(olap_name):
         CREATE SEQUENCE auto_id_{0};
     
         CREATE TABLE {0} (
-            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_{0}')
+            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_{0}'),
+            "data_log_id" integer
         );
+        
+        CREATE SEQUENCE auto_id_{0}_elements;
+
+        CREATE TABLE {0}_elements (
+            "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_{0}_elements'), 
+            "measure_id" int,
+            "data_log_id" int, 
+            "element" varchar,
+            "frequency" varchar,  
+            "mean" varchar, 
+            "variant" varchar,
+            "cumulative_frequency" varchar
+        );
+
         '''.format(olap_name))
     conn.commit()
 
@@ -43,7 +58,9 @@ def delete_olap(olap_name):
     cursor.execute(
         '''
             DROP TABLE {0}; 
+            DROP TABLE {0}_elements; 
             DROP SEQUENCE auto_id_{0};
+             DROP SEQUENCE auto_id_{0}_elements;
         '''.format(olap_name)
     )
     conn.commit()
@@ -184,13 +201,14 @@ def delete_column(olap_name, column_name):
     conn.commit()
 
 # Запись данных в куб
-def insret_data_to_olap(table_name, names_to_record, data_to_record):
+def insret_data_to_olap(table_name, names_to_record, data_to_record, log_id):
     cursor.execute(
         '''
         INSERT INTO {0} (
+            data_log_id,
             {1}
-        ) VALUES ({2});
-        '''.format(table_name, names_to_record, data_to_record)
+        ) VALUES ({3}, {2});
+        '''.format(table_name, names_to_record, data_to_record, log_id)
     )
     conn.commit()
 

@@ -17,6 +17,9 @@ forrms = {
 class DataAreaForm(Form):
     title = StringField('Название',[validators.required(message='Обязательное поле'), validators.Length(min=3, max=200, message='Поле должно содержать не менее 3 и не более 200 знаков')])
     description = TextAreaField('Комментарий')
+    operative_data = IntegerField('Объём хранимых загрузок')
+    max_size = IntegerField('Максимльный размер одной загрузки')
+
 
 # Фрма регистрации
 class RegisterForm(Form):
@@ -65,7 +68,7 @@ class DataFile(Form):
         default = '1'
     )
 
-# Форма загрузки данных из файла
+# Форма создания спраовчника
 class RefForm(Form):
     name = StringField('Название', [validators.required(message='Обязательное поле')])
     description = TextAreaField('Комментарий')

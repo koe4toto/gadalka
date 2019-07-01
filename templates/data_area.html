@@ -10,7 +10,11 @@
   </div>
 
 <div class="col-2">
-    <a class="btn btn-link float-right text-danger" href="/delete_data_area/{{data_area[0]}}"><i class="far fa-trash-alt"></i></a>
+    {% if measures == []%}
+    <a class="btn btn-link float-right text-danger" href="/delete_data_area?id={{data_area[0]}}"><i class="far fa-trash-alt"></i></a>
+    {% else %}
+    <i class="far fa-trash-alt float-right text-secondary" title="Сперва удалите все параметры"></i>
+    {% endif %}
 </div>
 </div>
 

@@ -25,6 +25,7 @@ def measures():
         list = db_app.select_measures(user)
     )
 
+
 # Продготовка данных времени к отображению
 def time_to_num(measure):
 
@@ -61,7 +62,6 @@ def time_to_num(measure):
     return result, statistics
 
 
-
 # Карточка параметра количественных данных
 def measure_quantitative(measure):
 
@@ -96,6 +96,7 @@ def measure_quantitative(measure):
 
     return data_asrea_id, id, measure, data, pairs, now_associations
 
+
 # Карточка параметра времени
 def measure_time(measure):
 
@@ -125,6 +126,7 @@ def measure_time(measure):
     da = [i[0] for i in d]
     data = sm.Series(da).freq_line_view()
     return data_asrea_id, id, measure2, data, pairs
+
 
 # Карточка параметра качественных данных
 def measure_qualitative(measure):
@@ -174,7 +176,6 @@ def measure(measure_id):
             data=data,
             pairs=pairs
         )
-
 
 
 # Добавление параметра
@@ -265,6 +266,7 @@ def add_measure(data_area_id, type):
             return redirect(url_for('data_areas.data_area', id=data_area_id))
     return render_template('add_measure.html', form=form, data_area=data_area[0], title = db_app.types[int(type)])
 
+
 # Редактирование параметра
 @mod.route("/data_area/<string:data_area_id>/edit_measure_<string:measure_id>", methods =['GET', 'POST'] )
 @is_logged_in
@@ -346,6 +348,7 @@ def edit_measure(data_area_id, measure_id):
 
     return render_template('edit_measure.html', form=form, data_area_id=data_area_id, data_area_name=data_area_name)
 
+
 # Удаление параметра
 @mod.route('/delete_data_measure/<string:measure_id>?data_area_id=<string:data_area_id>?olap_name=<string:olap_name>?column_name=<string:column_name>', methods=['POST'])
 @is_logged_in
@@ -364,6 +367,7 @@ def delete_data_measure(measure_id, data_area_id, olap_name, column_name):
 
     return redirect(url_for('data_areas.data_area', id=data_area_id))
 
+
 def dassosiations_group(measures):
     sorted_vehicles = sorted(measures, key=lambda x: x[2])
     fin = []
@@ -377,6 +381,7 @@ def dassosiations_group(measures):
         fin.append(item)
 
     return fin
+
 
 # Ассоциации параметра
 @mod.route("/associations/<string:measure_id>", methods =['GET', 'POST'] )
@@ -439,6 +444,7 @@ def assosiations(measure_id):
         return redirect(url_for('measures.measure', measure_id=measure[0][0]))
 
     return render_template('associations.html', form=form, measure=measure)
+
 
 # Параметры
 @mod.route("/associations")

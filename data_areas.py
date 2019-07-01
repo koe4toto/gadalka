@@ -106,9 +106,12 @@ def edit_data_area(id):
     return render_template('edit_data_area.html', form=form)
 
 # Удаление предметной области
-@mod.route('/delete_data_area/<string:id>', methods=['POST'])
+@mod.route('/delete_data_area', methods =['GET', 'POST'] )
 @is_logged_in
-def delete_data_area(id):
+def delete_data_area():
+    # Идентификатор отчета
+    id = request.args.get('id', type=str)
+
     filename = 'olap_'+ id + '.xls'
     database_table = db_app.delete_data_area(id)
 

@@ -144,6 +144,9 @@ def simple_report():
     # Полуение списка солонок
     columns = db_app.select_measurement_report_list(id)
 
+    # Пресеты
+    presets_to_report = []
+
     # Колонки выстраиваются по порядку
     if len(columns) > 0:
         columns_orders = order(columns).result_columns
@@ -439,7 +442,7 @@ def report():
     if report[0][3] == 2:
         report_type = 'reports.aggregation_report'
 
-    if report[0][7] != 0:
+    if report[0][7] not in [0, None, 'None']:
         main_preset = db_app.select_main_preset_to_repotr(report[0][7])
         preset = main_preset[0][3]
         return redirect(url_for(report_type, id=id, page=page) + preset)
