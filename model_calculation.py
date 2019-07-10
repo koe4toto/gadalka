@@ -44,7 +44,7 @@ def take_lines (line1, line2, limit=None):
     measure_data = db_data.select_data_from_olap(me1_alt, me2_alt, database_table, limit)
     return measure_data, database_table, database_id
 
-def measure_stats(data_area_id):
+def measure_stats(data_area_id, log_id, kind):
 
     # Измерения
     measures = db_app.select_measures_to_stats(data_area_id)
@@ -52,31 +52,13 @@ def measure_stats(data_area_id):
     # Обработка и сохранение статистик
     for i in measures:
 
-        # Набор даных
         # TODO сделать проверку про время: time_to_num
-        data_set = db_data.measure_data_set(i[1], i[2])
+        # Статистики средствами БД
+        stats = db_data.select_stats_general_line(i[1], i[2], log_id)
 
-        # Статистики
-        x_stats = sm.Series(data_set).stats_line()
+        for num, k in enumerate(stats):
+            db_app.insert_stats(i[0], log_id, num + 1, kind, k)
 
-        # Сохранение результатов в базу данных. Записываются данные по модели.
-        db_app.upgate_math_models_stats(
-            i[0],
-            x_stats['Размер выборки'],
-            x_stats['Сумма'],
-            x_stats['Минимум'],
-            x_stats['Максимум'],
-            x_stats['Максимальная частота'],
-            x_stats['Размах'],
-            x_stats['Среднее'],
-            x_stats['Медиана'],
-            x_stats['Мода'],
-            x_stats['Средневзвешенное'],
-            x_stats['Стандартное отклонение'],
-            x_stats['Дисперсия'],
-            x_stats['Стандартная ошибка средней'],
-            x_stats['Межквартильный размах']
-        )
 
 # Рассчета свойств модели и запись результатов в базу данных
 def search_model(hypothesis, x, y, adid1, adid2):

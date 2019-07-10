@@ -33,13 +33,18 @@ def task(result):
     # Обновление статуса задачи
     db_queue.update_task_status(id, status)
 
-    # Проверка и загрузка данных
+    # Проверка и загрузка данных из файла
     loading = start(id, data_area_id, log_id, filename, type)
 
     # Проверка гипотиз
     if loading == '5':
-        # Расчет статистик измерений
-        mc.measure_stats(data_area_id)
+        # TODO реализовать расчет и сохранение частотныого распределения
+
+        # Расчет статистик измерений для новой выборки
+        mc.measure_stats(data_area_id, log_id, 1)
+
+        # Расчет статистик измерений для всей выборки
+        mc.measure_stats(data_area_id, log_id, 2)
 
         # TODO нужно обработать ошибку расчета моделей и поставить конечный статус
         mc.primal_calc(data_area_id, log_id)

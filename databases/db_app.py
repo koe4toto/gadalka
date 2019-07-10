@@ -1011,64 +1011,6 @@ def upgate_math_models(
     )
     conn.commit()
 
-# Сохранение результатов в базу данных. Записываются данные по модели.
-def upgate_math_models_stats(
-        measure_id,
-        len,
-        sum,
-        min,
-        max,
-        max_freq,
-        ptp,
-        mean,
-        median,
-        mode,
-        average,
-        std,
-        var,
-        sem,
-        iqr
-):
-    cursor.execute(
-        '''
-        UPDATE 
-            measures 
-        SET 
-            len='{1}',
-            sum='{2}',
-            min='{3}',
-            max='{4}',
-            max_freq='{5}',
-            ptp='{6}',
-            mean='{7}',
-            median='{8}',
-            mode='{9}',
-            average='{10}',
-            std='{11}',
-            var='{12}',
-            sem='{13}',
-            iqr='{14}'
-        WHERE 
-            id = '{0}';
-        '''.format(
-            measure_id,
-            len,
-            sum,
-            min,
-            max,
-            max_freq,
-            ptp,
-            mean,
-            median,
-            mode,
-            average,
-            std,
-            var,
-            sem,
-            iqr
-        )
-    )
-    conn.commit()
 
 # Сохранение результатов в базу данных. Записываются данные по модели.
 def select_measures_to_lines(line1, line2):
@@ -1461,3 +1403,18 @@ def select_main_preset_to_repotr(preset_id):
     )
     result = cursor.fetchall()
     return result
+
+# Добавление простой статистики
+def insert_stats(measure_id, data_log_id, type, kind, value):
+    cursor.execute(
+        '''
+        INSERT INTO statistics (
+            measure_id, 
+            data_log_id, 
+            type, 
+            kind, 
+            value
+        ) VALUES ('{0}', '{1}', '{2}', '{3}', '{4}');
+        '''.format(measure_id, data_log_id, type, kind, value)
+    )
+    conn.commit()

@@ -257,6 +257,47 @@ def measure_data_set(table, column):
     measure_data = cursor.fetchall()
     return measure_data
 
+
+# Статистики ряда
+def select_stats_general_line(table, column, log_id):
+    log = str
+
+    if log_id != '':
+        log = 'AND data_log_id = {0}'.format(log_id)
+    else:
+        log = ''
+
+    cursor.execute(
+    '''
+    SELECT 
+        count(A) as len,
+        sum(A) as sum,
+        max(A) as max,
+        min(A) as min,
+        max(A)-min(A) as ptp,
+        avg(A) as mean,
+        percentile_cont(0.5) within group (order by A) as median,
+        percentile_cont(0.1) within group (order by A) as first_decil,
+        percentile_cont(0.9) within group (order by A) as last_decil,
+        percentile_cont(0.9) within group (order by A)/percentile_cont(0.1) within group (order by A) as decil_koef,
+        percentile_cont(0.75) within group (order by A)-percentile_cont(0.25) within group (order by A) as iqr,
+        mode() within group (order by A) as mode,
+        (SELECT COUNT(*) FROM {0} WHERE {1} IS NOT NULL {2} GROUP BY {1} LIMIT 1) as frq,
+        var_pop(A) as var,
+        stddev_pop(A) as pop,
+        stddev_pop(A)/(|/count(A)) as sem,
+        variance(A) as variance
+    FROM 
+        (
+            SELECT {1} as A
+            FROM {0} 
+            WHERE {1} IS NOT NULL {2}
+        )B; 
+    '''.format(table, column, log)
+    )
+    result = cursor.fetchall()[0]
+    return result
+
 # Выборка всех данных
 def select_columns_to_simple_report(columns, database_table, limit, offset, order_by, left_join, where):
     # Выборка всех данных
