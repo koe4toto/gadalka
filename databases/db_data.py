@@ -97,7 +97,7 @@ def delete_table(table_name):
     cursor.execute('''DROP TABLE {0}'''.format(table_name))
     conn.commit()
 
-# Удаление таблицы хранения данных
+# Удаление данных
 def delete_from_table(table_name):
     cursor.execute(
         '''
@@ -333,4 +333,27 @@ def select_data_count(columns, database_table, left_join, where):
     measure_data = cursor.fetchall()
 
     return measure_data
+
+# Удаление данных из оперативной БД
+def delete_oldest_partitions(limit):
+    try:
+        cursor.execute(
+        '''
+            with linmit_num as (
+                select a
+                from(
+                    select 
+                    data_log_id as a, 
+                    row_number() OVER () AS num 
+                    from olap_83_1 group by data_log_id
+                    order by num
+                )b
+                where num={0}
+            )
+            delete from olap_83_1 where data_log_id>(SELECT a FROM linmit_num);
+        '''.format(limit)
+        )
+        conn.commit()
+    except:
+        pass
 

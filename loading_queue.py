@@ -36,6 +36,7 @@ def task(result):
     # Проверка и загрузка данных из файла
     loading = start(id, data_area_id, log_id, filename, type)
 
+
     # Проверка гипотиз
     if loading == '5':
         # TODO реализовать расчет и сохранение частотныого распределения

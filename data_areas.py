@@ -63,9 +63,11 @@ def add_data_area():
     if request.method == 'POST' and form.validate():
         title = form.title.data
         description = form.description.data
+        partition_limit = form.partition_limit.data
+        partition_size = form.partition_size.data
 
         # Запись в базу данных
-        olap_name, data_base_id = db_app.create_data_area(title, description, session['user_id'], '1')
+        olap_name, data_base_id = db_app.create_data_area(title, description, session['user_id'], '1', partition_limit, partition_size)
 
         # Создание таблицы с данными
         db_data.create_olap(olap_name)
@@ -151,6 +153,11 @@ def upload_data_area_from_file(id):
     data_area = db_app.data_area(id)[0]
 
     form = DataFile(request.form)
+    #TODO Отработать фалидацию файла по размеру
+    from app import app
+    app.config['MAX_CONTENT_LENGTH'] = data_area[8] * 1024 * 1024
+    #flash(data_area[8], 'success')
+    #flash(app.config['MAX_CONTENT_LENGTH'], 'success')
 
     if request.method == 'POST' and form.validate():
 

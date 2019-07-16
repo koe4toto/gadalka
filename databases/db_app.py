@@ -70,22 +70,26 @@ def data_area(id):
     return result
 
 # Создание предметной области
-def create_data_area(name, description, user_id, status):
+def create_data_area(name, description, user_id, status, partition_limit, partition_size):
     cursor.execute(
         '''
         INSERT INTO data_area (
             name, 
             description, 
             user_id, 
-            status
-        ) VALUES (%s, %s, %s, %s)
+            status, 
+            partition_limit, 
+            partition_size
+        ) VALUES (%s, %s, %s, %s, %s, %s)
         RETURNING id;
         ''',
         (
             name,
             description,
             user_id,
-            status
+            status,
+            partition_limit,
+            partition_size
         ))
     conn.commit()
     data_base_id = cursor.fetchall()

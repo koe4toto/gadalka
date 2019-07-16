@@ -125,6 +125,15 @@ def start(id, data_area_id, log_id, filename, type):
     path_adn_file = constants.ERROR_FOLDER + filename
     wb.save(path_adn_file)
 
+    # Предметаная область
+    data_area = db_app.data_area(data_area_id)
+
+    # Максимальное количество хранимых загрузок
+    limit = data_area[0][7]
+
+    # Удление лишних данных в оперативном хранилище
+    db_data.delete_oldest_partitions(limit)
+
     # TODO нужно записать (обновить) статистические таблицы для измерений
 
     # Обновление статуса предметной области и измерений
