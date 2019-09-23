@@ -91,17 +91,28 @@ def edit_data_area(id):
     form = DataAreaForm(request.form)
     form.title.data = data_area[1]
     form.description.data = data_area[2]
+    form.partition_limit.data = data_area[7]
+    form.partition_size.data = data_area[8]
 
     if request.method == 'POST':
         # Получение данных из формы
         form.title.data = request.form['title']
         form.description.data = request.form['description']
+        form.partition_limit.data = request.form['partition_limit']
+        form.partition_size.data = request.form['partition_size']
 
         # Если данные из формы валидные
         if form.validate():
 
             # Обновление базе данных
-            db_app.update_data_area(form.title.data, form.description.data, data_area[4], id)
+            db_app.update_data_area(
+                form.title.data,
+                form.description.data,
+                data_area[4],
+                id,
+                form.partition_limit.data,
+                form.partition_size.data
+            )
 
             flash('Данные обновлены', 'success')
             return redirect(url_for('data_areas.data_area', id=id))

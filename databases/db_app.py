@@ -129,20 +129,23 @@ def update_data_area_olap_name(olap_name, data_base_id):
     conn.commit()
 
 # Редактирование предметной области
-def update_data_area(name, username, status, id):
+def update_data_area(name, description, status, id, partition_limit, partition_size):
     cursor.execute(
         '''
         UPDATE data_area SET
-            name=%s, 
-            description=%s, 
-            status=%s
-        WHERE id=%s;
-        ''',
-        (
+            name='{0}', 
+            description='{1}', 
+            status='{2}',
+            partition_limit='{4}',
+            partition_size='{5}'
+        WHERE id='{3}';
+        '''.format(
             name,
-            username,
+            description,
             status,
-            id
+            id,
+            partition_limit,
+            partition_size
         ))
     conn.commit()
 

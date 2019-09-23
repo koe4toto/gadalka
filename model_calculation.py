@@ -55,9 +55,10 @@ def measure_stats(data_area_id, log_id, kind):
         # TODO сделать проверку про время: time_to_num
         # Статистики средствами БД
         stats = db_data.select_stats_general_line(i[1], i[2], log_id)
-
         for num, k in enumerate(stats):
             db_app.insert_stats(i[0], log_id, num + 1, kind, k)
+
+        # TODO сделать расчет и запись частотных распределений
 
 
 # Рассчета свойств модели и запись результатов в базу данных

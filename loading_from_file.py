@@ -66,10 +66,16 @@ def start(id, data_area_id, log_id, filename, type):
     # Название таблицы, в которую записывать данные
     db_da = db_app.data_area(data_area_id)
     table_name = db_da[0][5]
+    # Максимальное количество хранимых загрузок
+    limit = db_da[0][7]
 
     # Удаление данных из таблицы, если идет операция обновления данных
     if type == '1':
         db_data.delete_data_from_olap(table_name)
+    else:
+        # Удление лишних данных в оперативном хранилище
+        db_data.delete_oldest_partitions(table_name, limit)
+        pass
 
     count = 1
     errrors = 0
@@ -97,6 +103,7 @@ def start(id, data_area_id, log_id, filename, type):
             else:
                 bdline.append(item)
 
+        # TODO Реализовать проверку наличия свободного места в общем наборе данных
 
         # Запись данных
         if rownum == 0:
@@ -124,15 +131,6 @@ def start(id, data_area_id, log_id, filename, type):
     # Сохранение и закрытие файла с ошибками
     path_adn_file = constants.ERROR_FOLDER + filename
     wb.save(path_adn_file)
-
-    # Предметаная область
-    data_area = db_app.data_area(data_area_id)
-
-    # Максимальное количество хранимых загрузок
-    limit = data_area[0][7]
-
-    # Удление лишних данных в оперативном хранилище
-    db_data.delete_oldest_partitions(limit)
 
     # TODO нужно записать (обновить) статистические таблицы для измерений
 

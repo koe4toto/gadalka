@@ -335,25 +335,42 @@ def select_data_count(columns, database_table, left_join, where):
     return measure_data
 
 # Удаление данных из оперативной БД
-def delete_oldest_partitions(limit):
+def delete_oldest_partitions(olap, limit):
     try:
         cursor.execute(
         '''
             with linmit_num as (
-                select a
-                from(
-                    select 
-                    data_log_id as a, 
-                    row_number() OVER () AS num 
-                    from olap_83_1 group by data_log_id
-                    order by num
-                )b
-                where num={0}
+                select DISTINCT data_log_id as data_log_ids 
+                from {0}
+                ORDER BY data_log_ids 
             )
-            delete from olap_83_1 where data_log_id>(SELECT a FROM linmit_num);
-        '''.format(limit)
+            delete from {0} 
+            WHERE data_log_id in (
+            select * 
+            from linmit_num 
+            limit 
+                (case 
+                 when (select count(data_log_ids) from linmit_num) >= {1} 
+                 then {1}-(select count(data_log_ids) from linmit_num)+1 
+                 else 0 
+                 end
+            ));
+        '''.format(olap, limit)
         )
         conn.commit()
     except:
         pass
 
+# Расчет и запись частотных характеристик выборки
+def insert_stat_freqs():
+    try:
+        cursor.execute(
+        # Пример запроса для качественных данных
+        '''
+        insert into items_ver (item_group, name, item_id)
+        select item_id, name as z, item_group from items;
+        '''
+        )
+        conn.commit()
+    except:
+        pass
