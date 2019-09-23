@@ -184,7 +184,8 @@ def start_app():
             "user_id" varchar(30), 
             "status" varchar,
             "database_table" varchar,
-            "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            "register_date" TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            "partition_limit" integer
         );
 
         CREATE TABLE ref_status (

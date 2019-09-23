@@ -18,7 +18,6 @@ class DataAreaForm(Form):
     title = StringField('Название',[validators.required(message='Обязательное поле'), validators.Length(min=3, max=200, message='Поле должно содержать не менее 3 и не более 200 знаков')])
     description = TextAreaField('Комментарий')
     partition_limit = IntegerField('Объём хранимых загрузок')
-    partition_size = IntegerField('Максимльный размер одной загрузки')
 
 
 # Фрма регистрации

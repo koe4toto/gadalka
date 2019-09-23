@@ -64,10 +64,9 @@ def add_data_area():
         title = form.title.data
         description = form.description.data
         partition_limit = form.partition_limit.data
-        partition_size = form.partition_size.data
 
         # Запись в базу данных
-        olap_name, data_base_id = db_app.create_data_area(title, description, session['user_id'], '1', partition_limit, partition_size)
+        olap_name, data_base_id = db_app.create_data_area(title, description, session['user_id'], '1', partition_limit)
 
         # Создание таблицы с данными
         db_data.create_olap(olap_name)
@@ -92,14 +91,12 @@ def edit_data_area(id):
     form.title.data = data_area[1]
     form.description.data = data_area[2]
     form.partition_limit.data = data_area[7]
-    form.partition_size.data = data_area[8]
 
     if request.method == 'POST':
         # Получение данных из формы
         form.title.data = request.form['title']
         form.description.data = request.form['description']
         form.partition_limit.data = request.form['partition_limit']
-        form.partition_size.data = request.form['partition_size']
 
         # Если данные из формы валидные
         if form.validate():
@@ -110,8 +107,7 @@ def edit_data_area(id):
                 form.description.data,
                 data_area[4],
                 id,
-                form.partition_limit.data,
-                form.partition_size.data
+                form.partition_limit.data
             )
 
             flash('Данные обновлены', 'success')
@@ -164,11 +160,6 @@ def upload_data_area_from_file(id):
     data_area = db_app.data_area(id)[0]
 
     form = DataFile(request.form)
-    #TODO Отработать фалидацию файла по размеру
-    from app import app
-    app.config['MAX_CONTENT_LENGTH'] = data_area[8] * 1024 * 1024
-    #flash(data_area[8], 'success')
-    #flash(app.config['MAX_CONTENT_LENGTH'], 'success')
 
     if request.method == 'POST' and form.validate():
 
@@ -201,6 +192,8 @@ def upload_data_area_from_file(id):
             flash('Неверный формат файла. Справочник должен быть в формате .xlsx', 'danger')
 
     return render_template('upload_data_area_from_file.html', form=form, data_area=data_area)
+
+
 
 # Загрузки в предметную область
 @mod.route("/data_area_log/<string:id>/")

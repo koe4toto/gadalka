@@ -70,7 +70,7 @@ def data_area(id):
     return result
 
 # Создание предметной области
-def create_data_area(name, description, user_id, status, partition_limit, partition_size):
+def create_data_area(name, description, user_id, status, partition_limit):
     cursor.execute(
         '''
         INSERT INTO data_area (
@@ -78,9 +78,8 @@ def create_data_area(name, description, user_id, status, partition_limit, partit
             description, 
             user_id, 
             status, 
-            partition_limit, 
-            partition_size
-        ) VALUES (%s, %s, %s, %s, %s, %s)
+            partition_limit
+        ) VALUES (%s, %s, %s, %s, %s)
         RETURNING id;
         ''',
         (
@@ -88,8 +87,7 @@ def create_data_area(name, description, user_id, status, partition_limit, partit
             description,
             user_id,
             status,
-            partition_limit,
-            partition_size
+            partition_limit
         ))
     conn.commit()
     data_base_id = cursor.fetchall()
@@ -129,23 +127,21 @@ def update_data_area_olap_name(olap_name, data_base_id):
     conn.commit()
 
 # Редактирование предметной области
-def update_data_area(name, description, status, id, partition_limit, partition_size):
+def update_data_area(name, description, status, id, partition_limit):
     cursor.execute(
         '''
         UPDATE data_area SET
             name='{0}', 
             description='{1}', 
             status='{2}',
-            partition_limit='{4}',
-            partition_size='{5}'
+            partition_limit='{4}'
         WHERE id='{3}';
         '''.format(
             name,
             description,
             status,
             id,
-            partition_limit,
-            partition_size
+            partition_limit
         ))
     conn.commit()
 
