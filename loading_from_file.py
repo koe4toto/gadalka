@@ -75,7 +75,6 @@ def start(id, data_area_id, log_id, filename, type):
     else:
         # Удление лишних данных в оперативном хранилище
         db_data.delete_oldest_partitions(table_name, limit)
-        pass
 
     count = 1
     errrors = 0
@@ -102,8 +101,6 @@ def start(id, data_area_id, log_id, filename, type):
                     bdline.append([None, '5'])
             else:
                 bdline.append(item)
-
-        # TODO Реализовать проверку наличия свободного места в общем наборе данных
 
         # Запись данных
         if rownum == 0:

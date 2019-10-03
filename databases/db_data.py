@@ -45,9 +45,7 @@ def create_olap(olap_name):
             "data_log_id" int, 
             "element" varchar,
             "frequency" varchar,  
-            "mean" varchar, 
-            "variant" varchar,
-            "cumulative_frequency" varchar
+            "mean" varchar
         );
 
         '''.format(olap_name))
@@ -370,6 +368,32 @@ def insert_stat_freqs():
         insert into items_ver (item_group, name, item_id)
         select item_id, name as z, item_group from items;
         '''
+        )
+        conn.commit()
+    except:
+        pass
+
+def agr_freq_table_to_numeric_measure(olap, meeasure_id, data_log_id, measure_name):
+    try:
+        cursor.execute(
+        '''
+        with step as(
+            SELECT
+                (max({3})- min({3}))/round(1+ |/COUNT(*)) as h
+            FROM {0}
+        ),
+        freq as(
+        SELECT 
+            '{1}'::integer as measure_id,
+            '{2}'::integer as data_log_id,
+            min({3}) || '-' || max({3}) as element,
+            count(*) as frequency,
+            avg({3}) as mean 
+        FROM {0}
+        group by round({3} / (select h from step)))
+        INSERT INTO {0}_elements (measure_id, data_log_id, element, frequency, mean) 
+            select measure_id, data_log_id, element, frequency, mean from freq;
+        '''.format(olap, meeasure_id, data_log_id, measure_name)
         )
         conn.commit()
     except:

@@ -58,8 +58,34 @@ def measure_stats(data_area_id, log_id, kind):
         for num, k in enumerate(stats):
             db_app.insert_stats(i[0], log_id, num + 1, kind, k)
 
-        # TODO сделать расчет и запись частотных распределений
+# Расчет и сохранение частотных характеристик параметров
+def measure_freqs(data_area_id, log_id):
+    # Измерения
+    measures = db_app.select_measures_to_stats(data_area_id)
+    data_area = db_app.data_area(data_area_id)
 
+    olap = data_area[0][5]
+    meeasure_id = measures[0][0]
+    measure_name = measures[0][1]
+
+
+    # Для числовых значений и времени определить интервалы
+    # Ниже запрос для вычисления k-количества интервалов и h-длинны интервалов
+    if  measures[0][5] == 1:
+        db_data.agr_freq_table_to_numeric_measure(olap, meeasure_id, log_id, measure_name)
+
+    # TODO сделать расчеты для времени
+    # TODO сделать расчеты для качественных данных
+    # TODO хранить промежутки как начало и конец
+
+    # Расчет накопленных частот
+    '''
+    Select sum(p.val) as sm
+    from test p, test v
+    where p.id<=v.id
+    GROUP BY v.id;
+    '''
+    pass
 
 # Рассчета свойств модели и запись результатов в базу данных
 def search_model(hypothesis, x, y, adid1, adid2):
