@@ -42,8 +42,11 @@ def create_olap(olap_name):
         CREATE TABLE {0}_elements (
             "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_{0}_elements'), 
             "measure_id" int,
-            "data_log_id" int, 
-            "element" varchar,
+            "data_log_id" int,
+            "value_id" varchar,
+            "value_name" varchar,
+            "value_max" varchar,
+            "value_min" varchar,
             "frequency" varchar,  
             "mean" varchar
         );
@@ -373,7 +376,7 @@ def insert_stat_freqs():
     except:
         pass
 
-def agr_freq_table_to_numeric_measure(olap, meeasure_id, data_log_id, measure_name):
+def agr_freq_table_for_numeric_measure(olap, meeasure_id, data_log_id, measure_name):
     try:
         cursor.execute(
         '''
@@ -386,13 +389,56 @@ def agr_freq_table_to_numeric_measure(olap, meeasure_id, data_log_id, measure_na
         SELECT 
             '{1}'::integer as measure_id,
             '{2}'::integer as data_log_id,
-            min({3}) || '-' || max({3}) as element,
+            min({3}) || '-' || max({3}) as value_name,
+            min({3}) as value_min,
+            max({3}) as value_max,
             count(*) as frequency,
             avg({3}) as mean 
         FROM {0}
         group by round({3} / (select h from step)))
-        INSERT INTO {0}_elements (measure_id, data_log_id, element, frequency, mean) 
-            select measure_id, data_log_id, element, frequency, mean from freq;
+        INSERT INTO {0}_elements (measure_id, data_log_id, value_name, value_min, value_max, frequency, mean) 
+            select measure_id, data_log_id, value_name, value_min, value_max, frequency, mean from freq;
+        '''.format(olap, meeasure_id, data_log_id, measure_name)
+        )
+        conn.commit()
+    except:
+        pass
+
+def agr_freq_table_for_ref_quantitative_measure(olap, meeasure_id, data_log_id, measure_name):
+    try:
+        cursor.execute(
+        '''
+        with freq as(
+            SELECT 
+                '{1}'::integer as measure_id,
+                '{2}'::integer as data_log_id,
+                {3} as value_id,
+                count(*) as frequency
+            FROM {0}
+            group by {3})
+        INSERT INTO {0}_elements (measure_id, data_log_id, value_id, frequency) 
+            select measure_id, data_log_id, value_id,frequency from freq;
+        '''.format(olap, meeasure_id, data_log_id, measure_name)
+        )
+        conn.commit()
+    except:
+        pass
+
+
+def agr_freq_table_for_quantitative_measure(olap, meeasure_id, data_log_id, measure_name):
+    try:
+        cursor.execute(
+        '''
+        with freq as(
+            SELECT 
+                '{1}'::integer as measure_id,
+                '{2}'::integer as data_log_id,
+                {3} as value_name,
+                count(*) as frequency
+            FROM {0}
+            group by {3})
+        INSERT INTO {0}_elements (measure_id, data_log_id, value_name, frequency) 
+            select measure_id, data_log_id, value_name, frequency from freq;
         '''.format(olap, meeasure_id, data_log_id, measure_name)
         )
         conn.commit()
