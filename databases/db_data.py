@@ -402,6 +402,7 @@ def agr_freq_table_for_numeric_measure(olap, meeasure_id, data_log_id, measure_n
         )
         conn.commit()
     except:
+        print('!!!!!!!!!!!!!Неудача!!!!!!!!!!!!!!!!', olap, meeasure_id, data_log_id, measure_name)
         pass
 
 def agr_freq_table_for_ref_quantitative_measure(olap, meeasure_id, data_log_id, measure_name):

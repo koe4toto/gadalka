@@ -282,3 +282,5 @@ https://www.youtube.com/watch?v=JcHCinmoef4&list=PLDrmKwRSNx7K3oySk9znyI4kolE8wQ
 '''
 result = db_data.select_stats_general_line('olap_78_1', 'RAD')
 print(result)
+
+

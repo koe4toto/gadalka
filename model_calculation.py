@@ -65,17 +65,16 @@ def measure_freqs(data_area_id, log_id):
     data_area = db_app.data_area(data_area_id)
 
     olap = data_area[0][5]
-    meeasure_id = measures[0][0]
-    measure_name = measures[0][1]
 
     # Вычисление и запись данных о частотах и "вариантах"
-    if  measures[0][5] == 1:
-        db_data.agr_freq_table_for_numeric_measure(olap, meeasure_id, log_id, measure_name)
-    elif measures[0][5] == 2:
-        db_data.agr_freq_table_for_quantitative_measure(olap, meeasure_id, log_id, measure_name)
-    elif measures[0][5] == 3:
-        db_data.agr_freq_table_for_ref_quantitative_measure(olap, meeasure_id, log_id, measure_name)
-    # TODO сделать расчеты для времени
+    for i in measures:
+        if  i[3] == 1:
+            db_data.agr_freq_table_for_numeric_measure(olap, i[0], log_id, i[2])
+        elif i[3] == 2:
+            db_data.agr_freq_table_for_quantitative_measure(olap, i[0], log_id, i[2])
+        elif i[3] == 3:
+            db_data.agr_freq_table_for_ref_quantitative_measure(olap, i[0], log_id, i[2])
+        # TODO сделать расчеты для времени
 
     # Расчет накопленных частот
     '''
