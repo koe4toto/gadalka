@@ -61,7 +61,7 @@ def measure_stats(data_area_id, log_id, kind):
 # Расчет и сохранение частотных характеристик параметров
 def measure_freqs(data_area_id, log_id):
     # Измерения
-    measures = db_app.select_measures_to_stats(data_area_id)
+    measures = db_app.select_measures_to_simple_stats(data_area_id)
     data_area = db_app.data_area(data_area_id)
 
     olap = data_area[0][5]

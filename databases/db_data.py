@@ -48,7 +48,9 @@ def create_olap(olap_name):
             "value_max" varchar,
             "value_min" varchar,
             "frequency" varchar,  
-            "mean" varchar
+            "mean" varchar,
+            "cumulative_frequency" varchar,
+            "cumulative_mean" varchar
         );
 
         '''.format(olap_name))
@@ -269,31 +271,82 @@ def select_stats_general_line(table, column, log_id):
         log = ''
 
     cursor.execute(
-    '''
+    ''' 
+    with main_tb as(
+        SELECT {1} as A
+        FROM {0} 
+        WHERE {1} IS NOT NULL {2}
+    ),
+    rang_tbl as (
+        SELECT COUNT(*), A 
+        FROM main_tb GROUP BY A
+    ),
+    deciles as (
+        SELECT 
+        percentile_disc(0.1) within group (order by A) as first_decil_disc,
+        percentile_disc(0.9) within group (order by A) as last_decil_disc,
+        var_pop(A) as var_pop_d,
+        avg(A) as avg_1,
+        (select sum(count) from rang_tbl) as suma
+        FROM main_tb
+    ),
+    first_dec_sum as (
+        SELECT sum(A) as F FROM main_tb WHERE A <= (SELECT first_decil_disc from deciles)
+    ),
+    last_dec_sum as (
+        SELECT sum(A) as L FROM main_tb WHERE A >= (SELECT last_decil_disc from deciles)
+    ),
+    moments as (
+        SELECT
+        sum(((A - (select avg_1 from deciles))^ 3.0)*(count/(select suma from deciles))) as m3m,
+        sum(((A - (select avg_1 from deciles))^ 4.0)*(count/(select suma from deciles))) as m4m
+        FROM
+        rang_tbl
+    ),
+    cumulative_frequency as (
+        select A,
+            count,
+           sum(count) over(order by A) as cumulative_frequency,
+           sum(count*A) over(order by A) as cumulative_plo
+        from rang_tbl),
+    haf_cumulative_plo as (
+        select 
+        (cumulative_plo*cumulative_plo)/2 as haf_plo
+        FROM cumulative_frequency
+        order by cumulative_plo desc limit 1
+    ),
+    gini as (
+        select 
+         1 - sum(cumulative_plo)/(select haf_plo from haf_cumulative_plo) as gini
+        FROM cumulative_frequency
+    )
     SELECT 
-        count(A) as len,
-        sum(A) as sum,
-        max(A) as max,
-        min(A) as min,
-        max(A)-min(A) as ptp,
-        avg(A) as mean,
-        percentile_cont(0.5) within group (order by A) as median,
-        percentile_cont(0.1) within group (order by A) as first_decil,
-        percentile_cont(0.9) within group (order by A) as last_decil,
-        percentile_cont(0.9) within group (order by A)/percentile_cont(0.1) within group (order by A) as decil_koef,
-        percentile_cont(0.75) within group (order by A)-percentile_cont(0.25) within group (order by A) as iqr,
-        mode() within group (order by A) as mode,
-        (SELECT COUNT(*) FROM {0} WHERE {1} IS NOT NULL {2} GROUP BY {1} LIMIT 1) as frq,
-        var_pop(A) as var,
-        stddev_pop(A) as pop,
-        stddev_pop(A)/(|/count(A)) as sem,
-        variance(A) as variance
-    FROM 
-        (
-            SELECT {1} as A
-            FROM {0} 
-            WHERE {1} IS NOT NULL {2}
-        )B; 
+        count(A) as "1",
+        sum(A) as "2",
+        min(A) as "3",
+        max(A) as "4",
+        (SELECT max(count) FROM rang_tbl) as "5",
+        max(A)-min(A) as "6",
+        avg(A) as "7",
+        percentile_cont(0.5) within group (order by A) as "8",
+        mode() within group (order by A) as "9",
+        (select sum(count*A)/sum(count) from rang_tbl) as "10",
+        stddev_pop(A) as "11",
+        var_pop(A) as "12",
+        stddev_pop(A)/(|/count(A)) as "13",
+        percentile_cont(0.75) within group (order by A)-percentile_cont(0.25) within group (order by A) as "14",
+        (SELECT gini FROM gini) as "15",
+        (SELECT m3m FROM moments) as "16",
+        (SELECT m4m FROM moments) as "17",
+        variance(A) as "18",
+        (SELECT first_decil_disc from deciles) as "19",
+        (SELECT last_decil_disc from deciles) as "20",
+        percentile_cont(0.9) within group (order by A)/percentile_cont(0.1) within group (order by A) as "21",
+        (SELECT F as res FROM first_dec_sum) as "22",
+        (SELECT L as res FROM last_dec_sum) as "23",
+        (SELECT L as res FROM last_dec_sum)/(SELECT F as res FROM first_dec_sum) as "24",
+        stddev_pop(A)/(|/count(A)) as "25"
+    FROM main_tb; 
     '''.format(table, column, log)
     )
     result = cursor.fetchall()[0]
@@ -334,6 +387,25 @@ def select_data_count(columns, database_table, left_join, where):
     measure_data = cursor.fetchall()
 
     return measure_data
+
+# Сатистика изменрения
+def measure_stats(measure_id, statistics_kind, statistics_data_log_id):
+    cursor.execute(
+    '''
+    select 
+         ref_statistics_type.name,
+         ref_statistics_type.code,
+         statistics.value,
+         statistics.type
+    from statistics
+    LEFT JOIN ref_statistics_type ON statistics.type = to_number(ref_statistics_type.code, '999999')
+    where statistics.measure_id = '136' AND statistics.kind = '1' AND statistics.data_log_id = '217'
+    order by statistics.type;
+    '''.format(measure_id, statistics_kind, statistics_data_log_id)
+    )
+    result = cursor.fetchall()
+
+    return result
 
 # Удаление данных из оперативной БД
 def delete_oldest_partitions(olap, limit):
@@ -395,18 +467,51 @@ def agr_freq_table_for_numeric_measure(olap, meeasure_id, data_log_id, measure_n
             count(*) as frequency,
             avg({3}) as mean 
         FROM {0}
-        group by round({3} / (select h from step)))
-        INSERT INTO {0}_elements (measure_id, data_log_id, value_name, value_min, value_max, frequency, mean) 
-            select measure_id, data_log_id, value_name, value_min, value_max, frequency, mean from freq;
+        group by round({3} / (select h from step))),
+        result_stat as (
+            select 
+                measure_id,
+                data_log_id,
+                value_name,
+                value_min,
+                value_max,
+                frequency,
+                mean,
+                sum(frequency) over(order by mean) as cumulative_frequency, 
+                sum(frequency*mean) over(order by mean) as cumulative_mean
+                from freq
+        )
+        INSERT INTO {0}_elements (
+            measure_id, 
+            data_log_id, 
+            value_name, 
+            value_min, 
+            value_max, 
+            frequency, 
+            mean,
+            cumulative_frequency, 
+            cumulative_mean 
+            ) 
+            select 
+                measure_id, 
+                data_log_id, 
+                value_name, 
+                value_min, 
+                value_max, 
+                frequency, 
+                mean, 
+                cumulative_frequency, 
+                cumulative_mean  
+                from result_stat;
         '''.format(olap, meeasure_id, data_log_id, measure_name)
         )
         conn.commit()
     except:
-        print('!!!!!!!!!!!!!Неудача!!!!!!!!!!!!!!!!', olap, meeasure_id, data_log_id, measure_name)
         pass
 
 def agr_freq_table_for_ref_quantitative_measure(olap, meeasure_id, data_log_id, measure_name):
     try:
+        print('000000000000000000000000000000 ', olap, meeasure_id, data_log_id, measure_name)
         cursor.execute(
         '''
         with freq as(
@@ -423,6 +528,7 @@ def agr_freq_table_for_ref_quantitative_measure(olap, meeasure_id, data_log_id, 
         )
         conn.commit()
     except:
+        print('00000000000Неудача0000000000000000000', olap, meeasure_id, data_log_id, measure_name)
         pass
 
 

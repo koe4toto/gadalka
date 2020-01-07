@@ -283,6 +283,25 @@ def select_measures_to_stats(data_area_id):
     result = cursor.fetchall()
     return result
 
+# Список измерений предметной области
+def select_measures_to_simple_stats(data_area_id):
+    cursor.execute(
+        '''
+        SELECT 
+            measures.id,
+            data_area.database_table,
+            measures.column_name,
+            measures.type
+        FROM 
+            measures
+        LEFT JOIN data_area ON measures.data_area_id = data_area.id
+        WHERE measures.data_area_id='{0}';
+        '''.format(data_area_id)
+    )
+    result = cursor.fetchall()
+    return result
+
+
 # Список моделей пары
 def select_pair_models(id1, id2):
     # Список пар
