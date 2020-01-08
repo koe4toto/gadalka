@@ -146,6 +146,7 @@ def measure_qualitative(measure):
 def measure(measure_id):
     # Получение данных о мере
     measure = db_app.select_measure(measure_id)
+    statistics = db_app.default_measure_stats(measure_id, 2)
 
     if measure[0][4] == 1:
         data_asrea_id, id, measure, data, pairs, now_associations = measure_quantitative(measure)
@@ -156,7 +157,8 @@ def measure(measure_id):
             measure=measure,
             data=data,
             pairs=pairs,
-            now_associations=now_associations
+            now_associations=now_associations,
+            statistics=statistics
         )
     elif measure[0][4] == 2 or measure[0][4] == 3:
         data_asrea_id, id = measure_qualitative(measure)

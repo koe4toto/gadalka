@@ -325,9 +325,9 @@ def select_stats_general_line(table, column, log_id):
         sum(A) as "2",
         min(A) as "3",
         max(A) as "4",
-        (SELECT max(count) FROM rang_tbl) as "5",
-        max(A)-min(A) as "6",
-        avg(A) as "7",
+        max(A)-min(A) as "5",
+        avg(A) as "6",
+        (SELECT max(count) FROM rang_tbl) as "7",
         percentile_cont(0.5) within group (order by A) as "8",
         mode() within group (order by A) as "9",
         (select sum(count*A)/sum(count) from rang_tbl) as "10",
@@ -344,8 +344,7 @@ def select_stats_general_line(table, column, log_id):
         percentile_cont(0.9) within group (order by A)/percentile_cont(0.1) within group (order by A) as "21",
         (SELECT F as res FROM first_dec_sum) as "22",
         (SELECT L as res FROM last_dec_sum) as "23",
-        (SELECT L as res FROM last_dec_sum)/(SELECT F as res FROM first_dec_sum) as "24",
-        stddev_pop(A)/(|/count(A)) as "25"
+        (SELECT L as res FROM last_dec_sum)/(SELECT F as res FROM first_dec_sum) as "24"
     FROM main_tb; 
     '''.format(table, column, log)
     )
@@ -551,3 +550,4 @@ def agr_freq_table_for_quantitative_measure(olap, meeasure_id, data_log_id, meas
         conn.commit()
     except:
         pass
+

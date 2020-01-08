@@ -1440,3 +1440,30 @@ def insert_stats(measure_id, data_log_id, type, kind, value):
         '''.format(measure_id, data_log_id, type, kind, value)
     )
     conn.commit()
+
+
+# Получение статистик измерения по умолчанию
+def default_measure_stats(measure_id, statistics_kind):
+    cursor.execute(
+    '''
+    with last_log_id as (
+        select 
+            data_log_id as log_id
+        from statistics
+        where measure_id = {0}
+        order by data_log_id desc limit 1
+    )
+    select 
+        statistics.type,
+        ref_statistics_type.name,
+        statistics.value
+    from statistics
+    left join ref_statistics_type ON statistics.type = to_number(ref_statistics_type.code, '999999')
+    where statistics.measure_id = {0} 
+        and statistics.kind = {1} 
+        and statistics.data_log_id = (select log_id from last_log_id)
+    order by statistics.type;
+    '''.format(measure_id, statistics_kind)
+    )
+    result = cursor.fetchall()
+    return result
