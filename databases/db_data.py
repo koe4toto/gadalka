@@ -551,3 +551,44 @@ def agr_freq_table_for_quantitative_measure(olap, meeasure_id, data_log_id, meas
     except:
         pass
 
+# Получение частотного распределения измерения по умолчанию
+def default_measure_freqs(measure_id, olap_name):
+    cursor.execute(
+    '''
+    with last_log_id as (
+        select 
+            data_log_id as log_id
+        from {1}_elements
+        order by data_log_id desc limit 1
+    )
+    select 
+        value_name,
+		frequency,
+		mean
+    from {1}_elements
+	where data_log_id = (select log_id from last_log_id) and measure_id = {0};
+    '''.format(measure_id, olap_name)
+    )
+    result = cursor.fetchall()
+    return result
+
+# Получение комулятивного распределения измерения по умолчанию
+def default_measure_cumulative_freqs(measure_id, olap_name):
+    cursor.execute(
+    '''
+    with last_log_id as (
+        select 
+            data_log_id as log_id
+        from {1}_elements
+        order by data_log_id desc limit 1
+    )
+    select 
+        value_name,
+		cumulative_frequency,
+		cumulative_mean
+    from {1}_elements
+	where data_log_id = (select log_id from last_log_id) and measure_id = {0};
+    '''.format(measure_id, olap_name)
+    )
+    result = cursor.fetchall()
+    return result

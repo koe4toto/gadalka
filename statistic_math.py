@@ -65,32 +65,7 @@ class Series:
             'Межквартильный размах': sci.iqr(self.line)
 
         }
-        # TODO посчитать все статистики с помощью БД
-        '''
-        
-        SELECT 
-            count(A) as len,
-            sum(A) as sum,
-            max(A) as max,
-            min(A) as min,
-            max(A)-min(A) as ptp,
-            avg(A) as mean,
-            percentile_cont(0.5) within group (order by A) as median,
-            percentile_cont(0.1) within group (order by A) as first_decil,
-            percentile_cont(0.9) within group (order by A) as last_decil,
-            percentile_cont(0.9) within group (order by A)/percentile_cont(0.1) within group (order by A) as decil_koef,
-            percentile_cont(0.75) within group (order by A)-percentile_cont(0.25) within group (order by A) as iqr,
-            mode() within group (order by A) as mode,
-            (SELECT COUNT(*) FROM olap_78_1 GROUP BY RAD LIMIT 1) as frq,
-            var_pop(A) as var,
-            stddev_pop(A) as pop,
-            stddev_pop(A)/(|/count(A)) as sem,
-            variance(A) as variance
-        FROM 
-        (SELECT RAD as A
-        FROM olap_78_1 WHERE RAD IS NOT NULL)B;
-                
-        '''
+
         return sline
 
     # Список статистик качественных данных

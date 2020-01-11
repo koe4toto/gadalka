@@ -85,16 +85,21 @@ def measure_quantitative(measure):
     column_name = measure[0][1]
 
     # Данные для графика распределения
-    d = db_data.distribution(column_name, olap_name, ui_limit)
+    d = db_data.default_measure_freqs(id, olap_name)
+
+    # Данные для графика комуляивного распределения
+    k = db_data.default_measure_cumulative_freqs(id, olap_name)
 
     # Список ассоциированных параметров
     now_associations = db_app.select_associations(id)
 
     # Формирование графика распределения
-    da = [i[0] for i in d]
-    data = sm.Series(da).freq_line_view()
+    da = [[i[0], float(i[1]), "silver"] for i in d]
+    ka = [[i[0], float(i[1]), "silver"] for i in k]
+    data = json.dumps(da)
+    data_ka = json.dumps(ka)
 
-    return data_asrea_id, id, measure, data, pairs, now_associations
+    return data_asrea_id, id, measure, data, pairs, now_associations, data_ka
 
 
 # Карточка параметра времени
@@ -149,7 +154,7 @@ def measure(measure_id):
     statistics = db_app.default_measure_stats(measure_id, 2)
 
     if measure[0][4] == 1:
-        data_asrea_id, id, measure, data, pairs, now_associations = measure_quantitative(measure)
+        data_asrea_id, id, measure, data, pairs, now_associations, data_ka = measure_quantitative(measure)
         return render_template(
             'measure_quantitative.html',
             data_asrea_id=data_asrea_id,
@@ -158,7 +163,8 @@ def measure(measure_id):
             data=data,
             pairs=pairs,
             now_associations=now_associations,
-            statistics=statistics
+            statistics=statistics,
+            data_ka=data_ka
         )
     elif measure[0][4] == 2 or measure[0][4] == 3:
         data_asrea_id, id = measure_qualitative(measure)

@@ -15,59 +15,68 @@
           <!--Load the AJAX API-->
             <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-            <script type="text/javascript">
-                google.charts.load('current', {'packages':['corechart']});
-                google.charts.setOnLoadCallback(drawChart);
+          <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+          <script type="text/javascript">
+            google.charts.load("current", {packages:['corechart']});
+            google.charts.setOnLoadCallback(drawChart);
+            function drawChart() {
+              var arr  = {{ data|safe }};
+              arr.unshift(["Element", "Density", { role: "style" } ]);
 
-                function drawChart() {
-                      var data = new google.visualization.DataTable();
-                      data.addColumn('number', 'X');
-                      data.addColumn('number', 'Частота');
-                      data.addColumn('number', 'Вероятность');
+              var data = google.visualization.arrayToDataTable(arr);
 
-                      data.addRows(
-                        {{ data }}
-                      );
+              var view = new google.visualization.DataView(data);
+              view.setColumns([0, 1,
+                               { calc: "stringify",
+                                 sourceColumn: 1,
+                                 type: "string",
+                                 role: "annotation" },
+                               2]);
+
+              var options = {
+                title: "Частотное распределение",
+                bar: {groupWidth: "95%"},
+                legend: { position: "none" },
+              };
+              var chart = new google.visualization.ColumnChart(document.getElementById("columnchart_values"));
+              chart.draw(view, options);
+          }
+          </script>
+
+        <script type="text/javascript">
+            google.charts.load("current", {packages:['corechart']});
+            google.charts.setOnLoadCallback(drawChart);
+            function drawChart() {
+              var arr  = {{ data_ka|safe }};
+              arr.unshift(["Element", "Density", { role: "style" } ]);
+
+              var data = google.visualization.arrayToDataTable(arr);
+
+              var view = new google.visualization.DataView(data);
+              view.setColumns([0, 1,
+                               { calc: "stringify",
+                                 sourceColumn: 1,
+                                 type: "string",
+                                 role: "annotation" },
+                               2]);
+
+              var options = {
+                title: "Распределение накопленных частот",
+                bar: {groupWidth: "95%"},
+                legend: { position: "none" },
+              };
+              var chart = new google.visualization.ColumnChart(document.getElementById("cumul_chart"));
+              chart.draw(view, options);
+          }
+          </script>
 
 
 
-                      var options = {
-                        vAxis: {
-                            gridlines: {color: '#414951'}
-                        },
-                        hAxis: {
-                            gridlines: {count: 0},
-                        },
-                        chartArea: {
-                            left:0,
-                            top:0,
-                            width:'1000%',
-                            height:'100%'
-                        },
-                        bar: {
-                            gap: 1
-                        },
-                        colors: ['#fff', '#28a745'],
-                        dataOpacity: 0.8,
-
-                        legend: {
-                            position: 'none'
-                        },
-                        height: 380,
-                        backgroundColor: {
-                            fill:'#343A40'
-                        }
-                      };
-
-                      var chart = new google.visualization.AreaChart(document.getElementById('chart_div'));
-
-                      chart.draw(data, options);
-
-            }
-            </script>
 
             <!--Div that will hold the pie chart-->
-            <div id="chart_div"></div>
+          <div id="columnchart_values" style="width: 100%; height: 300px;"></div>
+
+          <div id="cumul_chart" style="width: 100%; height: 300px;"></div>
           <br>
           <h4>Статистики</h4>
         <table class="table table-sm">

@@ -1467,3 +1467,4 @@ def default_measure_stats(measure_id, statistics_kind):
     )
     result = cursor.fetchall()
     return result
+
