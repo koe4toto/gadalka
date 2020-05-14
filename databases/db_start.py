@@ -408,8 +408,8 @@ def start_app():
     cursor.execute(
         '''
         CREATE SEQUENCE auto_id_statistics;
-        CREATE SEQUENCE auto_id_statistics_type;
-        CREATE SEQUENCE auto_id_statistics_kind;
+        CREATE SEQUENCE auto_id_ref_measures_type;
+        CREATE SEQUENCE auto_id_ref_measures_kind;
 
         CREATE TABLE statistics (
             "id" integer PRIMARY KEY NOT NULL DEFAULT nextval('auto_id_statistics'), 
