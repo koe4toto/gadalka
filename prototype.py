@@ -13,7 +13,7 @@ import databases.db_app as db_app
 import databases.db_start as db_start
 import databases.db_data as db_data
 import databases.db_queue as db_queue
-from itertools import groupby
+from itertools  import groupby
 import math
 # import matplotlib.pyplot as plt
 import re
@@ -280,8 +280,5 @@ https://www.youtube.com/watch?v=JcHCinmoef4&list=PLDrmKwRSNx7K3oySk9znyI4kolE8wQ
 
 
 '''
-result = '2'
-print(result)
-
-db_queue.create_queue()
+db_start.start_app()
 
