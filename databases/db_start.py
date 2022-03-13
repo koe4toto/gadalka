@@ -116,7 +116,9 @@ def delate_data(name):
     )
     conn.commit()
 
-
+# TODO перенести заполнение таблиц в start_app
+# TODO создавать БД queue и создание таблицы
+# TODO создавать БД user_data
 # Создание таблиц
 def start_app():
 
