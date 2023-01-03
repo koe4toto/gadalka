@@ -55,6 +55,24 @@ def select_da(user):
     result = cursor.fetchall()
     return result
 
+# Список предметных областей
+def api_select_da():
+    cursor.execute(
+        '''
+        SELECT 
+            data_area.id, 
+            data_area.name, 
+            data_area.register_date, 
+            data_area.description, 
+            data_area.status 
+        FROM 
+            data_area 
+        ORDER BY data_area.register_date DESC;
+        '''
+    )
+    result = cursor.fetchall()
+    return result
+
 # Предметная область
 def data_area(id):
     cursor.execute(
@@ -1455,10 +1473,10 @@ def default_measure_stats(measure_id, statistics_kind):
     )
     select 
         statistics.type,
-        ref_statistics_type.name,
+        ref_statistics_kind.name,
         statistics.value
     from statistics
-    left join ref_statistics_type ON statistics.type = to_number(ref_statistics_type.code, '999999')
+    left join ref_statistics_kind ON statistics.type = to_number(ref_statistics_kind.code, '999999')
     where statistics.measure_id = {0} 
         and statistics.kind = {1} 
         and statistics.data_log_id = (select log_id from last_log_id)
