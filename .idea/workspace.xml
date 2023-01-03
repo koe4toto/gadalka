@@ -5,10 +5,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="1719e8ec-808e-4103-a063-fff281569a44" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/error_files/olap_1.xls" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/react/my-app/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/react/my-app/README.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/react/my-app/package-lock.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/react/my-app/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/react/my-app/public/favicon.ico" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/react/my-app/public/index.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/react/my-app/public/logo192.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/react/my-app/public/logo512.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/react/my-app/public/manifest.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/react/my-app/public/robots.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/react/my-app/src/App.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/react/my-app/src/App.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/react/my-app/src/App.test.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/react/my-app/src/index.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/react/my-app/src/index.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/react/my-app/src/logo.svg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/react/my-app/src/reportWebVitals.js" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/react/my-app/src/setupTests.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data_areas.py" beforeDir="false" afterPath="$PROJECT_DIR$/data_areas.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/databases/db_app.py" beforeDir="false" afterPath="$PROJECT_DIR$/databases/db_app.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -91,11 +106,13 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_ADD_EXTERNAL_FILES": "true",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\user\Documents\GitHub\gadalka\venv\Lib\tcl8.6" />
