@@ -1,18 +1,25 @@
 import './App.css';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+
 
 function App() {
-  return (
-      <>
-          <h1>Привет!</h1>
-          <p className="h1">Тест</p>
-          <select>
-              <option value="1">one</option>
-              <option value="2">two</option>
-          </select>
-          <img src="/images/logo192.png" alt="Картинка" title="Картиночка" />
-          <p alt="">Тест</p>
-          
-      </>
+    return (
+        <div className='App'>
+            <Card sx={{ padding: 2 }}>
+                <CardContent>
+                    <Typography variant="h2" gutterBottom>Вход</Typography>
+                    <TextField fullWidth id="standard-basic" label="Логин" variant="standard" margin="normal" />
+                    <br />
+                    <TextField fullWidth id="standard-password-input" label="Пароль" type="password"
+                            autoComplete="current-password" variant="standard" margin="normal"/><br /><br />
+                    <Button variant="contained">Войти</Button>
+                </CardContent>
+            </Card>
+        </div>
   );
 }
 
