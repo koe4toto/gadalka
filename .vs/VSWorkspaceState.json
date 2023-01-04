@@ -3,11 +3,8 @@
     "",
     "\\databases",
     "\\react",
-    "\\react\\my-app",
-    "\\react\\my-app\\public",
-    "\\react\\my-app\\public\\images",
-    "\\react\\my-app\\src"
+    "\\react\\my-app"
   ],
-  "SelectedNode": "\\react\\my-app\\src\\App.js",
+  "SelectedNode": "\\react\\my-app",
   "PreviewInSolutionExplorer": false
 }
