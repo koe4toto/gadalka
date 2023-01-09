@@ -10,6 +10,7 @@ import databases.db_app as db_app
 # Настройки
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = constants.UPLOAD_FOLDER
+app.config['SECRET_KEY'] = '4385nkjcshcfn8642768m,5hbx398sdf234blwkjrlw23t42'
 
 # Ограничение на загрузку файлов в 100 мегабайт
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024
@@ -81,8 +82,7 @@ def api_login():
         result = db_app.user_search(username)
 
         if str(result) == '[]':
-            error = 'Пользователь не найден'
-            return jsonify({'result': error})
+            return jsonify({'result': 'Пользователь не найден'}), 401
         else:
             password = result[0][4]
             if sha256_crypt.verify(password_candidate, password):
@@ -92,15 +92,9 @@ def api_login():
                 session['username'] = username
                 session['user_id'] = result[0][0]
 
-                return jsonify({'result': session['user_id']})
+                return jsonify({'result': True}), 200
             else:
-                error = 'Не верный пароль'
-                return jsonify({'result': error})
-
-    try:
-        return password
-    except:
-        "Что-то пошло не так"
+                return jsonify({'result': 'Не верный пароль'}), 401
 
 
 
