@@ -1,5 +1,5 @@
 # Библиотеки
-from flask import Flask, render_template, flash, redirect, url_for, session, request
+from flask import Flask, render_template, flash, redirect, url_for, session, request, jsonify
 from passlib.hash import sha256_crypt
 
 # Мои модули
@@ -43,7 +43,7 @@ def login():
     if request.method == 'POST':
         # Даные полей формы авторизации
         username = request.form['username']
-        password_candidate = request.form['password']
+        password_candidate = sha256_crypt.encrypt(str(request.form['password'])) 
 
 
         # Поиск пользователя в базе по значению username
@@ -69,12 +69,56 @@ def login():
 
     return render_template('login.html')
 
+
+# Форма входа
+@app.route("/api/login", methods =['POST'] )
+def api_login():
+    if request.method == 'POST':
+        data = request.get_json()
+        username = data['username']
+        password_candidate = data['password']
+
+        result = db_app.user_search(username)
+
+        if str(result) == '[]':
+            error = 'Пользователь не найден'
+            return jsonify({'result': error})
+        else:
+            password = result[0][4]
+            if sha256_crypt.verify(password_candidate, password):
+                app.logger.info('PASSWORD MATCHED')
+                # Открывается сессия
+                session['logged_in'] = True
+                session['username'] = username
+                session['user_id'] = result[0][0]
+
+                return jsonify({'result': session['user_id']})
+            else:
+                error = 'Не верный пароль'
+                return jsonify({'result': error})
+
+    try:
+        return password
+    except:
+        "Что-то пошло не так"
+
+
+
 # Выход
 @app.route('/logout')
 def logout():
     session.clear()
+    session.modifited = True
     flash('Вы вышли', 'success')
     return redirect(url_for('login'))
+
+
+# Выход
+@app.route('/api/logout', methods =['GET'])
+def api_logout():
+    session.clear()
+    error = 'Вы вышли'
+    return jsonify({'result': error})
 
 
 

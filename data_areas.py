@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, flash, redirect, url_for, session, request, jsonify
 import os
-from decorators import is_logged_in
+from decorators import is_logged_in, api_is_logged_in
 from model_calculation import multiple_models_auto_calc
 from forms import *
 import databases.db_app as db_app
@@ -24,24 +24,26 @@ def data_areas():
 
 # Предметные области
 @mod.route("/api/data_areas", methods =['GET'])
+@is_logged_in
 def api_data_areas():
     tasks = []
     list = db_app.api_select_da()
     for i in list:
         tasks.append({
             "id": i[0],
-            "name": i[1],
+            "name": i[1],   
             "time": i[2],
             "description": i[3]
         })
 
     try:
-        return jsonify({'result': tasks})
+        return jsonify({'result': session})
     except:
         "Что-то пошло не так"
 
 # Предметные области
 @mod.route("/api/data_test", methods =['POST'])
+@api_is_logged_in
 def api_data_test():
     try:
         return jsonify({'result': request.json})

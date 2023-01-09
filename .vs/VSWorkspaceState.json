@@ -3,8 +3,9 @@
     "",
     "\\databases",
     "\\react",
-    "\\react\\my-app"
+    "\\react\\my-app",
+    "\\react\\my-app\\src"
   ],
-  "SelectedNode": "\\react\\my-app",
+  "SelectedNode": "\\react\\my-app\\src\\Login.js",
   "PreviewInSolutionExplorer": false
 }
