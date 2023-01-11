@@ -4,10 +4,31 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemText from '@mui/material/ListItemText';
 import Box from '@mui/material/Box';
+import { Auth } from './hoc/RequireAuth'
 
 function Header() {
+    if (Auth) {
+        return (
+                <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
+                    <nav aria-label="secondary mailbox folders">
+                        <List>
+                            <ListItem disablePadding>
+                                <ListItemButton href="/">
+                                    <ListItemText primary="Главная" />
+                                </ListItemButton>
+                            </ListItem>
+                            <ListItem disablePadding>
+                                <ListItemButton component="a" href="/login">
+                                    <ListItemText primary="Логин" />
+                                </ListItemButton>
+                            </ListItem>
+                        </List>
+                    </nav>
+                </Box>
+        );
+    }
+
     return (
-        <>
             <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
                 <nav aria-label="secondary mailbox folders">
                     <List>
@@ -16,6 +37,11 @@ function Header() {
                                 <ListItemText primary="Главная" />
                             </ListItemButton>
                         </ListItem>
+                            <ListItem disablePadding>
+                                <ListItemButton component="a" href="/area">
+                                    <ListItemText primary="Предметные области" />
+                                </ListItemButton>
+                            </ListItem>
                         <ListItem disablePadding>
                             <ListItemButton component="a" href="/login">
                                 <ListItemText primary="Логин" />
@@ -24,7 +50,6 @@ function Header() {
                     </List>
                 </nav>
             </Box>
-        </>
   );
 }
 
