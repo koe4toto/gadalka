@@ -42,7 +42,7 @@ function Header() {
                         </ListItem>
                             <ListItem disablePadding>
                                 <ListItemButton component="a" href="/area">
-                                    <ListItemText primary="Предметные области" />
+                                    <ListItemText primary="Предметные области 2" />
                                 </ListItemButton>
                             </ListItem>
                         <ListItem disablePadding>
