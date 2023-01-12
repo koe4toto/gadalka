@@ -4,8 +4,9 @@
     "\\databases",
     "\\react",
     "\\react\\my-app",
-    "\\react\\my-app\\src"
+    "\\react\\my-app\\src",
+    "\\react\\my-app\\src\\hoc"
   ],
-  "SelectedNode": "\\decorators.py",
+  "SelectedNode": "\\react\\my-app\\src\\hoc\\RequireAuth.js",
   "PreviewInSolutionExplorer": false
 }

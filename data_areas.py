@@ -24,22 +24,21 @@ def data_areas():
 
 # Предметные области
 @mod.route("/api/data_areas", methods =['GET'])
-@is_logged_in
+@api_is_logged_in
 def api_data_areas():
     tasks = []
-    list = db_app.api_select_da()
-    for i in list:
-        tasks.append({
-            "id": i[0],
-            "name": i[1],   
-            "time": i[2],
-            "description": i[3]
-        })
-
     try:
-        return jsonify({'result': session})
+        list = db_app.api_select_da()
+        for i in list:
+            tasks.append({
+                "id": i[0],
+                "name": i[1],   
+                "time": i[2],
+                "description": i[3]
+            })
+        return jsonify({'result': tasks})
     except:
-        "Что-то пошло не так"
+        "Что-то пошло не так", 403
 
 # Предметные области
 @mod.route("/api/data_test", methods =['POST'])

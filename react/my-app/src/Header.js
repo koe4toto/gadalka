@@ -7,7 +7,10 @@ import Box from '@mui/material/Box';
 import { Auth } from './hoc/RequireAuth'
 
 function Header() {
-    if (Auth) {
+
+    const auth = Auth()
+
+    if (auth) {
         return (
                 <Box sx={{ width: '100%', bgcolor: 'background.paper' }}>
                     <nav aria-label="secondary mailbox folders">

@@ -22,7 +22,7 @@ function App() {
                     <RequireAuth>
                         <Area />
                     </RequireAuth>
-                } />
+                } />    
             </Routes>
         </Router>
   );

@@ -1,16 +1,21 @@
 # Библиотеки
+from ast import Import
 from flask import Flask, render_template, flash, redirect, url_for, session, request, jsonify
 from passlib.hash import sha256_crypt
+from flask_cors import CORS, cross_origin
 
 # Мои модули
 from forms import *
 import constants
 import databases.db_app as db_app
+from decorators import api_is_logged_in
 
 # Настройки
 app = Flask(__name__)
+cors = CORS(app)
 app.config['UPLOAD_FOLDER'] = constants.UPLOAD_FOLDER
 app.config['SECRET_KEY'] = '4385nkjcshcfn8642768m,5hbx398sdf234blwkjrlw23t42'
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 # Ограничение на загрузку файлов в 100 мегабайт
 app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024
@@ -18,6 +23,12 @@ app.config['MAX_CONTENT_LENGTH'] = 100 * 1024 * 1024
 @app.errorhandler(404)
 def page_not_found(error):
     return 'This page does not exist', 404
+
+# Проверка авторизации
+@app.route("/api/authcheck", methods =['GET'] )
+@api_is_logged_in
+def api_auth_check():
+    return jsonify({'result': True}), 200
 
 
 # Регистрация
