@@ -15,7 +15,7 @@ forrms = {
 
 # Форма создания преметной области
 class DataAreaForm(Form):
-    title = StringField('Название',[validators.required(message='Обязательное поле'), validators.Length(min=3, max=200, message='Поле должно содержать не менее 3 и не более 200 знаков')])
+    title = StringField('Название',[validators.DataRequired(message='Обязательное поле'), validators.Length(min=3, max=200, message='Поле должно содержать не менее 3 и не более 200 знаков')])
     description = TextAreaField('Комментарий')
     partition_limit = IntegerField('Объём хранимых загрузок')
 
@@ -33,28 +33,28 @@ class RegisterForm(Form):
 
 # Форма подключения к базе данных по предметной области
 class DataConForm(Form):
-    database = StringField('База данных', [validators.required(message='Обязательное поле')])
-    database_user = StringField('Пользователь', [validators.required(message='Обязательное поле')])
+    database = StringField('База данных', [validators.DataRequired(message='Обязательное поле')])
+    database_user = StringField('Пользователь', [validators.DataRequired(message='Обязательное поле')])
     database_password = PasswordField('Пароль')
-    database_host = StringField('Хост', [validators.required(message='Обязательное поле')])
-    database_port = StringField('Порт', [validators.required(message='Обязательное поле')])
-    database_table = StringField('Таблица', [validators.required(message='Обязательное поле')])
+    database_host = StringField('Хост', [validators.DataRequired(message='Обязательное поле')])
+    database_port = StringField('Порт', [validators.DataRequired(message='Обязательное поле')])
+    database_table = StringField('Таблица', [validators.DataRequired(message='Обязательное поле')])
 
 # Форма создания меры
 class MeasureForm(Form):
-    column_name = StringField('Название колонки в таблице', [validators.required(message='Обязательное поле')])
-    description = StringField('Название парамтера', [validators.required(message='Обязательное поле')])
+    column_name = StringField('Название колонки в таблице', [validators.DataRequired(message='Обязательное поле')])
+    description = StringField('Название парамтера', [validators.DataRequired(message='Обязательное поле')])
 
 # Форма создания меры
 class QualMeasureForm(Form):
-    column_name = StringField('Название колонки в таблице', [validators.required(message='Обязательное поле')])
-    description = StringField('Название парамтера', [validators.required(message='Обязательное поле')])
+    column_name = StringField('Название колонки в таблице', [validators.DataRequired(message='Обязательное поле')])
+    description = StringField('Название парамтера', [validators.DataRequired(message='Обязательное поле')])
     unit_of_measurement = SelectField('Единицы измерения')
 
 # Форма создания измерения-справочника
 class RefMeasureForm(Form):
-    column_name = StringField('Название колонки в таблице', [validators.required(message='Обязательное поле')])
-    description = StringField('Название парамтера', [validators.required(message='Обязательное поле')])
+    column_name = StringField('Название колонки в таблице', [validators.DataRequired(message='Обязательное поле')])
+    description = StringField('Название парамтера', [validators.DataRequired(message='Обязательное поле')])
     ref = SelectField('Справочник')
 
 # Форма добавления справочника
@@ -62,29 +62,29 @@ class DataFile(Form):
     file = FileField(u'Таблица с данными')
     type_of = RadioField(
         'Тип обработки',
-        [validators.required(message='Обязательное поле')],
+        [validators.DataRequired(message='Обязательное поле')],
         choices=[('1', 'Замена данных'), ('2', 'Добавление новых')],
         default = '1'
     )
 
 # Форма создания спраовчника
 class RefForm(Form):
-    name = StringField('Название', [validators.required(message='Обязательное поле')])
+    name = StringField('Название', [validators.DataRequired(message='Обязательное поле')])
     description = TextAreaField('Комментарий')
 
 # Форма вероятности измерения
 class IntervalForm(Form):
-    di_from = StringField('Доверительный интерфал от', [validators.required(message='Обязательное поле')])
-    di_to = StringField('Доверительный интерфал до', [validators.required(message='Обязательное поле')])
+    di_from = StringField('Доверительный интерфал от', [validators.DataRequired(message='Обязательное поле')])
+    di_to = StringField('Доверительный интерфал до', [validators.DataRequired(message='Обязательное поле')])
 
 # Форма вероятности измерения
 class ProbabilityForm(Form):
-    probability = StringField('Вероятность', [validators.required(message='Обязательное поле')])
+    probability = StringField('Вероятность', [validators.DataRequired(message='Обязательное поле')])
 
 # Форма фильтра меры
 class MeFilterForm(Form):
-    test1 = StringField('тест1', [validators.required(message='Обязательное поле')])
-    test2 = StringField('тест1', [validators.required(message='Обязательное поле')])
+    test1 = StringField('тест1', [validators.DataRequired(message='Обязательное поле')])
+    test2 = StringField('тест1', [validators.DataRequired(message='Обязательное поле')])
 
 # Аввоциации параметра
 class AssosiationsForm(Form):
@@ -92,23 +92,23 @@ class AssosiationsForm(Form):
 
 # Форма единицы измерения
 class UnitOfMeasurement(Form):
-    name = StringField('Название', [validators.required(message='Обязательное поле')])
-    short_name = StringField('Сокращенное название', [validators.required(message='Обязательное поле')])
+    name = StringField('Название', [validators.DataRequired(message='Обязательное поле')])
+    short_name = StringField('Сокращенное название', [validators.DataRequired(message='Обязательное поле')])
 
 # Форма добавление отчета на исходных данных
 class SimpleReport(Form):
-    name = StringField('Название', [validators.required(message='Обязательное поле')])
+    name = StringField('Название', [validators.DataRequired(message='Обязательное поле')])
     description = TextAreaField('Комментарий')
     data_area = SelectField('Наборы данных')
 
 # Форма добавление отчета на исходных данных
 class АggregationReport(Form):
-    name = StringField('Название', [validators.required(message='Обязательное поле')])
+    name = StringField('Название', [validators.DataRequired(message='Обязательное поле')])
     description = TextAreaField('Комментарий')
 
 # Форма редактирования отчета
 class EditReport(Form):
-    name = StringField('Название', [validators.required(message='Обязательное поле')])
+    name = StringField('Название', [validators.DataRequired(message='Обязательное поле')])
     description = TextAreaField('Комментарий')
 
 class MeasurementReport(Form):
@@ -120,5 +120,5 @@ class FilterReportForm(Form):
 
 # Сохранение пресета
 class AddReportPreset(Form):
-    name = StringField('Название', [validators.required(message='Обязательное поле'), validators.Length(min=4, max=300)])
+    name = StringField('Название', [validators.DataRequired(message='Обязательное поле'), validators.Length(min=4, max=300)])
     is_main =BooleanField('Запускать атоматически при загрузке отчета')
